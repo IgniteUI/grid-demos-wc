@@ -1,102 +1,64 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, css, html } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
+import { dataService } from "./services/data.service";
+import { defineComponents, IgcAvatarComponent } from "igniteui-webcomponents";
+import { IgcCellTemplateContext } from "igniteui-webcomponents-grids/grids";
+import "igniteui-webcomponents-grids/grids/combined.js";
 
+defineComponents(IgcAvatarComponent);
 
-/**
- * An example element.
- *
- * @slot - This element has a slot
- * @csspart button - The button
- */
-@customElement('app-finance-grid')
+@customElement("app-finance-grid")
 export default class FinanceGrid extends LitElement {
-  /**
-   * Copy for the read the docs hint.
-   */
-  @property()
-  docsHint = 'Click on the Vite and Lit logos to learn more'
+  constructor() {
+    super();
+    dataService.getFinanceData().then((data) => {
+      this.financeData = data;
+      this.isLoading = false;
+    });
+  }
 
-  /**
-   * The number of times the button has been clicked.
-   */
-  @property({ type: Number })
-  count = 0
+  @state()
+  private financeData = [];
+
+  @property()
+  private isLoading = true;
+
+  private getPathToImage(val: string): string {
+    return `companies/${val.split(" ")[0]}.png`;
+  }
+
+  private assetTemplate = (ctx: IgcCellTemplateContext) => {
+    return html`
+      <div class="assets-container">
+        <igc-avatar .src=${this.getPathToImage(ctx.cell.value)} shape="rounded"></igc-avatar>
+        <span>${ctx.cell.value}</span>
+      </div>
+    `;
+  };
 
   render() {
     return html`
-      <div>Finance</div>
-    `
+      <link rel="stylesheet" href="./node_modules/igniteui-webcomponents/themes/light/bootstrap.css" />
+      <link rel="stylesheet" href="./node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css" />
+      <igc-grid .data="${this.financeData}" primary-key="id" row-selection="multiple" .isLoading="${this.isLoading}" class="grid-sizing">
+        <igc-column field="id" header="Symbol" ?sortable="${true}" width="7%"></igc-column>
+        <igc-column field="holdingName" header="Asset" ?sortable="${true}" width="15%" .bodyTemplate="${this.assetTemplate}"></igc-column>
+      </igc-grid>
+    `;
   }
 
   static styles = css`
-    :host {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .logo {
-      height: 6em;
-      padding: 1.5em;
-      will-change: filter;
-      transition: filter 300ms;
-    }
-    .logo:hover {
-      filter: drop-shadow(0 0 2em #646cffaa);
-    }
-    .logo.lit:hover {
-      filter: drop-shadow(0 0 2em #325cffaa);
-    }
-
-    .card {
-      padding: 2em;
-    }
-
-    .read-the-docs {
-      color: #888;
-    }
-
-    ::slotted(h1) {
-      font-size: 3.2em;
-      line-height: 1.1;
-    }
-
-    a {
-      font-weight: 500;
-      color: #646cff;
-      text-decoration: inherit;
-    }
-    a:hover {
-      color: #535bf2;
-    }
-
-    button {
-      border-radius: 8px;
-      border: 1px solid transparent;
-      padding: 0.6em 1.2em;
-      font-size: 1em;
-      font-weight: 500;
-      font-family: inherit;
-      background-color: #1a1a1a;
-      cursor: pointer;
-      transition: border-color 0.25s;
-    }
-    button:hover {
-      border-color: #646cff;
-    }
-    button:focus,
-    button:focus-visible {
-      outline: 4px auto -webkit-focus-ring-color;
-    }
-
-    @media (prefers-color-scheme: light) {
-      a:hover {
-        color: #747bff;
-      }
-      button {
-        background-color: #f9f9f9;
+    .assets-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      & igc-avatar {
+        --size: 24px;
       }
     }
-  `
+
+    .grid-sizing {
+      --ig-size: var(--ig-size-small);
+    }
+  `;
 }
