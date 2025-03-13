@@ -13,5 +13,10 @@ export const routes: Route[] = [
       { path: "fleet", component: "fleet-management-view" },
     ],
   },
+  { path: "/invetory", component: "app-erp-hgrid" },
+  { path: "/finance", component: "app-finance-grid" },
+  { path: "/hr-portal", component: "app-hr-portal" },
+  { path: "/sales", component: "app-sales-grid" },
+  { path: "/fleet", component: "app-fleet-management" },
   { path: "(.*)", redirect: "/home/inventory" }, // Fallback
 ];
