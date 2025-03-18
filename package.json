@@ -1,0 +1,25 @@
+{
+  "name": "grid-demos-wc",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:finance": "vite projects/finance-grid",
+    "dev:erp": "vite projects/erp-hgrid",
+    "dev:fleet": "vite projects/fleet-management-grid",
+    "dev:hr": "vite projects/hr-portal",
+    "dev:sales": "vite projects/sales-grid",
+
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vaadin/router": "^2.0.0",
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0"
+  }
+}
