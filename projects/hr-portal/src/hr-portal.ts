@@ -85,9 +85,11 @@ export default class HrPortal extends LitElement {
 
   public dateTemplate = (ctx: IgcCellTemplateContext) => {
     let row = ctx.cell.row;
+    const date = new Date(row.data.HireDate);
+    const formattedDate = date.toISOString().split('T')[0]; 
     return html`
-            ${new Date(row.data.HireDate).toLocaleDateString()}
-          `;
+      ${formattedDate}
+    `;
   }
 
   render() {
@@ -112,8 +114,7 @@ export default class HrPortal extends LitElement {
             <igc-grid-toolbar-hiding></igc-grid-toolbar-hiding>
             <igc-grid-toolbar-pinning></igc-grid-toolbar-pinning>
             <igc-grid-toolbar-exporter>
-              <span slot="excelText">Export to Excel</span>
-              <span slot="csvText">Export to CSV</span>
+              <span slot="excelText">Export</span>
             </igc-grid-toolbar-exporter>
             <igc-grid-toolbar-advanced-filtering></igc-grid-toolbar-advanced-filtering>
           </igc-grid-toolbar-actions>
