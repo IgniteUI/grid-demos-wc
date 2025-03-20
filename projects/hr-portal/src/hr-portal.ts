@@ -93,7 +93,6 @@ export default class HrPortal extends LitElement {
   render() {
     return html`
       <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/fluent.css" />
-       <link rel="stylesheet" href="node_modules/igniteui-webcomponents/themes/light/fluent.css" />
       <igc-tree-grid
       <igc-tree-grid
         id="treeGrid"
