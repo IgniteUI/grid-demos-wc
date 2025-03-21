@@ -3,11 +3,11 @@ import { customElement, property, query, state } from 'lit/decorators.js'
 
 import { erpDataService } from "./services/erp-data.service";
 // import { TRENDING_DOWN, TRENDING_UP } from "./assets/icons/icons";
-import { configureTheme, defineComponents, IgcAvatarComponent, IgcIconComponent, IgcInputComponent, IgcLinearProgressComponent, registerIconFromText } from "igniteui-webcomponents";
+import { configureTheme, defineComponents, IgcAvatarComponent, IgcIconComponent, IgcInputComponent, IgcLinearProgressComponent, IgcRatingComponent, registerIconFromText } from "igniteui-webcomponents";
 import { FilteringLogic, GridSelectionMode, IgcCellTemplateContext, IgcFilteringExpressionsTree, IgcGridComponent, IgcStringFilteringOperand } from "igniteui-webcomponents-grids/grids";
 import "igniteui-webcomponents-grids/grids/combined.js";
 
-defineComponents(IgcAvatarComponent, IgcIconComponent, IgcLinearProgressComponent, IgcInputComponent);
+defineComponents(IgcAvatarComponent, IgcIconComponent, IgcLinearProgressComponent, IgcInputComponent, IgcRatingComponent);
 configureTheme("material");
 
 @customElement('app-erp-hgrid')
@@ -56,12 +56,20 @@ export default class ErpHierarchicalGrid extends LitElement {
             .src="${ctx.cell.value}"
             alt="Product"
             igc-ripple="white"
-
           />
         
       </div>
     `;
   };
+
+  private ratingTemplate = (ctx: IgcCellTemplateContext) => {
+    return html`
+      <div class="rating-container">
+        <igc-rating value="${ctx.cell.value}" readonly="${true}" min="0" max="5"></igc-rating>
+      </div>
+    `;
+  };
+
 
   private filter(e: any) {
     const value = e.target.value;
@@ -91,13 +99,10 @@ export default class ErpHierarchicalGrid extends LitElement {
     console.log('event', event);
   }
 
-    // #hierarchicalGrid
+  // #hierarchicalGrid
   render() {
     return html`
         <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/material.css" />
-
-        <img alt="Product" src=" /products/adidas-sports-shoes-4762266_1920.jpg">
-        
 
         <igc-hierarchical-grid
           .data="${this.erpData}" 
@@ -135,6 +140,16 @@ export default class ErpHierarchicalGrid extends LitElement {
           </igc-column>
           <igc-column field="productName" header="Product Name" data-type="string" ?sortable="${true}" width="12%"></igc-column>
           <igc-column field="category" header="Category" data-type="string" ?sortable="${true}"></igc-column>
+          
+          <igc-column
+            field="rating"
+            header="Rating"
+            min-width="165px"
+            data-type="number"
+            ?sortable="${true}"
+            .bodyTemplate="${this.ratingTemplate}">
+          </igc-column>
+
           <igc-column field="unitsSold" header="Sold Units Last Month" data-type="number" width="10%" ?sortable="${true}"></igc-column>
           <igc-column field="grossPrice" header="Gross Price" data-type="currency" width="7%" ?sortable="${true}"></igc-column>
           <igc-column field="netPrice" header="Net Price" data-type="currency" width="7%" ?sortable="${true}"></igc-column>
@@ -150,6 +165,16 @@ export default class ErpHierarchicalGrid extends LitElement {
       margin: 0 auto;
       padding: 2rem;
       text-align: center;
+    }
+
+    .product-img {
+      display: flex;
+      justify-content: center;
+
+      img {
+        height: 22px;
+        border-radius: 4px;
+      }
     }
 
     .logo {
