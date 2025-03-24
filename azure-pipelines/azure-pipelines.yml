@@ -1,0 +1,33 @@
+trigger:
+  branches:
+    include:
+    - vnext
+    - master
+
+# This pipeline is meant to build specific branches for deployment. It's not meant to be a part of PR validation.
+pr: none
+
+parameters:
+- name: isVerbose
+  displayName: 'Get verbose output from steps - where configurable'
+  type: boolean
+  default: false
+- name: shouldCleanPostExecution
+  displayName: 'Clean all pipeline dirs after the pipeline finishes?'
+  type: boolean
+  default: true
+
+
+name: $(Year:yyyy).$(Month).$(DayOfMonth)-r$(Rev:.r)
+
+stages:
+- stage: Build
+  pool:
+    vmImage: ubuntu-latest
+
+    demands: npm
+  jobs:
+  - job: BuildSamples
+    steps:
+      - checkout: 'self' 
+        clean: true
