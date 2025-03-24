@@ -1,14 +1,14 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, html, unsafeCSS } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { dataService } from "./services/data.service";
 import { TRENDING_DOWN, TRENDING_UP } from "./assets/icons/icons";
 import { configureTheme, defineComponents, IgcAvatarComponent, IgcIconComponent, IgcInputComponent, IgcLinearProgressComponent, registerIconFromText } from "igniteui-webcomponents";
 import { FilteringLogic, IgcCellTemplateContext, IgcFilteringExpressionsTree, IgcGridComponent, IgcStringFilteringOperand } from "igniteui-webcomponents-grids/grids";
 import "igniteui-webcomponents-grids/grids/combined.js";
+import financeStyles from "./finance-grid.scss?inline";
 
 defineComponents(IgcAvatarComponent, IgcIconComponent, IgcLinearProgressComponent, IgcInputComponent);
 configureTheme("bootstrap");
-
 @customElement("app-finance-grid")
 export default class FinanceGrid extends LitElement {
   constructor() {
@@ -29,6 +29,7 @@ export default class FinanceGrid extends LitElement {
     super.disconnectedCallback();
     clearInterval(this._timer);
   }
+
   @query("igc-grid")
   private grid!: IgcGridComponent;
 
@@ -37,6 +38,15 @@ export default class FinanceGrid extends LitElement {
 
   @state()
   private isLoading = true;
+
+  private profitConditionHandler = (rowData: any, columnKey: string) => {
+    return rowData[columnKey] >= 0;
+  };
+
+  private lossConditionHandler = (rowData: any, columnKey: string) => {
+    return rowData[columnKey] < 0;
+  };
+
   private profitLossValueClasses = {
     profitCondition: this.profitConditionHandler,
     lossCondition: this.lossConditionHandler,
@@ -45,7 +55,7 @@ export default class FinanceGrid extends LitElement {
   private readonly updateTimerInMs = 3000;
 
   private getPathToImage(val: string): string {
-    return `companies/${val.split(" ")[0]}.png`;
+    return `/companies/${val.split(" ")[0]}.png`;
   }
 
   private assetTemplate = (ctx: IgcCellTemplateContext) => {
@@ -96,15 +106,7 @@ export default class FinanceGrid extends LitElement {
     return html` <span>${ctx.cell.value} days</span> `;
   };
 
-  private profitConditionHandler(rowData: any, columnKey: string) {
-    return rowData[columnKey] >= 0;
-  }
-
-  private lossConditionHandler(rowData: any, columnKey: string) {
-    return rowData[columnKey] < 0;
-  }
-
-  private filter(e: any) {
+  private filter = (e: any) => {
     const value = e.target.value;
     const expressionTree = new IgcFilteringExpressionsTree();
     expressionTree.operator = FilteringLogic.Or;
@@ -126,11 +128,11 @@ export default class FinanceGrid extends LitElement {
     } else {
       this.grid.clearFilter();
     }
-  }
+  };
 
   render() {
     return html`
-      <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css" />
+      <link rel="stylesheet" href="/node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css" />
       <igc-grid .data="${this.financeData}" primary-key="id" row-selection="multiple" class="grid-sizing">
         <igc-grid-toolbar>
           <igc-grid-toolbar-title>Financial Portfolio</igc-grid-toolbar-title>
@@ -156,39 +158,5 @@ export default class FinanceGrid extends LitElement {
     `;
   }
 
-  static styles = css`
-    :host {
-      display: block;
-      height: 100%;
-      width: 100%;
-    }
-
-    .profitCondition {
-      color: var(--ig-success-500);
-    }
-
-    .lossCondition {
-      color: var(--ig-error-500);
-    }
-
-    .assets-container {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      & igc-avatar {
-        --size: 24px;
-      }
-    }
-
-    .grid-sizing {
-      --ig-size: var(--ig-size-small);
-    }
-
-    .progress-container {
-      display: grid;
-      grid-template-columns: 0.5fr 1fr;
-      width: 100%;
-      gap: 0.5rem;
-    }
-  `;
+  static styles = unsafeCSS(financeStyles);
 }
