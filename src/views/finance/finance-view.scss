@@ -1,0 +1,14 @@
+@use "../../styles/utils" as *;
+@use "igniteui-theming" as *;
+@use "igniteui-theming/sass/typography/presets/bootstrap" as *;
+@use "igniteui-theming/sass/elevations/presets" as *;
+@use "igniteui-theming/sass/color/presets/light/bootstrap" as *;
+
+:host {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  @include theme($palette, $material-elevations, $typeface, $type-scale, "light");
+}

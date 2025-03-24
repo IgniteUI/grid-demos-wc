@@ -1,5 +1,5 @@
 @use "sass:map";
-@use "node_modules/igniteui-theming" as *;
+@use "igniteui-theming" as *;
 
 @function is-root() {
   @each $selector in & {

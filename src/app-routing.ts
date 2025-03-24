@@ -1,7 +1,7 @@
 import { Route } from "@vaadin/router";
 
 export const routes: Route[] = [
-  { path: "/", redirect: "/home/inventory" },
+  { path: "/", redirect: "/home/finance" },
   {
     path: "/home",
     component: "home-view",
