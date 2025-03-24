@@ -93,12 +93,12 @@ stages:
           command: 'install'
 
       - task: Npm@1
-        displayName: 'npm run build:ci'
+        displayName: 'npm run build'
         inputs:
           command: custom
           workingDir: '$(Build.SourcesDirectory)'
           verbose: ${{ parameters.isVerbose }}
-          customCommand: 'run build:ci'
+          customCommand: 'run build'
 
       - task: PublishPipelineArtifact@1
 
