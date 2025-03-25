@@ -1,10 +1,20 @@
 import { defineConfig } from "vite";
-import path from "path";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
   resolve: {
     alias: {
-      "igniteui-theming": path.resolve("node_modules/igniteui-theming"),
+      "igniteui-theming": new URL("./node_modules/igniteui-theming", import.meta.url).pathname,
     },
   },
+  plugins: [
+    viteStaticCopy({
+      targets: [
+        {
+          src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css",
+          dest: "themes",
+        },
+      ],
+    }),
+  ],
 });

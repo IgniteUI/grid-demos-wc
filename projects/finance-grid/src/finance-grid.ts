@@ -132,7 +132,7 @@ export default class FinanceGrid extends LitElement {
 
   render() {
     return html`
-      <link rel="stylesheet" href="/node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css" />
+      <link rel="stylesheet" href="/themes/bootstrap.css" />
       <igc-grid .data="${this.financeData}" primary-key="id" row-selection="multiple" class="grid-sizing">
         <igc-grid-toolbar>
           <igc-grid-toolbar-title>Financial Portfolio</igc-grid-toolbar-title>

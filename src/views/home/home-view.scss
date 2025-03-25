@@ -36,6 +36,7 @@
   flex-direction: row;
   justify-content: space-between;
   background-color: var(--ig-surface-500);
+  box-sizing: border-box;
   & a {
     text-decoration: none;
     display: block;
