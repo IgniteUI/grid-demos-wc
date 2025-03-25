@@ -27,9 +27,6 @@ export default class ErpHierarchicalGrid extends LitElement {
     `
   }
 
-  private _onClick() {
-    this.count++
-  }
 
   static styles = css`
     :host {
