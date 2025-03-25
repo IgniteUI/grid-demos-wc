@@ -104,7 +104,7 @@ stages:
 
         displayName: 'Publish app'
         inputs:
-          targetPath: '$(Build.SourcesDirectory)/dist/grid-demos-wc/browser'
+          targetPath: '$(Build.SourcesDirectory)/dist'
           artifact: 'dist.grid-demos-wc.browser'
           publishLocation: 'pipeline'
 
