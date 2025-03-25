@@ -17,7 +17,7 @@ export default class FinanceGrid extends LitElement {
     registerIconFromText("trending_down", TRENDING_DOWN, "material");
     dataService.getFinanceData().then((data) => {
       this.financeData = data;
-      this.isLoading = false;
+      // this.isLoading = false;
     });
     this._timer = setInterval(() => {
       dataService.updateAllPrices(this.grid.data);
@@ -35,8 +35,8 @@ export default class FinanceGrid extends LitElement {
   @state()
   private financeData = [];
 
-  @state()
-  private isLoading = true;
+  // @state()
+  // private isLoading = true;
   private profitLossValueClasses = {
     profitCondition: this.profitConditionHandler,
     lossCondition: this.lossConditionHandler,
