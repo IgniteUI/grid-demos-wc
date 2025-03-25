@@ -1,10 +1,9 @@
 import { defineConfig } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-import path from "path";
 export default defineConfig({
   resolve: {
     alias: {
-      "igniteui-theming": path.resolve("node_modules/igniteui-theming"),
+      "igniteui-theming": new URL("./node_modules/igniteui-theming", import.meta.url).pathname,
     },
   },
   plugins: [
@@ -13,6 +12,10 @@ export default defineConfig({
         {
           src: "./projects/finance-grid/public/*",
           dest: "",
+        },
+        {
+          src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css",
+          dest: "themes",
         },
       ],
     }),
