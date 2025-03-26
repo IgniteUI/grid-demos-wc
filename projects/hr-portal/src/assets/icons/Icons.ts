@@ -5,6 +5,11 @@ export const icons = [
       category: 'hr-icons',
     },
     {
+      name: 'close',
+      path: 'images/others/close.svg',
+      category: 'hr-icons',
+    },
+    {
       name: 'mail',
       path: 'images/others/mail.svg',
       category: 'hr-icons',
