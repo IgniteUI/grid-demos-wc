@@ -29,7 +29,6 @@ export default class FinanceGrid extends LitElement {
     super.disconnectedCallback();
     clearInterval(this._timer);
   }
-
   @query("igc-grid")
   private grid!: IgcGridComponent;
 
