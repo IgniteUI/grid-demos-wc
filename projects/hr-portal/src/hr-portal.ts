@@ -135,66 +135,68 @@ export default class HrPortal extends LitElement {
   render() {
     return html`
       <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/fluent.css" />
-      <igc-tree-grid
-        id="treeGrid"
-        .data="${this.data}"
-        primary-key="ID"
-        child-data-key="Employees"
-        row-selection="multipleCascade"
-        allow-filtering="true"
-        filter-mode="excelStyleFilter"
-        class="gridStyle"
-        @sortingExpressionsChange="${this.handleSortingChanged}"
-      >
-        <igc-paginator per-page="20"></igc-paginator>
+      <div class="ig-typography rootDiv">
+        <igc-tree-grid
+          id="treeGrid"
+          .data="${this.data}"
+          primary-key="ID"
+          child-data-key="Employees"
+          row-selection="multipleCascade"
+          allow-filtering="true"
+          filter-mode="excelStyleFilter"
+          class="gridStyle"
+          @sortingExpressionsChange="${this.handleSortingChanged}"
+        >
+          <igc-paginator per-page="20"></igc-paginator>
 
-        <igc-grid-toolbar>
-          <igc-grid-toolbar-title>Actions</igc-grid-toolbar-title>
-          <igc-grid-toolbar-actions>
-          ${
-            this.isSorted
-              ? html`
-                  <div class="icon-button-group">
-                    <igc-button variant="flat" @click="${this.clearSorting}">
-                      <igc-icon
-                        name="close"
-                        collection="hr-icons"
-                        class="medium"
-                      ></igc-icon>
-                      Clear Sort</igc-button
-                    >
-                  </div>
-                `
-              : ""
-          }
-            <igc-grid-toolbar-hiding></igc-grid-toolbar-hiding>
-            <igc-grid-toolbar-pinning></igc-grid-toolbar-pinning>
-            <igc-grid-toolbar-exporter>
-              <span slot="excelText">Export</span>
-            </igc-grid-toolbar-exporter>
-            <igc-grid-toolbar-advanced-filtering></igc-grid-toolbar-advanced-filtering>
-          </igc-grid-toolbar-actions>
-        </igc-grid-toolbar>
+          <igc-grid-toolbar>
+            <igc-grid-toolbar-title>Actions</igc-grid-toolbar-title>
+            <igc-grid-toolbar-actions>
+            ${
+              this.isSorted
+                ? html`
+                    <div class="icon-button-group">
+                      <igc-button variant="flat" @click="${this.clearSorting}">
+                        <igc-icon
+                          name="close"
+                          collection="hr-icons"
+                          class="medium"
+                        ></igc-icon>
+                        Clear Sort</igc-button
+                      >
+                    </div>
+                  `
+                : ""
+            }
+              <igc-grid-toolbar-hiding></igc-grid-toolbar-hiding>
+              <igc-grid-toolbar-pinning></igc-grid-toolbar-pinning>
+              <igc-grid-toolbar-exporter>
+                <span slot="excelText">Export</span>
+              </igc-grid-toolbar-exporter>
+              <igc-grid-toolbar-advanced-filtering></igc-grid-toolbar-advanced-filtering>
+            </igc-grid-toolbar-actions>
+          </igc-grid-toolbar>
 
-        <igc-column field="Name" width="300px" ?sortable="true" pinned="true" .bodyTemplate="${
-          this.avatarTemplate
-        }"></igc-column>
-        <igc-column field="JobTitle" header="Job Title" data-type="string" min-width="200px" sortable="true"></igc-column>
-        <igc-column field="Department" data-type="string" min-width="200px" sortable="true"></igc-column>
+          <igc-column field="Name" width="300px" ?sortable="true" pinned="true" .bodyTemplate="${
+            this.avatarTemplate
+          }"></igc-column>
+          <igc-column field="JobTitle" header="Job Title" data-type="string" min-width="200px" sortable="true"></igc-column>
+          <igc-column field="Department" data-type="string" min-width="200px" sortable="true"></igc-column>
 
-        <igc-column field="Location" data-type="string" ?sortable="true" .bodyTemplate="${
-          this.countryIconTemplate
-        }"></igc-column>
-        <igc-column field="Contacts" data-type="string" min-width="200px" filterable="false" .bodyTemplate="${
-          this.contactsTemplate
-        }"></igc-column> 
+          <igc-column field="Location" data-type="string" ?sortable="true" .bodyTemplate="${
+            this.countryIconTemplate
+          }"></igc-column>
+          <igc-column field="Contacts" data-type="string" min-width="200px" filterable="false" .bodyTemplate="${
+            this.contactsTemplate
+          }"></igc-column> 
 
-        <igc-column field="HireDate" header="Hire Date" data-type="date" min-width="100px" sortable="true" .bodyTemplate="${
-          this.dateTemplate
-        }"></igc-column>
+          <igc-column field="HireDate" header="Hire Date" data-type="date" min-width="100px" sortable="true" .bodyTemplate="${
+            this.dateTemplate
+          }"></igc-column>
 
-        <igc-column field="GrossSalary" header="Gross Salary" data-type="currency" min-width="100px" sortable="true"></igc-column></igc-column>
-      </igc-tree-grid>
+          <igc-column field="GrossSalary" header="Gross Salary" data-type="currency" min-width="100px" sortable="true"></igc-column></igc-column>
+        </igc-tree-grid>
+      </div>
     `;
   }
 
@@ -203,6 +205,11 @@ export default class HrPortal extends LitElement {
       display: block;
       height: 100%;
       width: 100%;
+    }
+
+    .rootDiv {
+      width: 100%;
+      height: 100%;
     }
 
     .gridStyle {
