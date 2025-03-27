@@ -1,5 +1,5 @@
-import { LitElement, PropertyValues, css, html } from "lit";
-import { customElement, property, query, state } from "lit/decorators.js";
+import { LitElement, PropertyValues, html } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import { SalesDataService } from "./services/data.service";
 import { defineComponents, registerIcon, IgcButtonComponent, IgcDropdownComponent, IgcDropdownItemComponent, IgcIconComponent } from "igniteui-webcomponents";
@@ -12,7 +12,7 @@ import {
     IgcPivotConfiguration,
     IgcPivotDateDimension,
     IgcColumnComponent,
-    CsvFileTypes,
+    // CsvFileTypes,
     // IgcCsvExporterService,
     // IgcCsvExporterOptions,
     // IgcExcelExporterService,
@@ -40,7 +40,7 @@ export class IgcSaleProfitAggregate {
     public static totalProfit = (_: any, data: any[] | undefined) =>
         data?.reduce((accumulator, value) => accumulator + (value.Sale - value.Cost), 0) || 0;
 
-    public static averageProfit = (_, data: any[] | undefined) => {
+    public static averageProfit = (_: any, data: any[] | undefined) => {
         let average = 0;
         if (data?.length === 1) {
             average = data[0].Sale - data[0].Cost;
@@ -135,7 +135,7 @@ export class SalesGrid extends LitElement {
                 label: 'Sum'
             },
         ],
-        formatter: (value, _, __) => {
+        formatter: (value: any, _: any, __: any) => {
             return this.currencyFormatter(value, 'Sale');
         }
     };
@@ -370,7 +370,7 @@ export class SalesGrid extends LitElement {
         this.pivotGrid.pivotConfiguration = this.availableConfigs.get(this.selectedConfig)?.config || this.pivotConfigBrands;
     }
 
-    public onExportSelection(event: CustomEvent<IgcDropdownItemComponent>) {
+    public onExportSelection(/*event: CustomEvent<IgcDropdownItemComponent>*/) {
         // To uncomment once Excel and CSV exporter are available in WC
         // let options!: IgcExporterOptionsBase;
         // const newId = event.detail.id;
