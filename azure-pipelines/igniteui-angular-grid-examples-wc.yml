@@ -107,12 +107,12 @@ stages:
           customEndpoint: 'public proget'
 
       - task: Npm@1
-        displayName: 'npm run build'
+        displayName: 'npm run build:ci'
         inputs:
           command: custom
           workingDir: '$(Build.SourcesDirectory)'
           verbose: ${{ parameters.isVerbose }}
-          customCommand: 'run build'
+          customCommand: 'run build:ci'
 
       - task: PublishPipelineArtifact@1
 
