@@ -1,7 +1,7 @@
 import { css } from "lit";
 
 export const salesGridStyles = css`
-:host {
+    :host {
       display: block;
       height: 100%;
       width: 100%;
@@ -47,7 +47,6 @@ export const salesGridStyles = css`
         width: 100%;
         display: flex;
         align-items: center;
-        // justify-content: center;
     }
 
     .countryImage {
@@ -61,13 +60,11 @@ export const salesGridStyles = css`
         border-top: none;
         height: 100%;
 
-        ::ng-deep {
-            .igx-list__item-content {
-                padding: 0 8px !important;
+        .igx-list__item-content {
+            padding: 0 8px !important;
 
-                span {
-                    margin-inline-start: initial;
-                }
+            span {
+                margin-inline-start: initial;
             }
         }
     }

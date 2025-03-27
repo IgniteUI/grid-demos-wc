@@ -397,23 +397,28 @@ export class SalesGrid extends LitElement {
     }
 
     public currencyFormatter(value: any, field: string) {
-        var valueConfig = this.pivotGrid.pivotConfiguration.values.find(value => value.member === field);
+        const valueConfig = this.pivotGrid.pivotConfiguration.values.find(value => value.member === field);
         if (!valueConfig || valueConfig.aggregate.key === "COUNT") {
             return value;
         }
-        return value;
+        const roundedValue = (Math.round(value * 100) / 100).toString();
+        const numLength = roundedValue.split('').length;
+        const separatedValue = roundedValue.split('').reverse()
+            .reduce((prev, curr, index) => prev + curr + ((index + 1) % 3 === 0 && index < numLength - 1 ?  ",": ""))
+            .split('').reverse().join("");
+        return "$" + separatedValue;
     }
 
     render() {
         return html`
-            <link rel="stylesheet" href="./node_modules/igniteui-webcomponents-grids/grids/themes/light/indigo.css" />
-            <div class="rootSample">
+            <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/indigo.css" />
+            <div class="rootSample ig-typography">
                 <div class="pivotToolbar igx-grid__tr-pivot">
                     <span class="igx-grid-toolbar__title">Sales Dashboard</span>
                     <div>
-                        <igc-button variant="outlined" style="margin-right: 10px;" @click="${this.onViewDropdownButton}">
+                        <igc-button variant="contained" style="margin-right: 10px;" @click="${this.onViewDropdownButton}">
                             <igc-icon name="visibility" collection="material"></igc-icon>
-                            Change View
+                            ${this.availableConfigs.get(this.selectedConfig)?.title}
                             <igc-icon .name="${this.viewDropdownOpen ? "arrow_up" : "arrow_down" }" collection="material"></igc-icon>
                         </igc-button>
                         <igc-button variant="outlined" @click="${this.onExportDropdownButton}">
