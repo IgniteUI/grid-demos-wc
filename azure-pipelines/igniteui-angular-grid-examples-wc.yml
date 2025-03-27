@@ -87,18 +87,11 @@ stages:
           artifact: 'samplesSourcesZips'
           publishLocation: 'pipeline'
 
-      - task: Npm@1
-        displayName: 'Register licensed npm registry in .npmrc'
+      - task: npmAuthenticate@0
+        displayName: '[IG Production ProGet] npm authenticate'
         inputs:
-          command: 'custom'
-          workingDir: '$(Build.SourcesDirectory)'
-          customCommand: 'config -L project set @infragistics:registry=https://packages.infragistics.com/npm/js-licensed/'
-          customEndpoint: 'public proget'
-
-      - task: Npm@1
-        displayName: 'Npm install'
-        inputs:
-          command: 'install'
+          workingFile: '$(Build.SourcesDirectory)/.npmrc'
+          customEndpoint: 'internal licensed proget'
 
       - task: Npm@1
         displayName: 'Register licensed npm registry in .npmrc'
@@ -108,6 +101,11 @@ stages:
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'config -L project set @infragistics:registry=https://packages.infragistics.com/npm/js-licensed/'
           customEndpoint: 'internal licensed proget'
+
+      - task: Npm@1
+        displayName: 'Npm install'
+        inputs:
+          command: 'install'
 
       - task: PowerShell@2
         displayName: 'Uninstall all IG trial packages & re-install their licensed variations'
