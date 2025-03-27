@@ -155,14 +155,13 @@ export default class HrPortal extends LitElement {
             this.isSorted
               ? html`
                   <div class="icon-button-group">
-                    <igc-button variant="flat" @click="${this.clearSorting}"
-                      > 
-                    <igc-icon
-                      name="close"
-                      collection="hr-icons"
-                      class="medium"
-                    ></igc-icon>
-                    Clear Sort</igc-button
+                    <igc-button variant="flat" @click="${this.clearSorting}">
+                      <igc-icon
+                        name="close"
+                        collection="hr-icons"
+                        class="medium"
+                      ></igc-icon>
+                      Clear Sort</igc-button
                     >
                   </div>
                 `
@@ -215,6 +214,10 @@ export default class HrPortal extends LitElement {
       --ig-size: var(--ig-size-small);
     }
 
+    .medium {
+      --ig-size: var(--ig-size-medium);
+    }
+
     .center-content {
       display: flex;
       justify-content: center;
@@ -237,16 +240,18 @@ export default class HrPortal extends LitElement {
 
     .flagDiv {
       gap: 8px;
-      align-items: center;
       display: flex;
     }
 
     .flagDiv igc-icon {
       height: 14px;
       width: 18px;
+      display: flex;
+      align-items: center;
       border-radius: 1px;
       box-shadow: var(--ig-elevation-1);
-      display: block;
+      display: flex;
+      justify-content: center;
       overflow: hidden;
     }
   `;
