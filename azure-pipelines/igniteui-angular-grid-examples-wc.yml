@@ -87,12 +87,6 @@ stages:
           artifact: 'samplesSourcesZips'
           publishLocation: 'pipeline'
 
-      - task: npmAuthenticate@0
-        displayName: '[IG Production ProGet] npm authenticate'
-        inputs:
-          workingFile: '$(Build.SourcesDirectory)/.npmrc'
-          customEndpoint: 'internal licensed proget'
-
       - task: Npm@1
         displayName: 'Register licensed npm registry in .npmrc'
         inputs:
