@@ -4,13 +4,3 @@ html, body {
     margin: 0;
     padding: 0;
   }
-  
-  body {
-    display: flex;
-    font-family: 'Helvetica', sans-serif;
-  }
-  
-  app-hr-portal {
-    display: flex;
-    flex-direction: column;
-  }

@@ -155,13 +155,14 @@ export default class HrPortal extends LitElement {
             this.isSorted
               ? html`
                   <div class="icon-button-group">
+                    <igc-button variant="flat" @click="${this.clearSorting}"
+                      > 
                     <igc-icon
                       name="close"
                       collection="hr-icons"
                       class="medium"
                     ></igc-icon>
-                    <igc-button variant="flat" @click="${this.clearSorting}"
-                      >Clear Sort</igc-button
+                    Clear Sort</igc-button
                     >
                   </div>
                 `
@@ -201,6 +202,8 @@ export default class HrPortal extends LitElement {
   static styles = css`
     :host {
       display: block;
+      height: 100%;
+      width: 100%;
     }
 
     .gridStyle {
@@ -230,10 +233,6 @@ export default class HrPortal extends LitElement {
 
     igc-avatar::part(base) {
       --size: 28px;
-    }
-
-    igc-tree-grid::part(row) {
-      background-color: #ffffff(--row-even-background);
     }
 
     .flagDiv {
