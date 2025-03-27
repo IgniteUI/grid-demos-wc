@@ -107,6 +107,12 @@ stages:
         inputs:
           command: 'install'
 
+      - task: npmAuthenticate@0
+        displayName: '[IG Production ProGet] npm authenticate'
+        inputs:
+          workingFile: '$(Build.SourcesDirectory)/.npmrc'
+          customEndpoint: 'public proget'
+
       - task: PowerShell@2
         displayName: 'Uninstall all IG trial packages & re-install their licensed variations'
         inputs:
@@ -131,12 +137,6 @@ stages:
             Write-Host $npmInstallPackages
             Invoke-Expression -Command “$npmUninstallPackages”
             Invoke-Expression -Command “$npmInstallPackages”
-
-      - task: npmAuthenticate@0
-        displayName: '[IG Production ProGet] npm authenticate'
-        inputs:
-          workingFile: '$(Build.SourcesDirectory)/.npmrc'
-          customEndpoint: 'public proget'
 
       - task: Npm@1
         displayName: 'npm run build:ci'
