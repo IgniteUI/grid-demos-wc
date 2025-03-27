@@ -88,6 +88,14 @@ stages:
           publishLocation: 'pipeline'
 
       - task: Npm@1
+        displayName: 'Register licensed npm registry in .npmrc'
+        inputs:
+          command: 'custom'
+          workingDir: '$(Build.SourcesDirectory)'
+          customCommand: 'config -L project set @infragistics:registry=https://packages.infragistics.com/npm/js-licensed/'
+          customEndpoint: 'public proget'
+
+      - task: Npm@1
         displayName: 'Npm install'
         inputs:
           command: 'install'
