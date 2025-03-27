@@ -1,4 +1,4 @@
-const DATA_URL = "https://staging7.infragistics.com/grid-examples-data/data/hr/hr.json";
+const DATA_URL = "https://www.infragistics.com/grid-examples-data/data/hr/hr.json";
 
 export class DataService {
     public async fetchData(): Promise<any> {
