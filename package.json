@@ -10,8 +10,8 @@
     "dev:fleet": "vite projects/fleet-management-grid",
     "dev:hr": "vite projects/hr-portal",
     "dev:sales": "vite projects/sales-grid",
-
     "build": "tsc && vite build",
+    "build:ci": "tsc && vite build --base /webcomponents-grid-examples/",
     "preview": "vite preview"
   },
   "dependencies": {
