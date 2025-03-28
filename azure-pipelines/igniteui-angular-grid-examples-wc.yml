@@ -180,6 +180,14 @@ stages:
           command: 'install'
           customEndpoint: 'internal licensed proget'
 
+      - task: Bash@3
+        displayName: 'Check installed packages'
+        inputs:
+          targetType: 'inline'
+          script: |
+            ls -l node_modules/@infragistics
+            npm list --depth=0
+
       - task: Npm@1
         displayName: 'npm run build:ci'
         inputs:
