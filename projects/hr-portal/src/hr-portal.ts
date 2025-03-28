@@ -150,7 +150,7 @@ export default class HrPortal extends LitElement {
           <igc-paginator per-page="20"></igc-paginator>
 
           <igc-grid-toolbar>
-            <igc-grid-toolbar-title>Actions</igc-grid-toolbar-title>
+            <igc-grid-toolbar-title>HR Portal</igc-grid-toolbar-title>
             <igc-grid-toolbar-actions>
             ${
               this.isSorted
