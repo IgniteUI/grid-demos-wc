@@ -174,9 +174,11 @@ stages:
             Invoke-Expression -Command "$npmInstallPackages"
 
       - task: Npm@1
-        displayName: 'Npm install'
+        displayName: 'Npm install --legacy-peer-deps'
         inputs:
+          verbose: ${{ parameters.isVerbose }}
           command: 'install'
+          customEndpoint: 'internal licensed proget'
 
       - task: Npm@1
         displayName: 'npm run build:ci'
