@@ -142,25 +142,13 @@ stages:
             $financeIndexHtml = Get-Content -Raw .\projects\finance-grid\index.html
             $financeIndexHtml = $financeIndexHtml -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
                            -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
-
+            $financeGridTs | Set-Content -Path .\projects\finance-grid\index.html
             $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
-            Write-Host "Initial contents of finance-grid.ts:"
-            Write-Host $financeGridTs
             $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-(?!/)', '@infragistics/igniteui-webcomponents-' `
                                -replace '(?<!@infragistics/)igniteui-webcomponents-grids-(?!/)', '@infragistics/igniteui-webcomponents-grids-'
-
-          
-            Write-Host "Updated contents of finance-grid.ts:"
-            Write-Host $financeGridTs
-
             $financeGridTs | Set-Content -Path .\projects\finance-grid\src\finance-grid.ts
-            $financeGridTs | Set-Content -Path .\projects\finance-grid\index.html
 
             Write-Host $npmUninstallPackages
-            Write-Host $npmInstallPackages
-            Write-Host "DEBUG npm uninstall command:"
-            Write-Host $npmUninstallPackages
-            Write-Host "DEBUG  npm install command:"
             Write-Host $npmInstallPackages
             Invoke-Expression -Command "$npmUninstallPackages"
             Invoke-Expression -Command "$npmInstallPackages"
