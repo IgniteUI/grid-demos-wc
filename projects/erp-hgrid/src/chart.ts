@@ -24,19 +24,20 @@ export class GridChart extends LitElement {
     @query("igc-column-series", true) series!: IgcColumnSeriesComponent;
 
     firstUpdated() {
-        this.series.xAxis = this.xAxis;
-        this.series.yAxis = this.yAxis;
+        // this.series.xAxis = this.xAxis;
+        // this.series.yAxis = this.yAxis;
     }
 
     render() {
         return html`
         <igc-data-chart width="100%" height="100%"
-          .plotAreaBackground="transparent"
+          .plot-area-background="transparent"
           .highlightingMode="FadeOthersSpecific"
           .highlightingBehavior="NearestItemsAndSeries">
   
           <igc-category-x-axis 
             id="xAxis"
+            name="xAxis"
             .dataSource=${this.trendData}
               label="month"
               label-visibility="collapsed"
@@ -46,6 +47,7 @@ export class GridChart extends LitElement {
   
           <igc-numeric-y-axis
               id="yAxis"
+              name="yAxis"
               label-visibility="collapsed"
               major-stroke="transparent"
               stroke="transparent"
@@ -53,6 +55,8 @@ export class GridChart extends LitElement {
           </igc-numeric-y-axis>
   
           <igc-column-series
+             x-axis-name="xAxis"
+             y-axis-name="yAxis"
               .dataSource=${this.trendData}
               radiusX="2"
               radiusY="2"

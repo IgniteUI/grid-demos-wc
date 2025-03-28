@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
+import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
 import { erpDataService } from "./services/erp-data.service";
 import { DROPBOX, DELIVERY, BILL_PAID, CHECK } from "./assets/icons/icons";
@@ -65,8 +66,21 @@ export default class ErpHierarchicalGrid extends LitElement {
   @query("igc-dialog")
   private imageDialog!: IgcDialogComponent;
 
+  @query('#mbutton')
+  private mbutton!: IgcButtonComponent;
+
+  @query('#mtooltip')
+  private mtooltip!: HTMLElement;
+
+  @query('#marrow')
+  private marrow!: HTMLElement;
+
+
   @query('#imageCol')
-  private imageColumn1!: IgcColumnComponent
+  private imageColumn1!: IgcColumnComponent;
+
+  @query('#imageElement')
+  private imageElement!: HTMLElement;
 
   @state()
   private erpData = [];
@@ -76,6 +90,12 @@ export default class ErpHierarchicalGrid extends LitElement {
   private isLoading = true;
 
   public orderStatus = OrderStatus;
+
+  // floating-ui variables
+  @state() showTooltip = false;
+  tooltipRef: any;
+  buttonRef: any;
+  cleanup: any;
 
   // private excelExporter = new IgcExcelExporterService();
   
@@ -120,6 +140,7 @@ export default class ErpHierarchicalGrid extends LitElement {
       }
     ];
 
+    
     // const imageColumn = document.getElementById('imageCol') as IgcColumnComponent;
  
 
@@ -135,6 +156,7 @@ export default class ErpHierarchicalGrid extends LitElement {
     // this.requestUpdate();
   }
 
+
   public rowIslandToolbarTemplate = () => {
     return html`   
       <igc-grid-toolbar>
@@ -148,30 +170,82 @@ export default class ErpHierarchicalGrid extends LitElement {
   
     return html`
       <div>
-        <img 
+        <!-- <img 
           id="imageElement"
           src="${imageUrl}" 
           alt="Product" 
-          style="width: 40px; height: 40px"
+          style="width: 22px; height: 22px"
           @mouseenter="${(e: any) => this.onImageHover(e)}"
           @mouseleave="${() => this.onImageLeave()}"/>
 
         <igc-dialog >
           <h5 slot="title">TITLE 1</h5>
           <img src="${imageUrl}" alt="Product View"/>
-        </igc-dialog>
+        </igc-dialog> -->
+
+        <!-- <div style="position: relative; display: inline-block;">
+          <button @mouseenter="${this.testShowTooltip}" @mouseleave="${this.testHideTooltip}">
+            Hover me
+          </button>
+          <div class="tooltip ${this.showTooltip ? 'visible' : ''}">Tooltip Text</div>
+        </div> -->
+
+        <img 
+          id="imageElement"
+          src="${imageUrl}" 
+          alt="Product" 
+          style="width: 22px; height: 22px"
+          @mouseenter="${(event: MouseEvent) => this.testShowTooltip(event)}"
+          @mouseleave="${this.testHideTooltip}"/>
+
+        <!-- <igc-button id="mbutton" aria-describedby="tooltip" 
+          @mouseenter="${this.testShowTooltip}" @mouseleave="${this.testHideTooltip}">
+          mButton
+        </igc-button> -->
+        <div id="mtooltip" role="tooltip">
+          My tooltip with more content
+        <div id="marrow"></div>
+      </div>
       </div>
     `;
   };
 
-private onImageHover(event: MouseEvent) {
+  public testShowTooltip = (event: MouseEvent) => {
+    const targetEl = event.target as HTMLElement;
+    console.log('TEST Show tooltip', targetEl);
+    
+    computePosition(targetEl, this.mtooltip, {
+      placement: 'top',
+      middleware: [
+        offset(6),
+        flip(),
+        shift({padding: 5}),
+        // arrow({element: this.marrow}),
+      ],
+    }).then(({x, y}) => {
+      Object.assign(this.mtooltip.style, {
+        left: `${x}px`,
+        top: `${y}px`,
+      });
+    });
 
-  const targetEl = event.target as HTMLElement;
-
-  if (this.imageDialog) {
-    this.imageDialog.show();
+    this.mtooltip.style.display = 'block';
+    this.mtooltip.style.zIndex = '1';
   }
-}
+
+  public testHideTooltip = () => {
+    console.log('TEST Hide tooltip');
+    this.mtooltip.style.display = 'none';
+  }
+
+  private onImageHover(event: MouseEvent) {
+
+    const targetEl = event.target as HTMLElement;
+
+    if (this.imageDialog) {
+      this.imageDialog.show();
+    }
+  }
 
 private onImageLeave() {
   if (this.imageDialog) {
@@ -182,7 +256,7 @@ private onImageLeave() {
   private ratingTemplate = (ctx: IgcCellTemplateContext) => {
     return html`
       <div class="rating-container">
-        <igc-rating value="${ctx.cell.value}" readonly="${true}" min="0" max="5"></igc-rating>
+        <igc-rating value="${ctx.cell.value}" ?readonly="${true}" min="0" max="5"></igc-rating>
       </div>
     `;
   };
@@ -210,7 +284,7 @@ private onImageLeave() {
           </igc-badge>
 
           <igc-badge
-            variant="error"
+            variant="danger"
             shape="rounded"
             ?hidden="${cellValue !== this.orderStatus.CUSTOMS}"
           >
@@ -304,6 +378,36 @@ private onImageLeave() {
     return `${value.streetNumber} ${value.streetName}, ${value.zipCode} ${value.city}, ${value.country}`;
   }
   
+  // floating-ui methods
+  // show() {
+  //   this.showTooltip = true;
+  //   this.updateComplete.then(() => {
+  //     this.positionTooltip();
+  //     this.cleanup = autoUpdate(this.buttonRef, this.tooltipRef, this.positionTooltip.bind(this));
+  //   });
+  // }
+
+  // hide() {
+  //   this.showTooltip = false;
+  //   if (this.cleanup) this.cleanup();
+  // }
+
+  // async positionTooltip() {
+  //   if (!this.buttonRef || !this.tooltipRef) return;
+  //   const { x, y } = await computePosition(this.buttonRef, this.tooltipRef, {
+  //     placement: 'top',
+  //     middleware: [offset(8), flip(), shift()]
+  //   });
+
+  //   Object.assign(this.tooltipRef.style, {
+  //     left: `${x}px`,
+  //     top: `${y}px`
+  //   });
+  // }
+  
+
+  
+
   render() {
     return html`
         <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/material.css" />
@@ -315,7 +419,7 @@ private onImageLeave() {
           primary-key="sku" 
           row-selection="multiple"
           width="100%"
-          height="100%"
+          height="1000px"
           row-height="32px"
           allow-filtering="${true}"
           allow-advanced-filtering="${true}"
@@ -524,8 +628,7 @@ private onImageLeave() {
           
         </igc-hierarchical-grid>
 
-        <div class="container sample center">
-    </div>
+       
       </div>
     `;
   }
@@ -549,6 +652,36 @@ private onImageLeave() {
         height: 22px;
         border-radius: 4px;
       }
+
+      // floating-ui styles
+      /* .tooltip {
+        position: absolute;
+        background-color: black;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateY(5px);
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        pointer-events: none;
+      }
+      .tooltip.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      button {
+        padding: 10px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background: blue;
+        color: red;
+        border-radius: 6px;
+      } */
+
+     
     }
 
     #hierarchicalGrid {
@@ -564,7 +697,7 @@ private onImageLeave() {
         background-color: var(--ig-warn-100);
       }
 
-      igc-badge[variant="error"]::part(base) {
+      igc-badge[variant="danger"]::part(base) {
         background-color: var(--ig-error-50);
       }
 
@@ -664,6 +797,20 @@ private onImageLeave() {
       button {
         background-color: #f9f9f9;
       }
+    }
+
+    #mtooltip {
+      display: none;
+      width: max-content;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #222;
+      color: white;
+      font-weight: bold;
+      padding: 5px;
+      border-radius: 4px;
+      font-size: 90%;
     }
   `
 }
