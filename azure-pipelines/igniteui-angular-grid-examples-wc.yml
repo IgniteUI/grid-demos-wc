@@ -132,7 +132,7 @@ stages:
             $npmInstallPackages = "npm install --legacy-peer-deps "
             $packageJson.dependencies.PSObject.Properties | `
                 Where-Object {
-                    $_.Name.StartsWith("igniteui-webcomponents") -r $_.Name.StartsWith("igniteui-webcomponents-") -or $_.Name.StartsWith("igniteui-webcomponents-grids-") `
+                    $_.Name.StartsWith("igniteui-webcomponents") -or $_.Name.StartsWith("igniteui-webcomponents-") -or $_.Name.StartsWith("igniteui-webcomponents-grids-") `
                 } | `
                 ForEach-Object { `
                     $npmUninstallPackages += $_.Name + " "
