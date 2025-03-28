@@ -86,6 +86,13 @@ stages:
           targetPath: '$(Build.ArtifactStagingDirectory)'
           artifact: 'samplesSourcesZips'
           publishLocation: 'pipeline'
+      - task: PowerShell@2
+        displayName: 'Ensure empty $(Build.SourcesDirectory)\.npmrc file'
+        inputs:
+          targetType: 'inline'
+          script: 'New-Item -Path . -Name ".npmrc" -ItemType "file" -Force'
+          pwsh: true
+          workingDirectory: '$(Build.SourcesDirectory)'
 
       - task: Npm@1
         displayName: 'Register licensed npm registry in .npmrc'
