@@ -161,6 +161,9 @@ stages:
           
             Write-Host "Updated contents of finance-grid.ts:"
             Write-Host $financeGridTs
+
+            $financeGridTs | Set-Content -Path .\projects\finance-grid\src\finance-grid.ts
+
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
             Write-Host "DEBUG npm uninstall command:"
