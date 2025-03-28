@@ -134,7 +134,7 @@ stages:
             $financeIndexHtml = Get-Content -Raw .\projects\finance-grid\index.html
             $financeIndexHtml = $financeIndexHtml -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
                            -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
-            $financeGridTs | Set-Content -Path .\projects\finance-grid\index.html
+            $financeIndexHtml | Set-Content -Path .\projects\finance-grid\index.html
             $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
             $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-(?!/)', '@infragistics/igniteui-webcomponents-' `
                                -replace '(?<!@infragistics/)igniteui-webcomponents-grids-(?!/)', '@infragistics/igniteui-webcomponents-grids-'
