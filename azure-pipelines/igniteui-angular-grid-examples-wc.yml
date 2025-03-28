@@ -140,6 +140,8 @@ stages:
                 }
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
+            Write-Host "DEBUG:Modified package.json content:"
+            $packageJson | ConvertTo-Json -Depth 10 | Write-Host
             Invoke-Expression -Command "$npmUninstallPackages"
             Invoke-Expression -Command "$npmInstallPackages"
 
