@@ -80,27 +80,29 @@ stages:
             
             echo "All sample projects have been compressed and saved to the artifacts directory."
 
-      - task: PublishPipelineArtifact@1
-        displayName: 'Publish Samples Sources zips'
-        inputs:
-          targetPath: '$(Build.ArtifactStagingDirectory)'
-          artifact: 'samplesSourcesZips'
-          publishLocation: 'pipeline'
-
       - task: Npm@1
         displayName: 'Register licensed npm registry in .npmrc'
         inputs:
-          verbose: ${{ parameters.isVerbose }}
+          command: 'custom'
+          workingDir: '$(Build.SourcesDirectory)'
+          customCommand: 'config -L project set @infragistics:registry=https://packages.infragistics.com/npm/js-licensed/'
+          customEndpoint: 'public proget'
+
+      - task: Npm@1
+        displayName: 'npm install --legacy-peer-deps'
+        inputs:
+          command: custom
+          workingDir: '$(Build.SourcesDirectory)'
+          customCommand: 'install --legacy-peer-deps'
+          customEndpoint: 'public proget'
+      
+      - task: Npm@1
+        displayName: 'Register licensed npm registry in .npmrc'
+        inputs:
           command: 'custom'
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'config -L project set @infragistics:registry=https://packages.infragistics.com/npm/js-licensed/'
           customEndpoint: 'internal licensed proget'
-
-      - task: npmAuthenticate@0
-        displayName: '[IG Production ProGet] npm authenticate'
-        inputs:
-          workingFile: '$(Build.SourcesDirectory)/.npmrc'
-          customEndpoint: 'public proget'
 
       - task: PowerShell@2
         displayName: 'Uninstall all IG trial packages & re-install their licensed variations'
@@ -126,11 +128,6 @@ stages:
             Write-Host $npmInstallPackages
             Invoke-Expression -Command "$npmUninstallPackages"
             Invoke-Expression -Command "$npmInstallPackages"
-
-      - task: Npm@1
-        displayName: 'Npm install'
-        inputs:
-          command: 'install'
 
       - task: Npm@1
         displayName: 'npm run build:ci'
