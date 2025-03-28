@@ -138,6 +138,29 @@ stages:
                     $npmUninstallPackages += $_.Name + " "
                     $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
                 }
+            
+            $financeIndexFilePath = '.\finance-grid\index.html'
+            if (Test-Path $htmlFilePath) {
+                $financeIndexContent = Get-Content -Path $financeIndexFilePath
+                $financeIndexContent | `
+                    Where-Object { $_ -match "igniteui-webcomponents" -or $_ -match "igniteui-webcomponents-grids-" } | `
+                    ForEach-Object {
+                        $npmUninstallPackages += $_.ToString().Trim() + " "
+                        $npmInstallPackages += "@infragistics/" + $_.ToString().Trim() + " "
+                    }
+            }
+
+            $financeGridFilePath = '.\finance-grid\src\finance-grid.ts'
+            if (Test-Path $financeGridFilePath) {
+                $financeGridContent = Get-Content -Path $financeGridFilePath
+                $financeGridContent | `
+                    Where-Object { $_ -match "igniteui-webcomponents" -or $_ -match "igniteui-webcomponents-grids-" } | `
+                    ForEach-Object {
+                        $npmUninstallPackages += $_.ToString().Trim() + " "
+                        $npmInstallPackages += "@infragistics/" + $_.ToString().Trim() + " "
+                    }
+            }
+
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
             Write-Host "DEBUG: npm uninstall command:"
