@@ -87,19 +87,22 @@ stages:
           artifact: 'samplesSourcesZips'
           publishLocation: 'pipeline'
 
+      - checkout: 'self' 
+        clean: true
+        path: $(Build.Repository.Name)
+
+      - task: NodeTool@0
+        displayName: 'Install Node'
+        inputs:
+          versionSource: 'spec'
+          versionSpec: '18.x'
+
       - task: Npm@1
         displayName: 'Register licensed npm registry in .npmrc'
         inputs:
-          verbose: ${{ parameters.isVerbose }}
           command: 'custom'
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'config -L project set @infragistics:registry=https://packages.infragistics.com/npm/js-licensed/'
-          customEndpoint: 'public proget'
-
-      - task: npmAuthenticate@0
-        displayName: '[IG Production ProGet] npm authenticate'
-        inputs:
-          workingFile: '$(Build.SourcesDirectory)/.npmrc'
           customEndpoint: 'public proget'
 
       - task: Npm@1
@@ -109,7 +112,7 @@ stages:
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install --legacy-peer-deps'
           customEndpoint: 'public proget'
-
+      
       - task: Npm@1
         displayName: 'Register licensed npm registry in .npmrc'
         inputs:
@@ -121,9 +124,6 @@ stages:
       - task: PowerShell@2
         displayName: 'Uninstall all IG trial packages & re-install their licensed variations'
         inputs:
-          failOnStderr: true
-          showWarnings: true
-          workingDirectory: '$(Build.SourcesDirectory)'
           targetType: 'inline'
           script: |
             Get-Content -Path .\.npmrc
@@ -132,50 +132,23 @@ stages:
             $npmInstallPackages = "npm install --legacy-peer-deps "
             $packageJson.dependencies.PSObject.Properties | `
                 Where-Object {
-                    $_.Name.StartsWith("igniteui-webcomponents-") -or $_.Name.StartsWith("igniteui-webcomponents-grids-") `
+                    $_.Name.StartsWith("igniteui-webcomponents-") -or $_.Name.StartsWith("igniteui-dockmanager") `
                 } | `
                 ForEach-Object { `
                     $npmUninstallPackages += $_.Name + " "
                     $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
                 }
-            
-            $financeIndexHtml = Get-Content -Raw .\projects\finance-grid\index.html
-            $financeIndexHtml -split "`n" | `
-                Where-Object { $_.StartsWith("igniteui-webcomponents") -or $_.StartsWith("igniteui-webcomponents-grids") } | `
-                ForEach-Object { `
-                    $npmUninstallPackages += $_.Trim() + " "
-                    $npmInstallPackages += "@infragistics/" + $_.Trim() + " "
-                }
-
-            $financeGridTs = $financeGridTs -replace 'igniteui-webcomponents', '@infragistics/igniteui-webcomponents' `
-                           -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
-
-            # $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
-            # $financeGridTs -split "`n" | `
-            #     Where-Object { $_.StartsWith("igniteui-webcomponents") -or $_.StartsWith("igniteui-webcomponents-grids") } | `
-            #     ForEach-Object { `
-            #         $npmUninstallPackages += $_.Trim() + " "
-            #         $npmInstallPackages += "@infragistics/" + $_.Trim() + " "
-            #     }
-          
-            Write-Host "Updated contents of finance-grid.ts:"
-            Write-Host $financeGridTs
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
-            Write-Host "DEBUG: npm uninstall command:"
-            Write-Host $npmUninstallPackages
-            Write-Host "DEBUG: npm install command:"
-            Write-Host $npmInstallPackages
-            Invoke-Expression -Command "$npmUninstallPackages"
-            Invoke-Expression -Command "$npmInstallPackages"
+            Invoke-Expression -Command “$npmUninstallPackages”
+            Invoke-Expression -Command “$npmInstallPackages”
+          failOnStderr: true
+          showWarnings: true
+          pwsh: true
+          workingDirectory: '$(Build.SourcesDirectory)'
 
       - task: Npm@1
-        displayName: 'Npm install'
-        inputs:
-          command: 'install'
-
-      - task: Npm@1
-        displayName: 'npm run build:ci'
+        displayName: 'npm run build'
         inputs:
           command: custom
           workingDir: '$(Build.SourcesDirectory)'
