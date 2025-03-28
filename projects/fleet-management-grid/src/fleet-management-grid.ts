@@ -1,8 +1,5 @@
 import { LitElement, css, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import litLogo from "./assets/lit.svg";
-import viteLogo from "/vite.svg";
-
+import { customElement } from "lit/decorators.js";
 @customElement("app-fleet-management")
 export class FleetManagementGrid extends LitElement {
   render() {
@@ -81,10 +78,4 @@ export class FleetManagementGrid extends LitElement {
       }
     }
   `;
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    "my-element": MyElement;
-  }
 }

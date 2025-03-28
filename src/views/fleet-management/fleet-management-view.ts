@@ -1,5 +1,5 @@
 import { LitElement, css, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import "../../../projects/fleet-management-grid/src/fleet-management-grid";
 
 @customElement("fleet-management-view")
