@@ -154,8 +154,9 @@ stages:
                     $npmUninstallPackages += $_.Trim() + " "
                     $npmInstallPackages += "@infragistics/" + $_.Trim() + " "
                 }
-            
-
+          
+            Write-Host "Updated contents of finance-grid.ts:"
+            Write-Host $financeGridTs
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
             Write-Host "DEBUG: npm uninstall command:"
