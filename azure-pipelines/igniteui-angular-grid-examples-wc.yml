@@ -141,7 +141,7 @@ stages:
         displayName: 'npm install'
         inputs:
           command: custom
-          workingDir: '$(Build.SourcesDirectory)\browser'
+          workingDir: '$(Build.SourcesDirectory)'
           verbose: ${{ parameters.isVerbose }}
           customCommand: 'install'
           customEndpoint: 'public proget'
