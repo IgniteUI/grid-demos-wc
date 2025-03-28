@@ -129,8 +129,8 @@ stages:
                 }
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
-            Invoke-Expression -Command “$npmUninstallPackages”
-            Invoke-Expression -Command “$npmInstallPackages”
+            Invoke-Expression -Command "$npmUninstallPackages"
+            Invoke-Expression -Command "$npmInstallPackages"
 
       - task: Npm@1
         displayName: 'npm run build:ci'
