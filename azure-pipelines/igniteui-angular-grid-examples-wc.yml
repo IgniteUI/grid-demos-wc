@@ -139,7 +139,7 @@ stages:
                     $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
                 }
             
-            $financeIndexHtml = Get-Content -Raw .\finance-grid\index.html
+            $financeIndexHtml = Get-Content -Raw .\projects\finance-grid\index.html
             $financeIndexHtml -split "`n" | `
                 Where-Object { $_.StartsWith("igniteui-webcomponents") -or $_.StartsWith("igniteui-webcomponents-grids-") } | `
                 ForEach-Object { `
@@ -147,7 +147,7 @@ stages:
                     $npmInstallPackages += "@infragistics/" + $_.Trim() + " "
                 }
 
-            $financeGridTs = Get-Content -Raw .\finance-grid\src\finance-grid.ts
+            $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
             $financeGridTs -split "`n" | `
                 Where-Object { $_.StartsWith("igniteui-webcomponents") -or $_.StartsWith("igniteui-webcomponents-grids-") } | `
                 ForEach-Object { `
