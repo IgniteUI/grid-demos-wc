@@ -135,8 +135,8 @@ stages:
             $financeIndexHtml = Get-Content -Raw .\projects\finance-grid\index.html
             Write-Host "INITIAL contents of finance index.html:"
             Write-Host $financeIndexHtml
-            $financeIndexHtml = $financeIndexHtml -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
-                           -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
+            $financeIndexHtml = $financeIndexHtml -replace 'igniteui-webcomponents-(?!/)', '@infragistics/igniteui-webcomponents-' `
+                           -replace 'igniteui-webcomponents-grids-(?!/)', '@infragistics/igniteui-webcomponents-grids-'
             Write-Host "Editted contents of finance index.html:"
             Write-Host $financeIndexHtml
             #debug
