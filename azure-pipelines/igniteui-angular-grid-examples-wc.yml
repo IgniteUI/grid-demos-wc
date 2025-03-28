@@ -138,31 +138,20 @@ stages:
                     $npmUninstallPackages += $_.Name + " "
                     $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
                 }
-            
+
             $financeIndexHtml = Get-Content -Raw .\projects\finance-grid\index.html
-            $financeIndexHtml -split "`n" | `
-                Where-Object { $_.StartsWith("igniteui-webcomponents-") -or $_.StartsWith("igniteui-webcomponents-grids-") } | `
-                ForEach-Object { `
-                    $npmUninstallPackages += $_.Trim() + " "
-                    $npmInstallPackages += "@infragistics/" + $_.Trim() + " "
-                }
+            $financeIndexHtml = $financeIndexHtml -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
+                           -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
 
             $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
             $financeGridTs = $financeGridTs -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
                            -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
-
-            # $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
-            # $financeGridTs -split "`n" | `
-            #     Where-Object { $_.StartsWith("igniteui-webcomponents") -or $_.StartsWith("igniteui-webcomponents-grids") } | `
-            #     ForEach-Object { `
-            #         $npmUninstallPackages += $_.Trim() + " "
-            #         $npmInstallPackages += "@infragistics/" + $_.Trim() + " "
-            #     }
           
             Write-Host "Updated contents of finance-grid.ts:"
             Write-Host $financeGridTs
 
             $financeGridTs | Set-Content -Path .\projects\finance-grid\src\finance-grid.ts
+            $financeGridTs | Set-Content -Path .\projects\finance-grid\index.html
 
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
