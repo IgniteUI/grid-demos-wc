@@ -147,6 +147,7 @@ stages:
                     $npmInstallPackages += "@infragistics/" + $_.Trim() + " "
                 }
 
+            $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
             $financeGridTs = $financeGridTs -replace 'igniteui-webcomponents', '@infragistics/igniteui-webcomponents' `
                            -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
 
@@ -162,9 +163,9 @@ stages:
             Write-Host $financeGridTs
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
-            Write-Host "DEBUG: npm uninstall command:"
+            Write-Host "DEBUG npm uninstall command:"
             Write-Host $npmUninstallPackages
-            Write-Host "DEBUG: npm install command:"
+            Write-Host "DEBUG  npm install command:"
             Write-Host $npmInstallPackages
             Invoke-Expression -Command "$npmUninstallPackages"
             Invoke-Expression -Command "$npmInstallPackages"
