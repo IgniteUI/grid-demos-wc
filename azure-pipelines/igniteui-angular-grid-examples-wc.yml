@@ -108,39 +108,54 @@ stages:
           workingFile: '$(Build.SourcesDirectory)/.npmrc'
           customEndpoint: 'public proget'
 
+      - task: PowerShell@2
+        displayName: 'Replace references to IG trial packages with licensed ones'
+        inputs:
+          failOnStderr: true
+          showWarnings: true
+          workingDirectory: '$(Build.SourcesDirectory)'
+          targetType: 'inline'
+          script: |
+            $packageJson = Get-Content -Raw .\package.json | ConvertFrom-Json
+            $properties = $packageJson.dependencies.PSObject.Properties `
+                | where-object { $_.Name.StartsWith("igniteui-webcomponents-") -or $_.Name.StartsWith("igniteui-dockmanager") }
+
+            foreach( $property in $properties )
+            {
+                $oldName = $property.Name;
+                $newName = "@infragistics/" + $oldName
+
+                # remember the current value of the old property
+                $value = $property.Value;
+
+                # remove reference to the trial package reference
+                $packageJson.dependencies.psobject.Properties.Remove($oldName);
+
+                # add reference to the licensed package reference
+                $packageJson.dependencies | Add-Member -NotePropertyName $newName -NotePropertyValue $value;
+            }
+
+            ConvertTo-Json -InputObject $packageJson | Set-Content -Path .\package.json
       - task: Npm@1
-        displayName: 'npm install --legacy-peer-deps'
+        displayName: 'npm install'
         inputs:
           command: custom
-          workingDir: '$(Build.SourcesDirectory)'
-          customCommand: 'install --legacy-peer-deps'
+          workingDir: '$(Build.SourcesDirectory)\browser'
+          verbose: ${{ parameters.isVerbose }}
+          customCommand: 'install'
           customEndpoint: 'public proget'
 
       - task: PowerShell@2
-        displayName: 'Uninstall all IG trial packages & re-install their licensed variations'
+        displayName: 'Replace references to IG trial packages with licensed ones in TSX files'
         inputs:
-          targetType: 'inline'
-          script: |
-            Get-Content -Path .\.npmrc
-            $packageJson = Get-Content -Raw .\package.json | ConvertFrom-Json
-            $npmUninstallPackages = "npm uninstall --save "
-            $npmInstallPackages = "npm install --legacy-peer-deps "
-            $packageJson.dependencies.PSObject.Properties | `
-                Where-Object {
-                    $_.Name.StartsWith("igniteui-webcomponents-") -or $_.Name.StartsWith("igniteui-dockmanager") `
-                } | `
-                ForEach-Object { `
-                    $npmUninstallPackages += $_.Name + " "
-                    $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
-                }
-            Write-Host $npmUninstallPackages
-            Write-Host $npmInstallPackages
-            Invoke-Expression -Command “$npmUninstallPackages”
-            Invoke-Expression -Command “$npmInstallPackages”
           failOnStderr: true
           showWarnings: true
-          pwsh: true
           workingDirectory: '$(Build.SourcesDirectory)'
+          targetType: 'inline'
+          script: |
+            Get-ChildItem -Include "*.tsx","*.ts" -Recurse | `
+            ForEach {  (Get-Content $_.PSPath | ForEach { ($_ -replace '([from|import])\s?[''"](igniteui-[webcomponents\-|dockmanager].*)[''"]', '$1 "@infragistics/$2"') }) | `
+            Set-Content $_.PSPath }
 
       - task: Npm@1
         displayName: 'npm run build'
