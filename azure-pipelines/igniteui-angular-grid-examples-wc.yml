@@ -144,6 +144,8 @@ stages:
                            -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
 
             $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
+            Write-Host "Initial contents of finance-grid.ts:"
+            Write-Host $financeGridTs
             $financeGridTs = $financeGridTs -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
                            -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
           
