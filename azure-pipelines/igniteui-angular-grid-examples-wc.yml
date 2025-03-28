@@ -96,11 +96,6 @@ stages:
           customCommand: 'config -L project set @infragistics:registry=https://packages.infragistics.com/npm/js-licensed/'
           customEndpoint: 'internal licensed proget'
 
-      - task: Npm@1
-        displayName: 'Npm install'
-        inputs:
-          command: 'install'
-
       - task: npmAuthenticate@0
         displayName: '[IG Production ProGet] npm authenticate'
         inputs:
@@ -131,6 +126,11 @@ stages:
             Write-Host $npmInstallPackages
             Invoke-Expression -Command "$npmUninstallPackages"
             Invoke-Expression -Command "$npmInstallPackages"
+
+      - task: Npm@1
+        displayName: 'Npm install'
+        inputs:
+          command: 'install'
 
       - task: Npm@1
         displayName: 'npm run build:ci'
