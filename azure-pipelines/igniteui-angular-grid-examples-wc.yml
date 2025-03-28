@@ -146,8 +146,9 @@ stages:
             $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
             Write-Host "Initial contents of finance-grid.ts:"
             Write-Host $financeGridTs
-            $financeGridTs = $financeGridTs -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
-                           -replace 'igniteui-webcomponents-grids', '@infragistics/igniteui-webcomponents-grids'
+            $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-(?!/)', '@infragistics/igniteui-webcomponents-' `
+                               -replace '(?<!@infragistics/)igniteui-webcomponents-grids-(?!/)', '@infragistics/igniteui-webcomponents-grids-'
+
           
             Write-Host "Updated contents of finance-grid.ts:"
             Write-Host $financeGridTs
