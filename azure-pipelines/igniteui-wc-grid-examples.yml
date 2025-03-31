@@ -146,7 +146,7 @@ stages:
             }
 
             $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
-            $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
+            $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
             $financeGridTs | Set-Content -Path .\projects\finance-grid\src\finance-grid.ts
 
             Write-Host $npmUninstallPackages
