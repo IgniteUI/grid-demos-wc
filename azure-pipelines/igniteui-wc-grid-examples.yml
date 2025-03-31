@@ -125,7 +125,7 @@ stages:
             $npmInstallPackages = "npm install --legacy-peer-deps "
             $packageJson.dependencies.PSObject.Properties | `
                 Where-Object {
-                    $_.Name.StartsWith("igniteui-webcomponents-") -or $_.Name.StartsWith("igniteui-webcomponents-grids-") `
+                    $_.Name.StartsWith("igniteui-webcomponents-") `
                 } | `
                 ForEach-Object { `
                     $npmUninstallPackages += $_.Name + " "
@@ -133,12 +133,10 @@ stages:
                 }
             
             $financeIndexHtml = Get-Content -Raw .\projects\finance-grid\index.html
-            $financeIndexHtml = $financeIndexHtml -replace 'igniteui-webcomponents-(?!/)', '@infragistics/igniteui-webcomponents-' `
-                           -replace 'igniteui-webcomponents-grids-(?!/)', '@infragistics/igniteui-webcomponents-grids-'
+            $financeIndexHtml = $financeIndexHtml -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
             $financeIndexHtml | Set-Content -Path .\projects\finance-grid\index.html
             $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
-            $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-(?!/)', '@infragistics/igniteui-webcomponents-' `
-                               -replace '(?<!@infragistics/)igniteui-webcomponents-grids-(?!/)', '@infragistics/igniteui-webcomponents-grids-'
+            $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
             $financeGridTs | Set-Content -Path .\projects\finance-grid\src\finance-grid.ts
 
             Write-Host $npmUninstallPackages
