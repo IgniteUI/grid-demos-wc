@@ -131,18 +131,28 @@ stages:
                     $npmUninstallPackages += $_.Name + " "
                     $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
                 }
-
-            Get-ChildItem -Path .\projects -Recurse -Filter *.html | ForEach-Object {
+            #Cycle through .html files to do string find a replace
+            Get-ChildItem -Path .\projects -Recurse -Filter *.html| ForEach-Object {
                 $filePath = $_.FullName
                 $fileContent = Get-Content -Raw -Path $filePath
                 $updatedContent = $fileContent -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
                 $updatedContent | Set-Content -Path $filePath
                 Write-Host "Updated: $filePath"
             }
+            #Cycle through .ts files to do string find a replace
+            Get-ChildItem -Path .\projects -Recurse -Filter *.ts | ForEach-Object {
+                $filePath = $_.FullName
+                $fileContent = Get-Content -Raw -Path $filePath
+                Write-Host "Initial: $fileContent"
+                $updatedContent = $fileContent -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
+                $updatedContent | Set-Content -Path $filePath
+                Write-Host "Updated: $filePath"
+                Write-Host "UPDATED: $fileContent"
+            }
 
-            $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
-            $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
-            $financeGridTs | Set-Content -Path .\projects\finance-grid\src\finance-grid.ts
+            # $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
+            # $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
+            # $financeGridTs | Set-Content -Path .\projects\finance-grid\src\finance-grid.ts
 
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
