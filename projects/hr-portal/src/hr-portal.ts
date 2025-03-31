@@ -65,10 +65,6 @@ export default class HrPortal extends LitElement {
   handleSortingChanged() {
     if (this.treeGrid) {
       this.isSorted = this.treeGrid.sortingExpressions.length > 0;
-      console.log(
-        "Sorting expressions changed:",
-        this.treeGrid.sortingExpressions
-      );
     }
   }
 
@@ -96,12 +92,11 @@ export default class HrPortal extends LitElement {
   public contactsTemplate = (ctx: IgcCellTemplateContext) => {
     let row = ctx.cell.row;
     return html`
-      <div class="center-content">
+      <div class="center-content small">
         <a href="mailto:${row.data.Email}">
           <igc-icon-button
             collection="hr-icons"
             name="mail"
-            class="small"
             variant="flat"
           ></igc-icon-button>
         </a>
@@ -109,7 +104,6 @@ export default class HrPortal extends LitElement {
           <igc-icon-button
             collection="hr-icons"
             name="tel"
-            class="small"
             variant="flat"
           ></igc-icon-button>
         </a>
@@ -117,7 +111,6 @@ export default class HrPortal extends LitElement {
           <igc-icon-button
             collection="hr-icons"
             name="linkedIn"
-            class="small"
             variant="flat"
           ></igc-icon-button>
         </a>
