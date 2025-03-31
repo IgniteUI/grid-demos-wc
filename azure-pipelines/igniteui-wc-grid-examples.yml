@@ -139,10 +139,11 @@ stages:
             Get-ChildItem -Path .\projects -Recurse -Filter *.html | ForEach-Object {
                 $filePath = $_.FullName
                 $fileContent = Get-Content -Raw -Path $filePath
-                Write-Host "Initial: $filePath"
+                Write-Host "Initial: $fileContent"
                 $updatedContent = $fileContent -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
                 $updatedContent | Set-Content -Path $filePath
                 Write-Host "Updated: $filePath"
+                Write-Host "Updated: $fileContent"
             }
 
             $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
