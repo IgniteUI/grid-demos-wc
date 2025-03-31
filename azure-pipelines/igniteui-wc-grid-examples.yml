@@ -132,9 +132,19 @@ stages:
                     $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
                 }
             
-            $financeIndexHtml = Get-Content -Raw .\projects\finance-grid\index.html
-            $financeIndexHtml = $financeIndexHtml -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
-            $financeIndexHtml | Set-Content -Path .\projects\finance-grid\index.html
+            # $financeIndexHtml = Get-Content -Raw .\projects\finance-grid\index.html
+            # $financeIndexHtml = $financeIndexHtml -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
+            # $financeIndexHtml | Set-Content -Path .\projects\finance-grid\index.html
+
+            Get-ChildItem -Path .\projects -Recurse -Filter *.html | ForEach-Object {
+                $filePath = $_.FullName
+                $fileContent = Get-Content -Raw -Path $filePath
+                Write-Host "Initial: $filePath"
+                $updatedContent = $fileContent -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
+                $updatedContent | Set-Content -Path $filePath
+                Write-Host "Updated: $filePath"
+            }
+
             $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
             $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-' `
             $financeGridTs | Set-Content -Path .\projects\finance-grid\src\finance-grid.ts
