@@ -147,7 +147,7 @@ stages:
                 $updatedContent = $fileContent -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
                 $updatedContent | Set-Content -Path $filePath
                 Write-Host "Updated: $filePath"
-                Write-Host "UPDATED: $fileContent"
+                Write-Host "UPDATED: $updatedContent"
             }
 
             # $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
