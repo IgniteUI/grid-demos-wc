@@ -143,16 +143,10 @@ stages:
             Get-ChildItem -Path .\projects -Recurse -Filter *.ts | ForEach-Object {
                 $filePath = $_.FullName
                 $fileContent = Get-Content -Raw -Path $filePath
-                Write-Host "Initial: $fileContent"
                 $updatedContent = $fileContent -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
                 $updatedContent | Set-Content -Path $filePath
                 Write-Host "Updated: $filePath"
-                Write-Host "UPDATED: $updatedContent"
             }
-
-            # $financeGridTs = Get-Content -Raw .\projects\finance-grid\src\finance-grid.ts
-            # $financeGridTs = $financeGridTs -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
-            # $financeGridTs | Set-Content -Path .\projects\finance-grid\src\finance-grid.ts
 
             Write-Host $npmUninstallPackages
             Write-Host $npmInstallPackages
