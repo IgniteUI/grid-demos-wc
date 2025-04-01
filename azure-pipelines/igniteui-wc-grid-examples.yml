@@ -166,7 +166,7 @@ stages:
           verbose: ${{ parameters.isVerbose }}
           command: custom
           workingDir: '$(Build.SourcesDirectory)'
-          customCommand: 'npx ig upgrade-packages'
+          customCommand: 'npx --version'
 
       - task: Bash@3
         displayName: 'Output package.json after upgrade'
