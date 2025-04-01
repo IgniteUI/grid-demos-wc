@@ -1,10 +1,7 @@
-import { configureTheme, defineComponents, IgcBadgeComponent, IgcIconComponent, registerIconFromText } from "igniteui-webcomponents";
 import { IgcCategoryXAxisComponent, IgcCategoryXAxisModule, IgcColumnSeriesComponent, IgcColumnSeriesModule, IgcDataChartCoreModule, IgcDataChartVisualDataModule, IgcNumericYAxisComponent, IgcNumericYAxisModule } from "igniteui-webcomponents-charts";
 import { ModuleManager } from "igniteui-webcomponents-core";
-import { IgcCellTemplateContext, IgcColumnComponent } from "igniteui-webcomponents-grids/grids";
 import { css, html, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-
 
 ModuleManager.register(
     IgcDataChartCoreModule,
@@ -14,7 +11,7 @@ ModuleManager.register(
     IgcDataChartVisualDataModule
   );
 
-@customElement("app-grid-chart")
+@customElement("app-sales-trends-chart")
 export class GridChart extends LitElement {
 
     @property({ type: Array }) trendData: any[] = [];
@@ -23,17 +20,12 @@ export class GridChart extends LitElement {
     @query("#yAxis", true) yAxis!: IgcNumericYAxisComponent;
     @query("igc-column-series", true) series!: IgcColumnSeriesComponent;
 
-    firstUpdated() {
-        // this.series.xAxis = this.xAxis;
-        // this.series.yAxis = this.yAxis;
-    }
-
     render() {
         return html`
         <igc-data-chart width="100%" height="100%"
-          .plot-area-background="transparent"
-          .highlightingMode="FadeOthersSpecific"
-          .highlightingBehavior="NearestItemsAndSeries">
+          plot-area-background="transparent"
+          highlightingMode="FadeOthersSpecific"
+          highlightingBehavior="NearestItemsAndSeries">
   
           <igc-category-x-axis 
             id="xAxis"
@@ -62,7 +54,7 @@ export class GridChart extends LitElement {
               radiusY="2"
               title="Sold Units"
               value-member-path="unitsSold"
-              show-default-tooltip="true"
+              .showDefaultTooltip="${true}"
               brush="#8A8A8A"
               outline="#8A8A8A"
               highlighting-mode="fadeOthersOnHover"
@@ -73,6 +65,8 @@ export class GridChart extends LitElement {
     }
 
     static styles = css`
-        :host { display: contents }
+        :host { 
+          width: 100%;
+          height: 100%; }
     `;
 }

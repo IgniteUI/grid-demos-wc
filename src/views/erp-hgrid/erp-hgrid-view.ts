@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import "../../../projects/erp-hgrid/src/erp-hierarchical-grid";
+import "../../../projects/erp-hgrid/src/components/erp-hierarchical-grid";
 
 @customElement("erp-hgrid-view")
 export default class ErpHgridView extends LitElement {

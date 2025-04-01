@@ -2,13 +2,13 @@ import { LitElement, css, html } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
 import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
-import { erpDataService } from "./services/erp-data.service";
-import { DROPBOX, DELIVERY, BILL_PAID, CHECK } from "./assets/icons/icons";
+import { erpDataService } from "../services/erp-data.service";
+import { DROPBOX, DELIVERY, BILL_PAID, CHECK } from "../assets/icons/icons";
 import { configureTheme, defineComponents, IgcAvatarComponent, IgcBadgeComponent, IgcButtonComponent, IgcDialogComponent, IgcIconComponent, IgcInputComponent, IgcLinearProgressComponent, IgcRatingComponent, registerIconFromText } from "igniteui-webcomponents";
-import { FilteringLogic, GridSelectionMode, IgcCellTemplateContext, IgcColumnComponent, IgcExporterEventArgs, IgcFilteringExpressionsTree, IgcGridComponent, IgcGridToolbarTemplateContext, IgcRowIslandComponent, IgcStringFilteringOperand, SortingDirection } from "igniteui-webcomponents-grids/grids";
+import { FilteringLogic, GridSelectionMode, IgcCellTemplateContext, IgcColumnComponent, IgcExporterEventArgs, IgcFilteringExpressionsTree, IgcFilteringOperand, IgcGridComponent, IgcGridToolbarTemplateContext, IgcRowIslandComponent, IgcStringFilteringOperand, SortingDirection } from "igniteui-webcomponents-grids/grids";
 
 import "igniteui-webcomponents-grids/grids/combined.js";
-import { OrderStatus } from './models/OrderStatus';
+import { OrderStatus } from '../models/OrderStatus';
 import { ModuleManager } from "igniteui-webcomponents-core";
 import { IgcDataChartCoreModule,
   IgcDataChartComponent, IgcNumericXAxisComponent, IgcNumericYAxisComponent, 
@@ -25,8 +25,8 @@ ModuleManager.register(
   IgcDataChartVisualDataModule
 );
 
-import './chart';
-import './image-dialog';
+import './sales-trends-chart';
+import { FullAddressFilteringOperand } from '../models/custom-filtering-operands';
 
 defineComponents(
   IgcAvatarComponent, 
@@ -66,7 +66,12 @@ export default class ErpHierarchicalGrid extends LitElement {
   private isLoading = true;
 
   private orderStatus = OrderStatus;
+
+  private currentImageUrl: any = '';
+  private currentProductName: any = '';
   
+  public fullAddressFilteringOperand = FullAddressFilteringOperand.instance();
+  public shortAddressFilteringOperand = new FullAddressFilteringOperand(true);
   constructor() {
     super();
     
@@ -81,6 +86,8 @@ export default class ErpHierarchicalGrid extends LitElement {
       this.erpData = data;
       this.isLoading = false;
     });
+
+    
   }
 
   firstUpdated() {
@@ -106,6 +113,30 @@ export default class ErpHierarchicalGrid extends LitElement {
     });
   }
 
+  private filter(e: any) {
+    const value = e.target.value;
+    const expressionTree = new IgcFilteringExpressionsTree();
+    expressionTree.operator = FilteringLogic.Or;
+    const tickerExpression = {
+      condition: IgcStringFilteringOperand.instance().condition("contains"),
+      fieldName: "id",
+      searchVal: value,
+      ignoreCase: true,
+    };
+    const assetExpression = {
+      condition: IgcStringFilteringOperand.instance().condition("contains"),
+      fieldName: "holdingName",
+      searchVal: value,
+      ignoreCase: true,
+    };
+    expressionTree.filteringOperands.push(tickerExpression, assetExpression);
+    if (value) {
+      this.hierarchicalGrid.filteringExpressionsTree = expressionTree;
+    } else {
+      this.hierarchicalGrid.clearFilter();
+    }
+  }
+
   // TEMPLATES
   private rowIslandToolbarTemplate = () => {
     return html`   
@@ -125,48 +156,52 @@ export default class ErpHierarchicalGrid extends LitElement {
           src="${imageUrl}" 
           alt="${rowID}" 
           style="width: 22px; height: 22px"
-          @mouseenter="${(event: MouseEvent) => this.showTooltip(event)}"
+          @mouseenter="${(event: MouseEvent) => this.showTooltip(event, ctx)}"
           @mouseleave="${this.hideTooltip}"/>
 
         <!-- Content for image dialog: div with id tooltip will be dynamically added here--> 
+         
       </div>
     `;
   };
 
-  private showTooltip = (event: MouseEvent) => {
+  private showTooltip = (event: MouseEvent, context: IgcCellTemplateContext) => {
     const targetEl = event.target as HTMLElement;
 
-    // Image URL for setting the right dialog image
-    const url = targetEl.getAttribute("src");
+    const contextUrl = context.implicit;
+    this.currentImageUrl = contextUrl;
+    console.log('imageURL', this.currentImageUrl);
 
-    // Alt = SKU of image to get the SKU (id) of the current row
-    // & then find the current element (row)
-    // & then get its product name
-    const imageAlt = targetEl.getAttribute("alt");
-    const currentProduct = this.erpData[this.erpData?.findIndex(product => product.sku === imageAlt)];
-    
-    // Create an HTML Element manually and attach the correct properties to it
-    const tooltip = document.createElement("div");
-    tooltip.id = "mtooltip";
-    tooltip.setAttribute("role", "tooltip");
-    tooltip.innerHTML = `
-      <div class="dialog-header"> ${currentProduct.productName} </div>
-      <div class="dialog-body">
-          <img src="${url}" alt="Product-${url}"/>
-      </div>
-    `;
-   
-    // Append that newly created HTML Element to the imageTemplate container with id="image-container-${rowID}"
-    // rowId = imageAlt
-    const imageEl = this.shadowRoot?.getElementById(`image-container-${imageAlt}`);
-    imageEl?.appendChild(tooltip);
+    const productname = context.cell.row?.cells?.find((c: any) => c.column.field === 'productName')?.value;
+    console.log(productname);
+    this.currentProductName = productname;
 
     // Add floating-ui setups and styles
-    this.setupImageDialog(targetEl, tooltip);
+    this.setupImageDialog(targetEl, this.mtooltip);
+
+    this.requestUpdate();
+    this.performUpdate();
+
+    // computePosition(targetEl, this.mtooltip, {
+    //   placement: 'right-start',
+    //   middleware: [
+    //     offset(6),
+    //     flip(),
+    //     shift({padding: 5}),
+    //   ],
+    // }).then(({x, y}) => {
+    //   Object.assign(this.mtooltip.style, {
+    //     left: `${x}px`,
+    //     top: `${y}px`,
+    //   });
+    // });
+
+    // this.mtooltip.style.display = 'block';
+    // this.mtooltip.style.zIndex = '9999';
   }
 
-  private setupImageDialog = (tagetElement: HTMLElement, tooltip: HTMLElement) => {
-    computePosition(tagetElement, tooltip, {
+  private setupImageDialog = (targetElement: HTMLElement, tooltip: HTMLElement) => {
+    computePosition(targetElement, tooltip, {
       placement: 'right-start',
       middleware: [
         offset(6),
@@ -186,8 +221,10 @@ export default class ErpHierarchicalGrid extends LitElement {
 
   private hideTooltip = () => {
     // Remove tooltip element from the DOM
-    const tooltip = this.shadowRoot?.getElementById("mtooltip");
-    tooltip?.remove();
+    // const tooltip = this.shadowRoot?.getElementById("mtooltip");
+    // tooltip?.remove();
+
+    this.mtooltip.style.display = 'none';
   }
 
   private ratingTemplate = (ctx: IgcCellTemplateContext) => {
@@ -263,7 +300,7 @@ export default class ErpHierarchicalGrid extends LitElement {
     }
 
     return html`
-      <app-grid-chart .trendData=${trendData}></app-grid-chart>
+      <app-sales-trends-chart .trendData=${trendData}></app-sales-trends-chart>
     `;
   };
 
@@ -326,7 +363,13 @@ export default class ErpHierarchicalGrid extends LitElement {
               .cellClasses="${this.productImageClasses}"
               .bodyTemplate="${this.imageTemplate}">
           </igc-column>
-          <igc-column field="productName" header="Product Name" data-type="string" ?sortable="${true}" width="12%"></igc-column>
+          <igc-column 
+            field="productName"
+            header="Product Name" 
+            data-type="string" 
+            ?sortable="${true}"
+            width="12%">
+          </igc-column>
           <igc-column field="category" header="Category" data-type="string" ?sortable="${true}"></igc-column>
           
           <igc-column
@@ -486,7 +529,8 @@ export default class ErpHierarchicalGrid extends LitElement {
                     ?sortable=${true}
                     ?resizable=${true}
                     visible-when-collapsed=${false}
-                    .formatter="${this.formatAddress}">
+                    .formatter="${this.formatAddress}"
+                    .filters="${this.shortAddressFilteringOperand}">
                 </igc-column>
 
                 <!-- Show this column when collapsed -->
@@ -497,7 +541,8 @@ export default class ErpHierarchicalGrid extends LitElement {
                     ?sortable=${true}
                     ?resizable=${true}
                     visible-when-collapsed=${true}
-                    .formatter="${this.formatFullAddress}">
+                    .formatter="${this.formatFullAddress}"
+                    .filters="${this.fullAddressFilteringOperand}">
                 </igc-column>
 
             </igc-column-group>
@@ -507,6 +552,12 @@ export default class ErpHierarchicalGrid extends LitElement {
           
         </igc-hierarchical-grid>
 
+        <div id="mtooltip" role="tooltip">
+          <div class="dialog-header"> ${this.currentProductName} </div>
+          <div class="dialog-body">
+            <img src="${this.currentImageUrl}" alt="Product-${this.currentImageUrl}"/>
+          </div>
+         </div>
        
       </div>
     `;
