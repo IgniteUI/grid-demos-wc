@@ -10,12 +10,10 @@ import { FilteringLogic, GridSelectionMode, IgcCellTemplateContext, IgcColumnCom
 import "igniteui-webcomponents-grids/grids/combined.js";
 import { OrderStatus } from './models/OrderStatus';
 import { ModuleManager } from "igniteui-webcomponents-core";
-import { IgcDataChartCoreModule, IgcDataChartScatterModule, IgcDataChartScatterCoreModule, IgcDataChartInteractivityModule,
-  IgcDataChartComponent, IgcLegendComponent, IgcNumericXAxisComponent, IgcNumericYAxisComponent, 
+import { IgcDataChartCoreModule,
+  IgcDataChartComponent, IgcNumericXAxisComponent, IgcNumericYAxisComponent, 
   IgcCategoryXAxisModule,
   IgcNumericYAxisModule,
-  IgcLineSeriesModule,
-  IgcLineSeriesComponent,
   IgcColumnSeriesModule,
   IgcDataChartVisualDataModule} from 'igniteui-webcomponents-charts';
 
@@ -28,10 +26,7 @@ ModuleManager.register(
 );
 
 import './chart';
-// - igc-data-chart
-// - igc-category-x-axis
-// - igc-numeric-y-axis
-// - igc-line-series
+import './image-dialog';
 
 defineComponents(
   IgcAvatarComponent, 
@@ -47,12 +42,6 @@ configureTheme("material");
 @customElement('app-erp-hgrid')
 export default class ErpHierarchicalGrid extends LitElement {
 
-  private chart!: IgcDataChartComponent;
-  private xAxis!: IgcNumericXAxisComponent;
-  private yAxis!: IgcNumericYAxisComponent;
-  private xAxisCrossLabel!: HTMLLabelElement;
-  private yAxisCrossLabel!: HTMLLabelElement;
-  
   private productImageClasses = {
     'product-img': true
   };
@@ -66,63 +55,32 @@ export default class ErpHierarchicalGrid extends LitElement {
   @query("igc-dialog")
   private imageDialog!: IgcDialogComponent;
 
-  @query('#mbutton')
-  private mbutton!: IgcButtonComponent;
-
   @query('#mtooltip')
   private mtooltip!: HTMLElement;
 
-  @query('#marrow')
-  private marrow!: HTMLElement;
-
-
-  @query('#imageCol')
-  private imageColumn1!: IgcColumnComponent;
-
-  @query('#imageElement')
-  private imageElement!: HTMLElement;
-
   @state()
-  private erpData = [];
+  private erpData: any[] = [];
   private selectionMode: GridSelectionMode = 'multiple';
 
   @state()
   private isLoading = true;
 
-  public orderStatus = OrderStatus;
-
-  // floating-ui variables
-  @state() showTooltip = false;
-  tooltipRef: any;
-  buttonRef: any;
-  cleanup: any;
-
-  // private excelExporter = new IgcExcelExporterService();
+  private orderStatus = OrderStatus;
   
   constructor() {
     super();
- 
+    
+    // Icons
     registerIconFromText("dropbox", DROPBOX, "material");
     registerIconFromText("delivery", DELIVERY, "material");
     registerIconFromText("bill-paid", BILL_PAID, "material");
     registerIconFromText("check", CHECK, "material");
+
+    // Data
     erpDataService.getErpData().then((data) => {
       this.erpData = data;
       this.isLoading = false;
-
-      // this.chart = document.getElementById('chart') as IgcDataChartComponent;
-
-      // this.xAxis = document.getElementById("xAxis") as IgcNumericXAxisComponent;
-      // this.yAxis = document.getElementById("yAxis") as IgcNumericYAxisComponent;
-  
-      // // this.chart.dataSource = data;
-
-      // let soldUnits = document.getElementById("unitsSold") as IgcColumnComponent;
-      // unitsInStock.formatter = this.formatCurrency;
     });
-
-    // var rowIsland1 = document.getElementById('rowIsland') as IgcRowIslandComponent;
-    // rowIsland1.toolbarTemplate = this.rowIslandToolbarTemplate;
   }
 
   firstUpdated() {
@@ -139,25 +97,17 @@ export default class ErpHierarchicalGrid extends LitElement {
           ignoreCase: true
       }
     ];
-
-    
-    // const imageColumn = document.getElementById('imageCol') as IgcColumnComponent;
- 
-
-    // this.chart = document.getElementById('chart') as IgcDataChartComponent;
-
-    // this.xAxis = document.getElementById("xAxis") as IgcNumericXAxisComponent;
-    // this.yAxis = document.getElementById("yAxis") as IgcNumericYAxisComponent;
-
-    // // this.chart.dataSource = data;
-
-    // let soldUnits = document.getElementById("unitsSold") as IgcColumnComponent;
-    
-    // this.requestUpdate();
   }
 
+  private exportStarted(args: any) {
+    args.detail.exporter.columnExporting.subscribe((columnArgs: any) => {
+      // Don't export Performance column
+      columnArgs.cancel = columnArgs.field === 'salesTrendData';
+    });
+  }
 
-  public rowIslandToolbarTemplate = () => {
+  // TEMPLATES
+  private rowIslandToolbarTemplate = () => {
     return html`   
       <igc-grid-toolbar>
         <igc-grid-toolbar-title>Sales data for the last month</igc-grid-toolbar-title>
@@ -166,92 +116,79 @@ export default class ErpHierarchicalGrid extends LitElement {
 
   private imageTemplate = (ctx: IgcCellTemplateContext) => {
     const imageUrl = ctx.cell.value;
-    const productName = ctx.cell.row.data.productName;
+    const rowID = ctx.cell.id?.rowID; // Value of SKU field
   
     return html`
-      <div>
-        <!-- <img 
-          id="imageElement"
-          src="${imageUrl}" 
-          alt="Product" 
-          style="width: 22px; height: 22px"
-          @mouseenter="${(e: any) => this.onImageHover(e)}"
-          @mouseleave="${() => this.onImageLeave()}"/>
-
-        <igc-dialog >
-          <h5 slot="title">TITLE 1</h5>
-          <img src="${imageUrl}" alt="Product View"/>
-        </igc-dialog> -->
-
-        <!-- <div style="position: relative; display: inline-block;">
-          <button @mouseenter="${this.testShowTooltip}" @mouseleave="${this.testHideTooltip}">
-            Hover me
-          </button>
-          <div class="tooltip ${this.showTooltip ? 'visible' : ''}">Tooltip Text</div>
-        </div> -->
-
+      <div id="image-container-${rowID}">
         <img 
           id="imageElement"
           src="${imageUrl}" 
-          alt="Product" 
+          alt="${rowID}" 
           style="width: 22px; height: 22px"
-          @mouseenter="${(event: MouseEvent) => this.testShowTooltip(event)}"
-          @mouseleave="${this.testHideTooltip}"/>
+          @mouseenter="${(event: MouseEvent) => this.showTooltip(event)}"
+          @mouseleave="${this.hideTooltip}"/>
 
-        <!-- <igc-button id="mbutton" aria-describedby="tooltip" 
-          @mouseenter="${this.testShowTooltip}" @mouseleave="${this.testHideTooltip}">
-          mButton
-        </igc-button> -->
-        <div id="mtooltip" role="tooltip">
-          My tooltip with more content
-        <div id="marrow"></div>
-      </div>
+        <!-- Content for image dialog: div with id tooltip will be dynamically added here--> 
       </div>
     `;
   };
 
-  public testShowTooltip = (event: MouseEvent) => {
+  private showTooltip = (event: MouseEvent) => {
     const targetEl = event.target as HTMLElement;
-    console.log('TEST Show tooltip', targetEl);
+
+    // Image URL for setting the right dialog image
+    const url = targetEl.getAttribute("src");
+
+    // Alt = SKU of image to get the SKU (id) of the current row
+    // & then find the current element (row)
+    // & then get its product name
+    const imageAlt = targetEl.getAttribute("alt");
+    const currentProduct = this.erpData[this.erpData?.findIndex(product => product.sku === imageAlt)];
     
-    computePosition(targetEl, this.mtooltip, {
-      placement: 'top',
+    // Create an HTML Element manually and attach the correct properties to it
+    const tooltip = document.createElement("div");
+    tooltip.id = "mtooltip";
+    tooltip.setAttribute("role", "tooltip");
+    tooltip.innerHTML = `
+      <div class="dialog-header"> ${currentProduct.productName} </div>
+      <div class="dialog-body">
+          <img src="${url}" alt="Product-${url}"/>
+      </div>
+    `;
+   
+    // Append that newly created HTML Element to the imageTemplate container with id="image-container-${rowID}"
+    // rowId = imageAlt
+    const imageEl = this.shadowRoot?.getElementById(`image-container-${imageAlt}`);
+    imageEl?.appendChild(tooltip);
+
+    // Add floating-ui setups and styles
+    this.setupImageDialog(targetEl, tooltip);
+  }
+
+  private setupImageDialog = (tagetElement: HTMLElement, tooltip: HTMLElement) => {
+    computePosition(tagetElement, tooltip, {
+      placement: 'right-start',
       middleware: [
         offset(6),
         flip(),
         shift({padding: 5}),
-        // arrow({element: this.marrow}),
       ],
     }).then(({x, y}) => {
-      Object.assign(this.mtooltip.style, {
+      Object.assign(tooltip.style, {
         left: `${x}px`,
         top: `${y}px`,
       });
     });
 
-    this.mtooltip.style.display = 'block';
-    this.mtooltip.style.zIndex = '1';
+    tooltip.style.display = 'block';
+    tooltip.style.zIndex = '9999';
   }
 
-  public testHideTooltip = () => {
-    console.log('TEST Hide tooltip');
-    this.mtooltip.style.display = 'none';
+  private hideTooltip = () => {
+    // Remove tooltip element from the DOM
+    const tooltip = this.shadowRoot?.getElementById("mtooltip");
+    tooltip?.remove();
   }
-
-  private onImageHover(event: MouseEvent) {
-
-    const targetEl = event.target as HTMLElement;
-
-    if (this.imageDialog) {
-      this.imageDialog.show();
-    }
-  }
-
-private onImageLeave() {
-  if (this.imageDialog) {
-    this.imageDialog.hide();
-  }
-}
 
   private ratingTemplate = (ctx: IgcCellTemplateContext) => {
     return html`
@@ -308,7 +245,6 @@ private onImageLeave() {
   private countryTemplate = (ctx: IgcCellTemplateContext) => {
     const cellValue = ctx.cell.value;
     const flagPath = `country-flags/${cellValue}.svg`;
-    // [src]="'country-flags/' + cell.row.data.orderInformation.country + '.svg'"
     return html`
       <div class="country-cell">
           <span class="cup">
@@ -322,7 +258,6 @@ private onImageLeave() {
   private salesTrendsChartTemplate = (ctx: IgcCellTemplateContext) => {
     const trendData = ctx.cell.value;
     
-
     if (!trendData || trendData.length === 0) {
       return html`<span>No data</span>`;
     }
@@ -332,80 +267,24 @@ private onImageLeave() {
     `;
   };
 
-
-  // private tooltipTemplate = (ctx: IgcCellTemplateContext) => {
-  //   return html`
-  //     <igc-icon
-  //       id="tooltipTarget"
-  //       igcTooltipTarget="tooltipRef"
-  //       draggable=${false}
-  //       showDelay="0"
-  //       hideDelay="0"
-  //       @click=${this.toggleExpand}
-  //     >
-  //       ${this.column.expanded ? 'expand_more' : 'chevron_right'}
-  //     </igc-icon>
-
-  //     <div id="tooltipRef" igcTooltip>
-  //       <span style="width: 200px">${this.getTooltipText(this.column.expanded)}</span>
-  //     </div>
-  //   `;
-  // };
-
-  public exportStarted(args: any) {
-    args.detail.exporter.columnExporting.subscribe((columnArgs: any) => {
-      // Don't export Performance column
-      columnArgs.cancel = columnArgs.field === 'salesTrendData';
-    });
-  }
-
   // FORMATTERS
-  public formatNumberAsIs(value: number): number {
+  private formatNumberAsIs(value: number): number {
     // Bypassing the default formatting of larger numbers
     // Example for 4-digit numbers: 1,234 => 1234
     return value;
   }
 
-  public formatDate(value: string): string {
+  private formatDate(value: string): string {
     return value || 'N/A';
   }
 
-  public formatAddress(value: any): string {
+  private formatAddress(value: any): string {
     return `${value.streetName} ${value.streetNumber}`;
   }
 
-  public formatFullAddress(value: any): string {
+  private formatFullAddress(value: any): string {
     return `${value.streetNumber} ${value.streetName}, ${value.zipCode} ${value.city}, ${value.country}`;
   }
-  
-  // floating-ui methods
-  // show() {
-  //   this.showTooltip = true;
-  //   this.updateComplete.then(() => {
-  //     this.positionTooltip();
-  //     this.cleanup = autoUpdate(this.buttonRef, this.tooltipRef, this.positionTooltip.bind(this));
-  //   });
-  // }
-
-  // hide() {
-  //   this.showTooltip = false;
-  //   if (this.cleanup) this.cleanup();
-  // }
-
-  // async positionTooltip() {
-  //   if (!this.buttonRef || !this.tooltipRef) return;
-  //   const { x, y } = await computePosition(this.buttonRef, this.tooltipRef, {
-  //     placement: 'top',
-  //     middleware: [offset(8), flip(), shift()]
-  //   });
-
-  //   Object.assign(this.tooltipRef.style, {
-  //     left: `${x}px`,
-  //     top: `${y}px`
-  //   });
-  // }
-  
-
   
 
   render() {
@@ -652,36 +531,6 @@ private onImageLeave() {
         height: 22px;
         border-radius: 4px;
       }
-
-      // floating-ui styles
-      /* .tooltip {
-        position: absolute;
-        background-color: black;
-        color: white;
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-size: 12px;
-        white-space: nowrap;
-        opacity: 0;
-        transform: translateY(5px);
-        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-        pointer-events: none;
-      }
-      .tooltip.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      button {
-        padding: 10px 16px;
-        font-size: 16px;
-        cursor: pointer;
-        border: none;
-        background: blue;
-        color: red;
-        border-radius: 6px;
-      } */
-
-     
     }
 
     #hierarchicalGrid {
@@ -736,81 +585,44 @@ private onImageLeave() {
       gap: 8px;
     }
 
-    .logo {
-      height: 6em;
-      padding: 1.5em;
-      will-change: filter;
-      transition: filter 300ms;
-    }
-    .logo:hover {
-      filter: drop-shadow(0 0 2em #646cffaa);
-    }
-    .logo.lit:hover {
-      filter: drop-shadow(0 0 2em #325cffaa);
-    }
-
-    .card {
-      padding: 2em;
-    }
-
-    .read-the-docs {
-      color: #888;
-    }
-
-    ::slotted(h1) {
-      font-size: 3.2em;
-      line-height: 1.1;
-    }
-
-    a {
-      font-weight: 500;
-      color: #646cff;
-      text-decoration: inherit;
-    }
-    a:hover {
-      color: #535bf2;
-    }
-
-    button {
-      border-radius: 8px;
-      border: 1px solid transparent;
-      padding: 0.6em 1.2em;
-      font-size: 1em;
-      font-weight: 500;
-      font-family: inherit;
-      background-color: #1a1a1a;
-      cursor: pointer;
-      transition: border-color 0.25s;
-    }
-    button:hover {
-      border-color: #646cff;
-    }
-    button:focus,
-    button:focus-visible {
-      outline: 4px auto -webkit-focus-ring-color;
-    }
-
-    @media (prefers-color-scheme: light) {
-      a:hover {
-        color: #747bff;
-      }
-      button {
-        background-color: #f9f9f9;
-      }
-    }
-
     #mtooltip {
       display: none;
-      width: max-content;
       position: absolute;
       top: 0;
       left: 0;
-      background: #222;
-      color: white;
+      background: white;
       font-weight: bold;
       padding: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
       border-radius: 4px;
       font-size: 90%;
+      animation: fadeIn 0.4s ease-in-out forwards;
+
+      .dialog-header {
+        padding: 16px;
+        font-size: 18px;
+        font-weight: bold;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
+
+      .dialog-body {
+        padding: 16px;
+        font-size: 14px;
+        color: #555;
+        overflow-y: auto;
+
+        img {
+          width: 312px;
+          height: 312px;
+        }
+      }
+
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
     }
   `
 }
