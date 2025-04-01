@@ -168,13 +168,21 @@ stages:
             echo "Checking for ignite-ui-cli.json"
             ls -alh $(Build.SourcesDirectory) | grep ignite-ui-cli.json || echo "File not found!"
 
-      - task: Npm@1
-        displayName: 'Upgrade Ignite UI Packages'
+      # - task: Npm@1
+      #   displayName: 'Upgrade Ignite UI Packages'
+      #   inputs:
+      #     verbose: ${{ parameters.isVerbose }}
+      #     command: custom
+      #     workingDir: '$(Build.SourcesDirectory)'
+      #     customCommand: 'npx ig upgrade-packages'
+
+      - task: Bash@3
+        displayName: 'Run Ignite UI Upgrade with Explicit Path'
         inputs:
-          verbose: ${{ parameters.isVerbose }}
-          command: custom
-          workingDir: '$(Build.SourcesDirectory)'
-          customCommand: 'npx ig upgrade-packages'
+          targetType: 'inline'
+          script: |
+            echo "Running Ignite UI package upgrade..."
+            $(Build.SourcesDirectory)/node_modules/.bin/npx ig upgrade-packages
 
       - task: Bash@3
         displayName: 'Output package.json after upgrade'
