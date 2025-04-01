@@ -54,7 +54,7 @@ export class TripHistoryGrid extends LitElement {
         const isVisible = ctx.cell.row.index === 0 && ctx.cell.row.data.end === "N/A";
         return html`
             <igc-avatar class="driver-avatar" shape="circle" src="${this.getPathToDriverPhoto(ctx.cell)}"></igc-avatar>
-            <a class="status-value" #coordinates href="#" (click)="$event.preventDefault();">${ctx.implicit}</a>
+            <a class="status-value" #coordinates href="#" @click="${(e: MouseEvent) => this.handleDriverClick(e, ctx)}">${ctx.implicit}</a>
             ${isVisible
                 ? html`<igc-badge class="driver-badge" variant="success">
                     <span class="current-badge-text">Current</span>
@@ -62,6 +62,36 @@ export class TripHistoryGrid extends LitElement {
                 : ""
             }            
         `
+    }
+
+    private handleDriverClick(event: MouseEvent, ctx: IgcCellTemplateContext) {
+        event.preventDefault();
+
+        const driverName = ctx.cell.row?.cells?.find((c: any) => c.column.field === 'driverName')?.value;
+
+        if (!driverName) {
+        console.error('Driver not found in data');
+        return;
+        }
+
+        const driverDetails = dataService.getDriverData(driverName);
+
+        if (!driverDetails) {
+        console.error(`No data found for driver: ${driverName}`);
+        return;
+        }
+
+        const detail = {
+            driverDetails: driverDetails,
+            ctx: ctx,
+            originalEvent: event
+        };
+
+        this.dispatchEvent(new CustomEvent("driver-cell-click", {
+            detail,
+            bubbles: true,
+            composed: true
+        }));
     }
 
     private getPathToDriverPhoto(cell: any) {
@@ -87,7 +117,7 @@ export class TripHistoryGrid extends LitElement {
         `
     }
 
-    static styles = css`
+    static styles = css`       
         .driver-avatar {
             --size: 22px
         }

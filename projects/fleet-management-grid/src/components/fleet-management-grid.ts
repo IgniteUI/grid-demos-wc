@@ -2,33 +2,73 @@ import { LitElement, css, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { dataService } from "../services/data-service";
 import { IgcCellTemplateContext, IgcColumnComponent, IgcGridComponent, IgcGridMasterDetailContext, SortingDirection } from 'igniteui-webcomponents-grids/grids';
-import { configureTheme, defineComponents, IgcAvatarComponent, IgcBadgeComponent, IgcButtonComponent, IgcCarouselComponent, IgcDividerComponent, IgcIconComponent, IgcInputComponent, IgcSelectComponent, IgcSelectHeaderComponent, IgcSelectItemComponent, IgcTabsComponent, registerIconFromText } from "igniteui-webcomponents";
+import { configureTheme, defineComponents, IgcAvatarComponent, IgcBadgeComponent, IgcButtonComponent, IgcCardComponent, IgcCarouselComponent, IgcDividerComponent, IgcIconComponent, IgcSelectComponent, IgcSelectHeaderComponent, IgcSelectItemComponent, IgcTabsComponent, registerIconFromText } from "igniteui-webcomponents";
 import { check, delivery, wrench } from '@igniteui/material-icons-extended';
-import { ModuleManager } from "igniteui-webcomponents-core";
+import { DataTemplateMeasureInfo, DataTemplateRenderInfo, IgDataTemplate, ModuleManager } from "igniteui-webcomponents-core";
 import "./trip-history-grid";
 import "./maintenance"
-
 import 'igniteui-webcomponents-grids/grids/combined.js';
 import { CLEAR } from "../assets/icons/icons";
 import CAR_PHOTO_MANIFEST from '../assets/car_photo_manifest.json';
 import CAR_IMAGES from '../assets/car_images.json';
 import VEHICLE_DETAILS from '../assets/vehicle_details.json';
+import DRIVER_CATEGORIES from '../assets/driver_categories.json'
 import { Period } from "../models/period-enum";
 import { ChartType } from "../models/chart-type-enum";
-import { IgcCategoryChartModule, IgcLegendComponent, IgcLegendModule, IgcPieChartModule } from "igniteui-webcomponents-charts";
+import { IgcCategoryChartModule, IgcDataChartInteractivityModule, IgcLegendComponent, IgcLegendModule, IgcPieChartModule } from "igniteui-webcomponents-charts";
+import { VehicleDetails } from "../models/vehicle-details-interface";
+import { IgcGeographicMapComponent, IgcGeographicMapModule, IgcGeographicSymbolSeriesComponent, IgcGeographicSymbolSeriesModule } from "igniteui-webcomponents-maps";
+import { computePosition, flip, offset, shift } from "@floating-ui/dom";
+import { DriverDetails } from "../models/driver-details-interface";
 
 
-defineComponents(IgcIconComponent, IgcButtonComponent, IgcIconComponent, IgcAvatarComponent, IgcBadgeComponent, IgcTabsComponent, IgcCarouselComponent, IgcDividerComponent, IgcSelectComponent, IgcSelectItemComponent, IgcSelectHeaderComponent)
+defineComponents(IgcIconComponent, IgcButtonComponent, IgcIconComponent, IgcAvatarComponent, IgcBadgeComponent, IgcTabsComponent, IgcCarouselComponent, IgcDividerComponent, IgcSelectComponent, IgcSelectItemComponent, IgcSelectHeaderComponent, IgcCardComponent)
 configureTheme("material");
 
-ModuleManager.register(IgcCategoryChartModule, IgcPieChartModule, IgcLegendModule)
+ModuleManager.register(IgcCategoryChartModule, IgcPieChartModule, IgcLegendModule, IgcGeographicMapModule, IgcGeographicSymbolSeriesModule, IgcDataChartInteractivityModule)
 
 @customElement("app-fleet-management")
 export class FleetManagementGrid extends LitElement {
-  private vehiclesData: any[] = []
 
-  @state()
-  private periods: { [vehicleId: string]: { costPerTypePeriod: Period, costPerMeterPeriod: Period, fuelCostPeriod: Period } | null } = {};
+  /** Reactive State */
+
+  @state() private hasSorting = false;
+  @state() private periods: { [vehicleId: string]: { costPerTypePeriod: Period, costPerMeterPeriod: Period, fuelCostPeriod: Period } | null } = {};
+
+  /** Query Selectors */
+
+  @query('#main-grid') mainGrid!: IgcGridComponent;
+  @query('#make-column') makeColumn!: IgcColumnComponent;
+  @query('#status-column') statusColumn!: IgcColumnComponent;
+  @query('#location-column') locationColumn!: IgcColumnComponent;
+  @query('#legend') legend!: IgcLegendComponent;
+  @query('#map') map!: IgcGeographicMapComponent
+  @query('#locationOverlay') locationOverlay!: any;
+  @query('#driverOverlay') driverOverlay!: any;
+  @query('#overlayBackdrop') overlayBackdrop!: any
+
+  /** Data & References */
+
+  private vehiclesData: any[] = [];
+  private lastOverlayTrigger: any;
+  private vehicleDetails: VehicleDetails = {
+    vehiclePhoto: '',
+    make: '',
+    model: '',
+    mileage: '',
+    markerLocations: []
+  }
+  private driverDetails: DriverDetails = {
+    name: "",
+    license: "",
+    address: "",
+    city: "",
+    phone: "",
+    email: "",
+    photo: ""
+  }  
+
+  /** Lifecycle Methods */
 
   constructor() {
     super();
@@ -38,16 +78,7 @@ export class FleetManagementGrid extends LitElement {
     registerIconFromText(delivery.name, delivery.value, "imx-icons");
     
     this.vehiclesData = dataService.getVehiclesData();
-  }
-
-
-  @query('#main-grid') mainGrid!: IgcGridComponent;
-  @query('#make-column') makeColumn!: IgcColumnComponent;
-  @query('#status-column') statusColumn!: IgcColumnComponent;
-  @query('#location-column') locationColumn!: IgcColumnComponent;
-  @query('#legend') legend!: IgcLegendComponent;
-
-  @state() private hasSorting = false;
+  }  
 
   firstUpdated() {
     this.mainGrid.sortingExpressions = [
@@ -56,9 +87,7 @@ export class FleetManagementGrid extends LitElement {
 
     this.mainGrid.addEventListener("sortingDone", () => {
       this.hasSorting = this.mainGrid.sortingExpressions.length > 0;
-    });
-
-    
+    });    
 
     this.hasSorting = this.mainGrid.sortingExpressions.length > 0;
 
@@ -69,12 +98,36 @@ export class FleetManagementGrid extends LitElement {
     this.mainGrid.detailTemplate = this.masterDetailTemplate
   }
 
-  clearSorting() {
+  /** Utility Methods */
+
+  private onPeriodChange(event: any, chart: string, vehicleId: string): void {
+    if (!this.periods[vehicleId]) {
+      this.periods[vehicleId] = {
+        costPerTypePeriod: Period.YTD,
+        costPerMeterPeriod: Period.YTD,
+        fuelCostPeriod: Period.YTD
+      };
+    }
+
+    if (chart === ChartType.CostPerType) {
+      this.periods[vehicleId].costPerTypePeriod = event.detail.value;
+    } else if (chart === ChartType.CostPerMeter) {
+      this.periods[vehicleId].costPerMeterPeriod = event.detail.value;
+    } else if (chart === ChartType.FuelCosts) {
+      this.periods[vehicleId].fuelCostPeriod = event.detail.value;
+    }
+
+    this.mainGrid.markForCheck();
+  }
+
+  private clearSorting() {
     if (this.mainGrid) {
       this.mainGrid.sortingExpressions = [];
       this.hasSorting = false;
     }
   }
+
+  /** Templates */
 
   private masterDetailTemplate = (ctx: IgcGridMasterDetailContext) => {
     const images: any[] = this.getPathToCarImage(ctx.implicit.vehicleId)
@@ -130,7 +183,10 @@ export class FleetManagementGrid extends LitElement {
         </igc-tab-panel>
 
         <igc-tab-panel id="trip-history">
-          <trip-history-grid .tripHistoryData="${ dataService.getTripHistoryData(ctx.implicit.vehicleId) }"></trip-history-grid>
+          <trip-history-grid 
+            .tripHistoryData="${ dataService.getTripHistoryData(ctx.implicit.vehicleId) }"
+            @driver-cell-click="${(event: CustomEvent) => this.showDriverOverlay(event)}">
+          </trip-history-grid>
         </igc-tab-panel>
 
 
@@ -295,9 +351,204 @@ export class FleetManagementGrid extends LitElement {
 
   private locationCellTemplate = (ctx: IgcCellTemplateContext) => {
     return html`
-      <a class="link-style" #coordinates href="#" (click)="$event.preventDefault();">${ctx.implicit}</a>
+      <a class="link-style" #coordinates href="#" @click="${(event: MouseEvent) => this.showLocationOverlay(event, ctx)}">${ctx.implicit}</a>
     `
   }
+
+  /** Overlay Logic */
+
+  /* Show */
+  private showLocationOverlay(event: MouseEvent, ctx: IgcCellTemplateContext) {
+    event.preventDefault();
+
+    const vehicleId = ctx.cell.row?.cells?.find((c: any) => c.column.field === 'vehicleId')?.value;
+
+    if (!vehicleId) {
+      console.error('Vehicle ID not found in data');
+      return;
+    }
+
+    const vehicle = dataService.getVehiclesData().find(v => v.vehicleId === vehicleId)
+
+    if (!vehicle) {
+      console.error(`No vehicle found for ID: ${vehicleId}`);
+      return;
+    }
+
+    this.vehicleDetails.vehiclePhoto = this.getPathToCarImage(vehicleId)[0];
+    this.vehicleDetails.make = vehicle.make;
+    this.vehicleDetails.model = vehicle.model;
+    this.vehicleDetails.mileage = vehicle.details.mileage;
+    this.vehicleDetails.markerLocations = [
+      { latitude: parseFloat(vehicle.locationGps.split(',')[0]), longitude: parseFloat(vehicle.locationGps.split(',')[1]) },
+    ];
+
+    this.map.series.clear();
+    this.addSeriesWith(this.vehicleDetails.markerLocations, "Red");
+    const centerPoint = {
+      left: this.vehicleDetails.markerLocations[0].longitude - 0.01,
+      top: this.vehicleDetails.markerLocations[0].latitude - 0.01,
+      width: 0.01,
+      height: 0.01
+    };
+    this.map.zoomToGeographic(centerPoint);
+
+    this.requestUpdate();
+
+    const target = event.target as HTMLElement;
+    const overlay = this.locationOverlay
+    
+    computePosition(target, overlay, {
+      placement: 'left-start',
+      middleware: [offset(8), flip(), shift()],
+    }).then(({ x, y }) => {
+      Object.assign(overlay.style, {
+        left: `${x}px`,
+        top: `${y}px`,
+      });
+    }); 
+
+    this.overlayBackdrop.classList.add("visible");
+    this.locationOverlay.style.display = 'block';
+
+    requestAnimationFrame(() => {
+      overlay.classList.add('visible');
+    });
+    
+
+    this.lastOverlayTrigger = target;
+    document.addEventListener("mousedown", this.locationEventHandler);
+    window.addEventListener("wheel", this.locationEventHandler, { passive: true, capture: true });
+  }
+
+  private showDriverOverlay(event: CustomEvent) {
+
+    const driverDetails = event.detail.driverDetails;
+    const originalEvent = event.detail.originalEvent;
+
+    this.driverDetails.name = driverDetails.name;
+    this.driverDetails.license = driverDetails.license;
+    this.driverDetails.address = driverDetails.address;
+    this.driverDetails.city = driverDetails.city;
+    this.driverDetails.phone = driverDetails.phone;
+    this.driverDetails.email = driverDetails.email;
+    this.driverDetails.photo = `people/${driverDetails.photo}.jpg`;
+
+    this.requestUpdate();
+
+    const target = originalEvent.target as HTMLElement;
+    const overlay = this.driverOverlay
+
+    computePosition(target, overlay, {
+      placement: 'left-start',
+      middleware: [offset(8), flip(), shift()],
+    }).then(({ x, y }) => {
+      Object.assign(overlay.style, {
+        left: `${x}px`,
+        top: `${y}px`,
+      });
+    });
+
+    this.overlayBackdrop.classList.add("visible");
+    this.driverOverlay.style.display = 'block';
+
+    requestAnimationFrame(() => {
+      overlay.classList.add('visible');
+    });
+    
+
+    this.lastOverlayTrigger = target;
+    document.addEventListener("mousedown", this.driverEventHandler);
+    window.addEventListener("wheel", this.driverEventHandler, { passive: true, capture: true });
+
+  }
+
+  /* Event Handlers */
+  private locationEventHandler = (event: any) => {
+    const path = event.composedPath();
+
+    const clickedInsideOverlay = path.includes(this.locationOverlay);
+    const clickedOnTrigger = this.lastOverlayTrigger ? path.includes(this.lastOverlayTrigger) : false;
+
+    if (!clickedInsideOverlay && !clickedOnTrigger) {
+      this.closeLocationOverlay();
+    }
+  };
+
+  private driverEventHandler = (event: any) => {
+    const path = event.composedPath();
+
+    const clickedInsideOverlay = path.includes(this.driverOverlay);
+    const clickedOnTrigger = this.lastOverlayTrigger ? path.includes(this.lastOverlayTrigger) : false;
+
+    if (!clickedInsideOverlay && !clickedOnTrigger) {
+      this.closeDriverOverlay();
+    }
+  };
+
+  /* Close */
+  private closeLocationOverlay() {
+    if (this.locationOverlay) {
+      const overlay = this.locationOverlay;
+
+      overlay.classList.remove('visible');
+      this.overlayBackdrop.classList.remove("visible");
+
+      overlay.addEventListener('transitionend', () => {
+        overlay.style.display = 'none';
+      }, { once: true })
+    }
+  
+    document.removeEventListener("mousedown", this.locationEventHandler);
+    window.removeEventListener("wheel", this.locationEventHandler, true);
+  }
+
+  private closeDriverOverlay() {
+    if (this.driverOverlay) {
+      const overlay = this.driverOverlay;
+
+      overlay.classList.remove('visible');
+      this.overlayBackdrop.classList.remove("visible");
+
+      overlay.addEventListener('transitionend', () => {
+        overlay.style.display = 'none';
+      }, { once: true })
+    }
+  
+    document.removeEventListener("mousedown", this.driverEventHandler);
+    window.removeEventListener("wheel", this.driverEventHandler, true);
+  }
+
+
+  /* Map Logic */
+  private addSeriesWith(locations: any[], brush: string) {
+    const symbolSeries = new IgcGeographicSymbolSeriesComponent();
+    symbolSeries.dataSource = locations;
+    symbolSeries.latitudeMemberPath = "latitude";
+    symbolSeries.longitudeMemberPath = "longitude";
+    symbolSeries.markerBrush  = "White";
+    symbolSeries.markerOutline = brush;
+    symbolSeries.markerTemplate = {
+      measure: (measureInfo: DataTemplateMeasureInfo) => {
+        measureInfo.width = 24;
+        measureInfo.height = 24;
+      },
+      render: (renderInfo: DataTemplateRenderInfo) => {
+        const ctx = renderInfo.context;
+        const x = renderInfo.xPosition;
+        const y = renderInfo.yPosition;
+
+        const img = new Image();
+        img.src = 'location_pin.svg';
+        img.onload = () => {
+          ctx.drawImage(img, x - 12, y - 12, 32, 32);
+        };
+      }
+    } as IgDataTemplate;
+    this.map.series.add(symbolSeries);
+  }
+
+  /** Data Helpers */
 
   private getStatusType(status: string): string {
     const types: Record<string, string> = {
@@ -336,27 +587,7 @@ export class FleetManagementGrid extends LitElement {
 
   private getValueByPath(obj: any, path: string) {
     return path.split('.').reduce((o, key) => (o && o[key] !== undefined) ? o[key] : 'N/A', obj);
-  }
-
-  private onPeriodChange(event: any, chart: string, vehicleId: string): void {
-    if (!this.periods[vehicleId]) {
-      this.periods[vehicleId] = {
-        costPerTypePeriod: Period.YTD,
-        costPerMeterPeriod: Period.YTD,
-        fuelCostPeriod: Period.YTD
-      };
-    }
-
-    if (chart === ChartType.CostPerType) {
-      this.periods[vehicleId].costPerTypePeriod = event.detail.value;
-    } else if (chart === ChartType.CostPerMeter) {
-      this.periods[vehicleId].costPerMeterPeriod = event.detail.value;
-    } else if (chart === ChartType.FuelCosts) {
-      this.periods[vehicleId].fuelCostPeriod = event.detail.value;
-    }
-
-    event.target.emitClosed()
-  }
+  }  
 
   render() {
     return html`
@@ -388,6 +619,68 @@ export class FleetManagementGrid extends LitElement {
       <igc-column field="locationCity" header="Location (City)" sortable="true" width="11%"></igc-column>
       <igc-column id="location-column" field="locationGps" header="Location (GPS)" width="14%"></igc-column>
     </igc-grid>
+
+    <div class="overlay-backdrop" id="overlayBackdrop"></div>
+    <div class="overlay-wrapper" id="locationOverlay">
+      <div>
+        <igc-card elevated class="overlay overlay-location">
+          <igc-card-header class="overlay-location-header" vertical="true">
+            <div class="overlay-header-content">
+              <igc-avatar class="overlay-avatar" shape="circle" src="${this.vehicleDetails.vehiclePhoto}"></igc-avatar>
+              <h6 class="overlay-title">${this.vehicleDetails.make} ${this.vehicleDetails.model}</h6>
+              <span class="overlay-text">Mileage: ${this.vehicleDetails.mileage}</span>
+            </div>            
+          </igc-card-header>
+          <igc-card-content class="overlay-location-content">
+            <igc-geographic-map id="map" width="360px" height="190px"
+              zoomable="false"
+              draggable="false"
+              .dataSource="${this.vehicleDetails.markerLocations}"
+              latitude-member-path="latitude"
+              longitude-member-path="longitude">
+            </igc-geographic-map>
+          </igc-card-content>
+          <igc-card-actions class="overlay-location-actions">
+            <igc-button variant="flat" @click=${() => (this.closeLocationOverlay())}>Close</igc-button>
+          </igc-card-actions>
+        </igc-card>
+      </div>   
+    </div>  
+    
+    
+    <div class="overlay-wrapper" id="driverOverlay">
+      <igc-card elevated class="overlay overlay-driver">
+        <igc-card-header class="overlay-driver-header" vertical="true">
+          <div class="overlay-header-content">
+            <igc-avatar class="overlay-avatar" shape="circle" src="${this.driverDetails.photo}"></igc-avatar>
+            <h6 class="overlay-title">${this.driverDetails.name}</h6>
+          </div>
+        </igc-card-header>
+        <igc-card-content class="overlay-driver-content">
+          <div class="driver-block-container">
+            <div class="driver-category-container">
+              ${DRIVER_CATEGORIES.driverCategories.map(category => html`
+                <div class="detail-item">
+                  <span class="detail-category">${category.label}:</span>
+                  <igc-divider></igc-divider>
+                </div>
+              `)}
+            </div>
+            <div class="driver-content-container">
+              ${DRIVER_CATEGORIES.driverCategories.map(category => html`
+                <div class="detail-item">
+                  <span class="detail-value">${this.driverDetails[category.key]}</span>
+                  <igc-divider></igc-divider>
+                </div>
+              `)}
+            </div>
+          </div>
+        </igc-card-content>
+        <igc-card-actions class="overlay-driver-actions">
+          <igc-button variant="flat" @click=${() => (this.closeDriverOverlay())}>Close</igc-button>
+        </igc-card-actions>
+      </igc-card>
+    </div> 
     `;
   }
 
@@ -417,6 +710,23 @@ export class FleetManagementGrid extends LitElement {
     igc-divider {
       color: var(--ig-gray-200);
       opacity: 24%;
+    }
+
+    .overlay-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 200ms ease;
+      z-index: 9998;
+      pointer-events: none;
+    }
+
+    .overlay-backdrop.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
     }
 
     /* Global Grid Styles */
@@ -589,6 +899,21 @@ export class FleetManagementGrid extends LitElement {
       box-shadow: var(--ig-elevation-24);
     }
 
+    .overlay-wrapper {
+      position: absolute;
+      display: none;
+      opacity: 0;
+      transition: opacity 500ms ease;
+      width: max-content;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    .overlay-wrapper.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     .overlay-driver {
       width: 327px;
       height: 360px;
@@ -597,8 +922,26 @@ export class FleetManagementGrid extends LitElement {
     }
 
     /*Overlay Sections*/
+    .overlay-avatar {
+      --ig-size: var(--ig-size-medium);
+      margin-bottom: 16px;
+    }
+
     .overlay-text {
       font-size: 14px;
+    }
+
+    .overlay-title {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .overlay-header-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      
     }
 
     .overlay-location-header,
@@ -606,9 +949,9 @@ export class FleetManagementGrid extends LitElement {
       height: 38%;
       width: 100%;
       flex-direction: column;
-      justify-content: space-around;
+      justify-content: center;
       align-items: center;
-      align-content: space-around;
+      align-content: center;
     }
 
     .overlay-location-content,
