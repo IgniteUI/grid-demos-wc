@@ -160,13 +160,19 @@ stages:
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install -g igniteui-cli'
 
-      - task: Bash@3
+      - task: Npm@1
         displayName: 'Upgrade Ignite UI Packages'
+        inputs:
+          verbose: ${{ parameters.isVerbose }}
+          command: custom
+          workingDir: '$(Build.SourcesDirectory)'
+          customCommand: 'npx ig upgrade-packages'
+
+      - task: Bash@3
+        displayName: 'Output package.json after upgrade'
         inputs:
           targetType: 'inline'
           script: |
-            echo "Running Ignite UI package upgrade..."
-            ig upgrade-packages
             echo "Contents of package.json after upgrade:"
             cat "$(Build.SourcesDirectory)/package.json"
 
