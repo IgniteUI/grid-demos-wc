@@ -1,23 +1,30 @@
 import { defineConfig } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-export default defineConfig({
-  resolve: {
-    alias: {
-      "igniteui-theming": new URL("./node_modules/igniteui-theming", import.meta.url).pathname,
+export default defineConfig(({ mode }) => {
+  return {
+    base: mode === "production" ? "/webcomponents-grid-examples" : "/",
+    resolve: {
+      alias: {
+        "igniteui-theming": new URL("./node_modules/igniteui-theming", import.meta.url).pathname,
+      },
     },
-  },
-  plugins: [
-    viteStaticCopy({
-      targets: [
-        {
-          src: "./projects/finance-grid/public/*",
-          dest: "",
-        },
-        {
-          src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css",
-          dest: "themes",
-        },
-      ],
-    }),
-  ],
+    plugins: [
+      viteStaticCopy({
+        targets: [
+          {
+            src: "./web.config",
+            dest: "",
+          },
+          {
+            src: "./projects/finance-grid/public/*",
+            dest: "",
+          },
+          {
+            src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css",
+            dest: "themes",
+          },
+        ],
+      }),
+    ],
+  };
 });
