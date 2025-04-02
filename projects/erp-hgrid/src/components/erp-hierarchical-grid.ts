@@ -73,8 +73,8 @@ export default class ErpHierarchicalGrid extends LitElement {
   @state()
   private erpData: TemplateDataItemExtended[] = [];
 
-  @state()
-  private isLoading = true;
+  // @state()
+  // private isLoading = true;
 
   private selectionMode: GridSelectionMode = 'multiple';
   private orderStatus = OrderStatus;
@@ -99,7 +99,7 @@ export default class ErpHierarchicalGrid extends LitElement {
     // Data
     erpDataService.getErpData().then((data) => {
       this.erpData = data;
-      this.isLoading = false;
+      // this.isLoading = false;
     });
   }
 
