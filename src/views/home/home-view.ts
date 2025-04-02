@@ -127,7 +127,7 @@ export default class HomeView extends LitElement {
         </div>
         <div class="tab-actions">
           <a class="learn-text  ${classMap({ "link--disabled": this.routeName !== tabName })}" href="${this.tabInfo.get(tabName)?.moreLink}" @click="${this.onLinkClick}">Learn more</a>
-          <igc-icon-button class="${classMap({ "button--disabled": this.routeName !== tabName })}" @click="${(e: any) => this.onDownloadClick(e, tabName)}">
+          <igc-icon-button class="${classMap({ "button--disabled": this.routeName !== tabName, "button--enabled": this.routeName === tabName })}" @click="${(e: any) => this.onDownloadClick(e, tabName)}" >
             <igc-ripple></igc-ripple>
             <igc-icon name="file_download" collection="indigo_internal"></igc-icon>
           </igc-icon-button>

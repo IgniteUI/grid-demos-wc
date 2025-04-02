@@ -8,7 +8,6 @@ import "igniteui-webcomponents-grids/grids/combined.js";
 import financeStyles from "./finance-grid.scss?inline";
 
 defineComponents(IgcAvatarComponent, IgcIconComponent, IgcLinearProgressComponent, IgcInputComponent);
-configureTheme("bootstrap");
 @customElement("app-finance-grid")
 export default class FinanceGrid extends LitElement {
   constructor() {
@@ -130,6 +129,8 @@ export default class FinanceGrid extends LitElement {
   };
 
   render() {
+    configureTheme("bootstrap");
+
     return html`
       <link rel="stylesheet" href="/themes/bootstrap.css" />
       <igc-grid .data="${this.financeData}" primary-key="id" row-selection="multiple" class="grid-sizing">

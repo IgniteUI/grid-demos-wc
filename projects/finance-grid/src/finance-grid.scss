@@ -1,15 +1,15 @@
-// @use "./styles/utils" as *;
-// @use "igniteui-theming" as *;
-// @use "igniteui-theming/sass/typography/presets/bootstrap" as *;
-// @use "igniteui-theming/sass/elevations/presets" as *;
-// @use "igniteui-theming/sass/color/presets/light/bootstrap" as *;
+@use "./styles/utils" as *;
+@use "igniteui-theming" as *;
+@use "igniteui-theming/sass/typography/presets/bootstrap" as *;
+@use "igniteui-theming/sass/elevations/presets" as *;
+@use "igniteui-theming/sass/color/presets/light/bootstrap" as *;
 
-// :host {
-//   height: 100%;
-//   width: 100%;
-//   @include theme($palette, $material-elevations, $typeface, $type-scale, "light");
-//   font-family: var(--ig-typography);
-// }
+:host {
+  height: 100%;
+  width: 100%;
+  font-family: var(--ig-font-family);
+  @include theme($palette, $material-elevations, $typeface, $type-scale, "light");
+}
 
 :host {
   display: block;

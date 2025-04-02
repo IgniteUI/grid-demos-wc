@@ -1,11 +1,9 @@
 import { Route } from "@vaadin/router";
 
-const basePath = import.meta.env.MODE === "production" ? "/webcomponents-grid-examples" : "";
-
 export const routes: Route[] = [
-  { path: `${basePath}/`, redirect: `${basePath}/home/finance` },
+  { path: `/`, redirect: `/home/finance` },
   {
-    path: `${basePath}/home`,
+    path: `/home`,
     component: "home-view",
     children: [
       { path: "inventory", component: "erp-hgrid-view" },
@@ -15,12 +13,12 @@ export const routes: Route[] = [
       { path: "fleet", component: "fleet-management-view" },
     ],
   },
-  { path: `${basePath}/inventory`, component: "app-erp-hgrid" },
-  { path: `${basePath}/finance`, component: "app-finance-grid" },
-  { path: `${basePath}/hr-portal`, component: "app-hr-portal" },
-  { path: `${basePath}/sales`, component: "app-sales-grid" },
-  { path: `${basePath}/fleet`, component: "app-fleet-management" },
+  { path: `/inventory`, component: "app-erp-hgrid" },
+  { path: `/finance`, component: "app-finance-grid" },
+  { path: `/hr-portal`, component: "app-hr-portal" },
+  { path: `/sales`, component: "app-sales-grid" },
+  { path: `/fleet`, component: "app-fleet-management" },
 
   // Fallback route
-  { path: `${basePath}/(.*)`, redirect: `${basePath}/home/inventory` },
+  { path: `/(.*)`, redirect: `/home/inventory` },
 ];
