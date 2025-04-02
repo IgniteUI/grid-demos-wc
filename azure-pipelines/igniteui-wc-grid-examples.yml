@@ -160,14 +160,6 @@ stages:
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install -g igniteui-cli'
 
-      - task: Bash@3
-        displayName: 'Check ignite-ui-cli.json'
-        inputs:
-          targetType: 'inline'
-          script: |
-            echo "Checking for ignite-ui-cli.json"
-            cat $(Build.SourcesDirectory)/ignite-ui-cli.json
-
       # - task: Npm@1
       #   displayName: 'Upgrade Ignite UI Packages'
       #   inputs:
@@ -176,7 +168,7 @@ stages:
       #     workingDir: '$(Build.SourcesDirectory)'
       #     customCommand: 'npx ig upgrade-packages'
 
-      - task: PowerShell@2
+      - task: Bash@3
         displayName: 'Run Ignite UI Upgrade with Explicit Path'
         inputs:
           targetType: 'inline'
