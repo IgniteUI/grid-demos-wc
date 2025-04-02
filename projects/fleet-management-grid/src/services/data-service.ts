@@ -6,7 +6,6 @@ import COST_DATA from '../assets/data/cost.json';
 import UTILIZATION_DATA from '../assets/data/utilization.json';
 
 export class DataService {
-    private static instance: DataService;
     private vehiclesData: any[] = VEHICLES_DATA;
     private driversData: any[] = DRIVERS_DATA;
     private tripHistoryData: any[] = TRIP_HISTORY_DATA;
