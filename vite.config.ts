@@ -19,7 +19,15 @@ export default defineConfig(({ mode }) => {
             dest: "",
           },
           {
+            src: "./projects/hr-portal/public/*",
+            dest: "",
+          },
+          {
             src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css",
+            dest: "themes",
+          },
+          {
+            src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/fluent.css",
             dest: "themes",
           },
         ],
