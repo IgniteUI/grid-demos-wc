@@ -136,6 +136,14 @@ stages:
             done
 
       - task: Npm@1
+        displayName: 'npm install --legacy-peer-deps'
+        inputs:
+          verbose: ${{ parameters.isVerbose }}
+          command: custom
+          workingDir: '$(Build.SourcesDirectory)'
+          customCommand: 'install --legacy-peer-deps'
+
+      - task: Npm@1
         displayName: 'npm run build:ci'
         inputs:
           verbose: ${{ parameters.isVerbose }}
