@@ -168,13 +168,29 @@ stages:
       #     workingDir: '$(Build.SourcesDirectory)'
       #     customCommand: 'npx ig upgrade-packages'
 
+      # - task: Bash@3
+      #   displayName: 'Run Ignite UI Upgrade with Explicit Path'
+      #   inputs:
+      #     targetType: 'inline'
+      #     script: |
+      #       echo "Running Ignite UI package upgrade..."
+      #       npx ig upgrade-packages
+
       - task: Bash@3
-        displayName: 'Run Ignite UI Upgrade with Explicit Path'
+        displayName: 'Run Ignite UI Upgrade in Root and All Project Subdirectories'
         inputs:
           targetType: 'inline'
           script: |
-            echo "Running Ignite UI package upgrade..."
+            echo "Running Ignite UI package upgrade at root level..."
             npx ig upgrade-packages
+
+            echo "Running Ignite UI package upgrade in all project subdirectories..."
+            for dir in $(Build.SourcesDirectory)/projects/*/; do
+              if [ -d "$dir" ]; then
+                echo "Processing: $dir"
+                (cd "$dir" && npx ig upgrade-packages)
+              fi
+            done
 
       - task: Bash@3
         displayName: 'Output package.json after upgrade'
