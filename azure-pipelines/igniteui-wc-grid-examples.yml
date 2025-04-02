@@ -176,7 +176,7 @@ stages:
       #     workingDir: '$(Build.SourcesDirectory)'
       #     customCommand: 'npx ig upgrade-packages'
 
-      - task: Bash@3
+      - task: PowerShell@2
         displayName: 'Run Ignite UI Upgrade with Explicit Path'
         inputs:
           targetType: 'inline'
