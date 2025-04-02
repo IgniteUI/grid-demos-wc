@@ -1,30 +1,13 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, html, unsafeCSS } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import "igniteui-webcomponents-grids/grids/combined.js";
-import {
-  configureTheme,
-  defineComponents,
-  IgcAvatarComponent,
-  IgcButtonComponent,
-  IgcIconButtonComponent,
-  IgcIconComponent,
-  registerIcon,
-} from "igniteui-webcomponents";
-import {
-  IgcTreeGridComponent,
-  IgcCellTemplateContext,
-} from "igniteui-webcomponents-grids/grids";
+import { configureTheme, defineComponents, IgcAvatarComponent, IgcButtonComponent, IgcIconButtonComponent, IgcIconComponent, registerIcon } from "igniteui-webcomponents";
+import { IgcTreeGridComponent, IgcCellTemplateContext } from "igniteui-webcomponents-grids/grids";
 import { icons } from "./assets/icons/Icons";
 import { DataService } from "./services/data.service";
+import styles from "./hr-portal.scss?inline";
 
-defineComponents(
-  IgcAvatarComponent,
-  IgcIconComponent,
-  IgcTreeGridComponent,
-  IgcIconButtonComponent,
-  IgcButtonComponent
-);
-configureTheme("fluent");
+defineComponents(IgcAvatarComponent, IgcIconComponent, IgcTreeGridComponent, IgcIconButtonComponent, IgcButtonComponent);
 
 @customElement("app-hr-portal")
 export default class HrPortal extends LitElement {
@@ -81,10 +64,7 @@ export default class HrPortal extends LitElement {
   public countryIconTemplate = (ctx: IgcCellTemplateContext) => {
     let row = ctx.cell.row;
     return html` <div class="flagDiv">
-      <igc-icon
-        collection="country-icons"
-        name="${row.data.Country}"
-      ></igc-icon>
+      <igc-icon collection="country-icons" name="${row.data.Country}"></igc-icon>
       <span>${row.data.Location}, ${row.data.Country}</span>
     </div>`;
   };
@@ -94,25 +74,13 @@ export default class HrPortal extends LitElement {
     return html`
       <div class="center-content small">
         <a href="mailto:${row.data.Email}">
-          <igc-icon-button
-            collection="hr-icons"
-            name="mail"
-            variant="flat"
-          ></igc-icon-button>
+          <igc-icon-button collection="hr-icons" name="mail" variant="flat"></igc-icon-button>
         </a>
         <a href="tel:${row.data.Phone}">
-          <igc-icon-button
-            collection="hr-icons"
-            name="tel"
-            variant="flat"
-          ></igc-icon-button>
+          <igc-icon-button collection="hr-icons" name="tel" variant="flat"></igc-icon-button>
         </a>
         <a href="https://www.linkedin.com" target="_blank">
-          <igc-icon-button
-            collection="hr-icons"
-            name="linkedIn"
-            variant="flat"
-          ></igc-icon-button>
+          <igc-icon-button collection="hr-icons" name="linkedIn" variant="flat"></igc-icon-button>
         </a>
       </div>
     `;
@@ -126,8 +94,10 @@ export default class HrPortal extends LitElement {
   };
 
   render() {
+    configureTheme("fluent");
+
     return html`
-      <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/fluent.css" />
+      <link rel="stylesheet" href="/themes/fluent.css" />
       <div class="ig-typography rootDiv">
         <igc-tree-grid
           id="treeGrid"
@@ -150,11 +120,7 @@ export default class HrPortal extends LitElement {
                 ? html`
                     <div class="icon-button-group">
                       <igc-button variant="flat" @click="${this.clearSorting}">
-                        <igc-icon
-                          name="close"
-                          collection="hr-icons"
-                          class="medium"
-                        ></igc-icon>
+                        <igc-icon name="close" collection="hr-icons" class="medium"></igc-icon>
                         Clear Sort</igc-button
                       >
                     </div>
@@ -170,22 +136,14 @@ export default class HrPortal extends LitElement {
             </igc-grid-toolbar-actions>
           </igc-grid-toolbar>
 
-          <igc-column field="Name" width="300px" ?sortable="true" pinned="true" .bodyTemplate="${
-            this.avatarTemplate
-          }"></igc-column>
+          <igc-column field="Name" width="300px" ?sortable="true" pinned="true" .bodyTemplate="${this.avatarTemplate}"></igc-column>
           <igc-column field="JobTitle" header="Job Title" data-type="string" min-width="200px" sortable="true"></igc-column>
           <igc-column field="Department" data-type="string" min-width="200px" sortable="true"></igc-column>
 
-          <igc-column field="Location" data-type="string" ?sortable="true" .bodyTemplate="${
-            this.countryIconTemplate
-          }"></igc-column>
-          <igc-column field="Contacts" data-type="string" min-width="200px" filterable="false" .bodyTemplate="${
-            this.contactsTemplate
-          }"></igc-column> 
+          <igc-column field="Location" data-type="string" ?sortable="true" .bodyTemplate="${this.countryIconTemplate}"></igc-column>
+          <igc-column field="Contacts" data-type="string" min-width="200px" filterable="false" .bodyTemplate="${this.contactsTemplate}"></igc-column> 
 
-          <igc-column field="HireDate" header="Hire Date" data-type="date" min-width="100px" sortable="true" .bodyTemplate="${
-            this.dateTemplate
-          }"></igc-column>
+          <igc-column field="HireDate" header="Hire Date" data-type="date" min-width="100px" sortable="true" .bodyTemplate="${this.dateTemplate}"></igc-column>
 
           <igc-column field="GrossSalary" header="Gross Salary" data-type="currency" min-width="100px" sortable="true"></igc-column></igc-column>
         </igc-tree-grid>
@@ -193,66 +151,5 @@ export default class HrPortal extends LitElement {
     `;
   }
 
-  static styles = css`
-    :host {
-      display: block;
-      height: 100%;
-      width: 100%;
-    }
-
-    .rootDiv {
-      width: 100%;
-      height: 100%;
-    }
-
-    .gridStyle {
-      --ig-size: var(--ig-size-medium);
-      --row-even-background: #ffffff;
-    }
-
-    .small {
-      --ig-size: var(--ig-size-small);
-    }
-
-    .medium {
-      --ig-size: var(--ig-size-medium);
-    }
-
-    .center-content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      height: 100%;
-      width: 100%;
-      gap: 8px;
-    }
-
-    .employeeDiv {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    igc-avatar::part(base) {
-      --size: 28px;
-    }
-
-    .flagDiv {
-      gap: 8px;
-      display: flex;
-    }
-
-    .flagDiv igc-icon {
-      height: 14px;
-      width: 18px;
-      display: flex;
-      align-items: center;
-      border-radius: 1px;
-      box-shadow: var(--ig-elevation-1);
-      display: flex;
-      justify-content: center;
-      overflow: hidden;
-    }
-  `;
+  static styles = unsafeCSS(styles);
 }
