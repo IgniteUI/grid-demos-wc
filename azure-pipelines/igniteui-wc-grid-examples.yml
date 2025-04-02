@@ -125,13 +125,13 @@ stages:
           targetType: 'inline'
           script: |
             echo "Running Ignite UI package upgrade at root level..."
-            npx ig upgrade-packages
+            npx ig upgrade-packages --skip-install
 
             echo "Running Ignite UI package upgrade in all project subdirectories..."
             for dir in $(Build.SourcesDirectory)/projects/*/; do
               if [ -d "$dir" ]; then
                 echo "Processing: $dir"
-                (cd "$dir" && npx ig upgrade-packages)
+                (cd "$dir" && npx ig upgrade-packages --skip-install)
               fi
             done
 
