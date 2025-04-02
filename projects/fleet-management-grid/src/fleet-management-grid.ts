@@ -75,9 +75,7 @@ export class FleetManagementGrid extends LitElement {
     registerIconFromText("clear", CLEAR, "material");
     registerIconFromText(check.name, check.value, "imx-icons");
     registerIconFromText(wrench.name, wrench.value, "imx-icons");
-    registerIconFromText(delivery.name, delivery.value, "imx-icons");
-    
-    this.vehiclesData = dataService.getVehiclesData();
+    registerIconFromText(delivery.name, delivery.value, "imx-icons");    
   }  
 
   firstUpdated() {
@@ -96,6 +94,14 @@ export class FleetManagementGrid extends LitElement {
     this.locationColumn.bodyTemplate = this.locationCellTemplate;
 
     this.mainGrid.detailTemplate = this.masterDetailTemplate
+  }
+
+  async connectedCallback() {
+    super.connectedCallback()
+    await dataService.loadAllData();
+    this.vehiclesData = dataService.getVehiclesData();
+
+    this.requestUpdate();
   }
 
   /** Utility Methods */
