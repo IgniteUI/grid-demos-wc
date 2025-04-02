@@ -166,7 +166,7 @@ stages:
           targetType: 'inline'
           script: |
             echo "Checking for ignite-ui-cli.json"
-            ls -alh $(Build.SourcesDirectory) | grep ignite-ui-cli.json || echo "File not found!"
+            cat $(Build.SourcesDirectory)/ignite-ui-cli.json
 
       # - task: Npm@1
       #   displayName: 'Upgrade Ignite UI Packages'
