@@ -1,15 +1,11 @@
 import { LitElement, css, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-
+import { customElement } from "lit/decorators.js";
 
 @customElement("app-sales-grid")
 export class SalesGrid extends LitElement {
   render() {
-    return html` <div>
-      Sales grid
-    </div> `;
+    return html` <div>Sales grid</div> `;
   }
-
 
   static styles = css`
     :host {
@@ -82,10 +78,4 @@ export class SalesGrid extends LitElement {
       }
     }
   `;
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    "my-element": MyElement;
-  }
 }

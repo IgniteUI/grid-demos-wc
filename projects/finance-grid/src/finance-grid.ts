@@ -1,102 +1,194 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, css, html } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
+import { dataService } from "./services/data.service";
+import { TRENDING_DOWN, TRENDING_UP } from "./assets/icons/icons";
+import { configureTheme, defineComponents, IgcAvatarComponent, IgcIconComponent, IgcInputComponent, IgcLinearProgressComponent, registerIconFromText } from "igniteui-webcomponents";
+import { FilteringLogic, IgcCellTemplateContext, IgcFilteringExpressionsTree, IgcGridComponent, IgcStringFilteringOperand } from "igniteui-webcomponents-grids/grids";
+import "igniteui-webcomponents-grids/grids/combined.js";
 
+defineComponents(IgcAvatarComponent, IgcIconComponent, IgcLinearProgressComponent, IgcInputComponent);
+configureTheme("bootstrap");
 
-/**
- * An example element.
- *
- * @slot - This element has a slot
- * @csspart button - The button
- */
-@customElement('app-finance-grid')
+@customElement("app-finance-grid")
 export default class FinanceGrid extends LitElement {
-  /**
-   * Copy for the read the docs hint.
-   */
-  @property()
-  docsHint = 'Click on the Vite and Lit logos to learn more'
+  constructor() {
+    super();
+    registerIconFromText("trending_up", TRENDING_UP, "material");
+    registerIconFromText("trending_down", TRENDING_DOWN, "material");
+    dataService.getFinanceData().then((data) => {
+      this.financeData = data;
+      // this.isLoading = false;
+    });
+    this._timer = setInterval(() => {
+      dataService.updateAllPrices(this.grid.data);
+      this.grid.markForCheck();
+    }, this.updateTimerInMs);
+  }
 
-  /**
-   * The number of times the button has been clicked.
-   */
-  @property({ type: Number })
-  count = 0
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    clearInterval(this._timer);
+  }
+  @query("igc-grid")
+  private grid!: IgcGridComponent;
+
+  @state()
+  private financeData = [];
+
+  // @state()
+  // private isLoading = true;
+  private profitLossValueClasses = {
+    profitCondition: this.profitConditionHandler,
+    lossCondition: this.lossConditionHandler,
+  };
+  private _timer!: ReturnType<typeof setInterval>;
+  private readonly updateTimerInMs = 3000;
+
+  private getPathToImage(val: string): string {
+    return `companies/${val.split(" ")[0]}.png`;
+  }
+
+  private assetTemplate = (ctx: IgcCellTemplateContext) => {
+    return html`
+      <div class="assets-container">
+        <igc-avatar .src=${this.getPathToImage(ctx.cell.value)} shape="rounded"></igc-avatar>
+        <span>${ctx.cell.value}</span>
+      </div>
+    `;
+  };
+
+  private renderIcon = (val: number) => {
+    return val >= 0 ? html`<igc-icon name="trending_up" collection="material"></igc-icon>` : html`<igc-icon name="trending_down" collection="material"></igc-icon>`;
+  };
+
+  private dailyChangePercentageTemplate = (ctx: IgcCellTemplateContext) => {
+    const percentageValue = (ctx.cell.value * 100).toFixed(2);
+    return html`
+      <div class="assets-container">
+        <div>${percentageValue}%</div>
+        ${this.renderIcon(ctx.cell.value)}
+      </div>
+    `;
+  };
+
+  private profitLossValueTemplate = (ctx: IgcCellTemplateContext) => {
+    const formattedValue = `${ctx.cell.value < 0 ? "-" : ""}$${Math.abs(ctx.cell.value).toFixed(2)}`;
+    return html`
+      <div class="assets-container">
+        <div>${formattedValue}</div>
+        ${this.renderIcon(ctx.cell.value)}
+      </div>
+    `;
+  };
+
+  private allocationTemplate = (ctx: IgcCellTemplateContext) => {
+    const percentageValue = (ctx.cell.value * 100).toFixed(2);
+
+    return html`
+      <div class="progress-container">
+        <div>${percentageValue}%</div>
+        <igc-linear-progress .value="${percentageValue}" animation-duration=${0} hide-label="${true}"></igc-linear-progress>
+      </div>
+    `;
+  };
+
+  private holdingPeriodTemplate = (ctx: IgcCellTemplateContext) => {
+    return html` <span>${ctx.cell.value} days</span> `;
+  };
+
+  private profitConditionHandler(rowData: any, columnKey: string) {
+    return rowData[columnKey] >= 0;
+  }
+
+  private lossConditionHandler(rowData: any, columnKey: string) {
+    return rowData[columnKey] < 0;
+  }
+
+  private filter(e: any) {
+    const value = e.target.value;
+    const expressionTree = new IgcFilteringExpressionsTree();
+    expressionTree.operator = FilteringLogic.Or;
+    const tickerExpression = {
+      condition: IgcStringFilteringOperand.instance().condition("contains"),
+      fieldName: "id",
+      searchVal: value,
+      ignoreCase: true,
+    };
+    const assetExpression = {
+      condition: IgcStringFilteringOperand.instance().condition("contains"),
+      fieldName: "holdingName",
+      searchVal: value,
+      ignoreCase: true,
+    };
+    expressionTree.filteringOperands.push(tickerExpression, assetExpression);
+    if (value) {
+      this.grid.filteringExpressionsTree = expressionTree;
+    } else {
+      this.grid.clearFilter();
+    }
+  }
 
   render() {
     return html`
-      <div>Finance</div>
-    `
+      <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css" />
+      <igc-grid .data="${this.financeData}" primary-key="id" row-selection="multiple" class="grid-sizing">
+        <igc-grid-toolbar>
+          <igc-grid-toolbar-title>Financial Portfolio</igc-grid-toolbar-title>
+          <igc-input type="search" placeholder="Filter by Asset" @igcInput="${this.filter}"></igc-input>
+          <igc-grid-toolbar-actions>
+            <igc-grid-toolbar-hiding></igc-grid-toolbar-hiding>
+            <igc-grid-toolbar-pinning></igc-grid-toolbar-pinning>
+            <igc-grid-toolbar-exporter></igc-grid-toolbar-exporter>
+          </igc-grid-toolbar-actions>
+        </igc-grid-toolbar>
+        <igc-column field="id" header="Symbol" ?sortable="${true}" width="7%"></igc-column>
+        <igc-column field="holdingName" header="Asset" ?sortable="${true}" width="15%" .bodyTemplate="${this.assetTemplate}"></igc-column>
+        <igc-column field="positions" header="Position" ?sortable="${true}" data-type="number" width="6%"></igc-column>
+        <igc-column field="value.boughtPrice" header="Average Cost/Share" data-type="currency" ?sortable="${true}" width="10%"></igc-column>
+        <igc-column field="value.currentPrice" header="Last Price" data-type="currency" ?sortable="${true}" width="7%"></igc-column>
+        <igc-column field="dailyPercentageChange" header="Daily Change %" .cellClasses="${this.profitLossValueClasses}" data-type="percent" .bodyTemplate=${this.dailyChangePercentageTemplate} ?sortable="${true}" width="10%"> </igc-column>
+        <igc-column field="marketValue" header="Market Value" data-type="currency" ?sortable="${true}" width="5%"></igc-column>
+        <igc-column field="profitLossValue" header="NET Profit/Loss" .bodyTemplate="${this.profitLossValueTemplate}" ?sortable="${true}" data-type="currency" width="10%" .cellClasses="${this.profitLossValueClasses}"></igc-column>
+        <igc-column field="profitLossPercentage" header="NET Profit/Loss %" ?sortable="${true}" data-type="percent" width="10%" .cellClasses="${this.profitLossValueClasses}" .bodyTemplate=${this.dailyChangePercentageTemplate}></igc-column>
+        <igc-column field="allocation" header="Allocation" ?sortable="${true}" data-type="percent" width="10%" .bodyTemplate="${this.allocationTemplate}"></igc-column>
+        <igc-column field="holdingPeriod" header="Holding Period" ?sortable="${true}" width="8%" .bodyTemplate="${this.holdingPeriodTemplate}"></igc-column>
+      </igc-grid>
+    `;
   }
 
   static styles = css`
     :host {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 2rem;
-      text-align: center;
+      display: block;
+      height: 100%;
+      width: 100%;
     }
 
-    .logo {
-      height: 6em;
-      padding: 1.5em;
-      will-change: filter;
-      transition: filter 300ms;
-    }
-    .logo:hover {
-      filter: drop-shadow(0 0 2em #646cffaa);
-    }
-    .logo.lit:hover {
-      filter: drop-shadow(0 0 2em #325cffaa);
+    .profitCondition {
+      color: var(--ig-success-500);
     }
 
-    .card {
-      padding: 2em;
+    .lossCondition {
+      color: var(--ig-error-500);
     }
 
-    .read-the-docs {
-      color: #888;
-    }
-
-    ::slotted(h1) {
-      font-size: 3.2em;
-      line-height: 1.1;
-    }
-
-    a {
-      font-weight: 500;
-      color: #646cff;
-      text-decoration: inherit;
-    }
-    a:hover {
-      color: #535bf2;
-    }
-
-    button {
-      border-radius: 8px;
-      border: 1px solid transparent;
-      padding: 0.6em 1.2em;
-      font-size: 1em;
-      font-weight: 500;
-      font-family: inherit;
-      background-color: #1a1a1a;
-      cursor: pointer;
-      transition: border-color 0.25s;
-    }
-    button:hover {
-      border-color: #646cff;
-    }
-    button:focus,
-    button:focus-visible {
-      outline: 4px auto -webkit-focus-ring-color;
-    }
-
-    @media (prefers-color-scheme: light) {
-      a:hover {
-        color: #747bff;
-      }
-      button {
-        background-color: #f9f9f9;
+    .assets-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      & igc-avatar {
+        --size: 24px;
       }
     }
-  `
+
+    .grid-sizing {
+      --ig-size: var(--ig-size-small);
+    }
+
+    .progress-container {
+      display: grid;
+      grid-template-columns: 0.5fr 1fr;
+      width: 100%;
+      gap: 0.5rem;
+    }
+  `;
 }
