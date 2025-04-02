@@ -111,47 +111,6 @@ stages:
           customCommand: 'install --legacy-peer-deps'
           customEndpoint: 'public proget'
 
-      # - task: PowerShell@2
-      #   displayName: 'Uninstall all IG trial packages & re-install their licensed variations'
-      #   inputs:
-      #     failOnStderr: true
-      #     showWarnings: true
-      #     workingDirectory: '$(Build.SourcesDirectory)'
-      #     targetType: 'inline'
-      #     script: |
-      #       $packageJson = Get-Content -Raw .\package.json | ConvertFrom-Json
-      #       $npmUninstallPackages = "npm uninstall --save "
-      #       $npmInstallPackages = "npm install --legacy-peer-deps "
-      #       $packageJson.dependencies.PSObject.Properties | `
-      #           Where-Object {
-      #               $_.Name.StartsWith("igniteui-webcomponents-") `
-      #           } | `
-      #           ForEach-Object { `
-      #               $npmUninstallPackages += $_.Name + " "
-      #               $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
-      #           }
-      #       #Cycle through .html files to do string find a replace
-      #       Get-ChildItem -Path .\projects -Recurse -Filter *.html| ForEach-Object {
-      #           $filePath = $_.FullName
-      #           $fileContent = Get-Content -Raw -Path $filePath
-      #           $updatedContent = $fileContent -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
-      #           $updatedContent | Set-Content -Path $filePath
-      #           Write-Host "Updated: $filePath"
-      #       }
-      #       #Cycle through .ts files to do string find a replace
-      #       Get-ChildItem -Path .\projects -Recurse -Filter *.ts | ForEach-Object {
-      #           $filePath = $_.FullName
-      #           $fileContent = Get-Content -Raw -Path $filePath
-      #           $updatedContent = $fileContent -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
-      #           $updatedContent | Set-Content -Path $filePath
-      #           Write-Host "Updated: $filePath"
-      #       }
-
-      #       Write-Host $npmUninstallPackages
-      #       Write-Host $npmInstallPackages
-      #       Invoke-Expression -Command "$npmUninstallPackages"
-      #       Invoke-Expression -Command "$npmInstallPackages"
-
       - task: Npm@1
         displayName: 'Install Ignite UI CLI globally'
         inputs:
@@ -159,22 +118,6 @@ stages:
           command: custom
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install -g igniteui-cli'
-
-      # - task: Npm@1
-      #   displayName: 'Upgrade Ignite UI Packages'
-      #   inputs:
-      #     verbose: ${{ parameters.isVerbose }}
-      #     command: custom
-      #     workingDir: '$(Build.SourcesDirectory)'
-      #     customCommand: 'npx ig upgrade-packages'
-
-      # - task: Bash@3
-      #   displayName: 'Run Ignite UI Upgrade with Explicit Path'
-      #   inputs:
-      #     targetType: 'inline'
-      #     script: |
-      #       echo "Running Ignite UI package upgrade..."
-      #       npx ig upgrade-packages
 
       - task: Bash@3
         displayName: 'Run Ignite UI Upgrade in Root and All Project Subdirectories'
@@ -191,14 +134,6 @@ stages:
                 (cd "$dir" && npx ig upgrade-packages)
               fi
             done
-
-      - task: Bash@3
-        displayName: 'Output package.json after upgrade'
-        inputs:
-          targetType: 'inline'
-          script: |
-            echo "Contents of package.json after upgrade:"
-            cat "$(Build.SourcesDirectory)/package.json"
 
       - task: Npm@1
         displayName: 'npm run build:ci'
