@@ -1,7 +1,9 @@
+import { TemplateDataItem, TemplateDataItemExtended } from "../models/TemplateDataItem";
+
 const DATA_URL = "https://staging.infragistics.com/grid-examples-data/data/erp/products.json";
 
 class ErpDataService {
-  public getErpData = async () => {
+  public async getErpData(): Promise<TemplateDataItemExtended[]> {
     try {
       const response = await fetch(DATA_URL);
       if (!response.ok) {
@@ -16,21 +18,21 @@ class ErpDataService {
 
         // calculate totalNetProfit
         record["totalNetProfit"] = this.calculateTotalNetProfit(record);
-
       });
 
       return currData;
+
     } catch (err) {
-      console.error(err);
+      throw new Error("Failed to fetch data");
     }
   };
 
-  private getLastMonthSoldUnits(product: any): void {
+  private getLastMonthSoldUnits(product: TemplateDataItem): number {
     const lastItemIndex = product.salesTrendData.length - 1;
     return product.salesTrendData[lastItemIndex].unitsSold;
   }
 
-  private calculateTotalNetProfit(product: any): number {
+  private calculateTotalNetProfit(product: TemplateDataItem): number {
     const unitsSold: number = product.unitsSold || 0;
     return unitsSold * (product.netPrice);
   }

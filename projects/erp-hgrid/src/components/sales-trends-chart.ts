@@ -1,14 +1,26 @@
-import { IgcCategoryXAxisComponent, IgcCategoryXAxisModule, IgcColumnSeriesComponent, IgcColumnSeriesModule, IgcDataChartCoreModule, IgcDataChartVisualDataModule, IgcNumericYAxisComponent, IgcNumericYAxisModule } from "igniteui-webcomponents-charts";
-import { ModuleManager } from "igniteui-webcomponents-core";
 import { css, html, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { ModuleManager } from "igniteui-webcomponents-core";
+import { 
+  IgcCategoryXAxisComponent, 
+  IgcCategoryXAxisModule, 
+  IgcColumnSeriesComponent, 
+  IgcColumnSeriesModule, 
+  IgcDataChartCoreModule, 
+  IgcDataChartInteractivityModule, 
+  IgcDataChartVisualDataModule, 
+  IgcNumericYAxisComponent, 
+  IgcNumericYAxisModule
+ } from "igniteui-webcomponents-charts";
+
 
 ModuleManager.register(
     IgcDataChartCoreModule,
     IgcCategoryXAxisModule,
     IgcNumericYAxisModule,
     IgcColumnSeriesModule,
-    IgcDataChartVisualDataModule
+    IgcDataChartVisualDataModule,
+    IgcDataChartInteractivityModule
   );
 
 @customElement("app-sales-trends-chart")
@@ -21,52 +33,65 @@ export class GridChart extends LitElement {
     @query("igc-column-series", true) series!: IgcColumnSeriesComponent;
 
     render() {
-        return html`
-        <igc-data-chart width="100%" height="100%"
+      return html`
+        <igc-data-chart 
+          width="100%" 
+          height="100%"
           plot-area-background="transparent"
-          highlightingMode="FadeOthersSpecific"
-          highlightingBehavior="NearestItemsAndSeries">
+          highlighting-mode="FadeOthersSpecific"
+          highlighting-behavior="NearestItemsAndSeries">
   
           <igc-category-x-axis 
             id="xAxis"
             name="xAxis"
-            .dataSource=${this.trendData}
-              label="month"
-              label-visibility="collapsed"
-              gap=".4"
-              stroke="transparent">
+            label="month"
+            label-visibility="collapsed"
+            gap=".4"
+            stroke="transparent"
+            .dataSource=${this.trendData}>
           </igc-category-x-axis>
   
           <igc-numeric-y-axis
-              id="yAxis"
-              name="yAxis"
-              label-visibility="collapsed"
-              major-stroke="transparent"
-              stroke="transparent"
-              >
+            id="yAxis"
+            name="yAxis"
+            label-visibility="collapsed"
+            major-stroke="transparent"
+            stroke="transparent">
           </igc-numeric-y-axis>
   
           <igc-column-series
-             x-axis-name="xAxis"
-             y-axis-name="yAxis"
-              .dataSource=${this.trendData}
-              radiusX="2"
-              radiusY="2"
-              title="Sold Units"
-              value-member-path="unitsSold"
-              .showDefaultTooltip="${true}"
-              brush="#8A8A8A"
-              outline="#8A8A8A"
-              highlighting-mode="fadeOthersOnHover"
-              highlighting-fade-opacity="0.3">
+            x-axis-name="xAxis"
+            y-axis-name="yAxis"
+            radiusX="2"
+            radiusY="2"
+            title="Sold Units"
+            value-member-path="unitsSold"
+            show-default-tooltip="true"
+            brush="#8A8A8A"
+            outline="#8A8A8A"
+            highlighting-mode="fadeOthersOnHover"
+            highlighting-fade-opacity="0.3"
+            .dataSource=${this.trendData}>
           </igc-column-series>
-      </igc-data-chart>
+        </igc-data-chart>
       `;
     }
 
     static styles = css`
-        :host { 
-          width: 100%;
-          height: 100%; }
+      :host { 
+        width: 100%;
+        height: 100%;
+      }
+
+
+      igc-tooltip-container {
+        background-color: white;
+        color: black;
+        padding: 8px 12px;
+        font-size: 12px;
+        border: 1px solid black;
+        border-radius: 2px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      }
     `;
 }
