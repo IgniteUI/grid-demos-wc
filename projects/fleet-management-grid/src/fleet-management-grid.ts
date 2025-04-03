@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
-import { dataService } from "./services/data-service";
+import { dataService } from "./services/data.service";
 import { IgcCellTemplateContext, IgcColumnComponent, IgcGridComponent, IgcGridMasterDetailContext, SortingDirection } from 'igniteui-webcomponents-grids/grids';
 import { configureTheme, defineComponents, IgcAvatarComponent, IgcBadgeComponent, IgcButtonComponent, IgcCardComponent, IgcCarouselComponent, IgcDividerComponent, IgcIconComponent, IgcSelectComponent, IgcSelectHeaderComponent, IgcSelectItemComponent, IgcTabsComponent, registerIconFromText } from "igniteui-webcomponents";
 import { check, delivery, wrench } from '@igniteui/material-icons-extended';

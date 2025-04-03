@@ -2,7 +2,7 @@ import { configureTheme, defineComponents, IgcAvatarComponent, IgcBadgeComponent
 import { IgcCellTemplateContext, IgcColumnComponent } from "igniteui-webcomponents-grids/grids";
 import { css, html, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { dataService } from "../services/data-service";
+import { dataService } from "../services/data.service";
 import 'igniteui-webcomponents-grids/grids/combined.js';
 
 defineComponents(IgcAvatarComponent, IgcBadgeComponent)
