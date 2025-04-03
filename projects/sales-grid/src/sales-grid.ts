@@ -441,6 +441,7 @@ export class SalesGrid extends LitElement {
                     <div class="pivotContainer">
                         <igc-pivot-grid
                             id="salesGrid"
+                            .isLoading="${!this.salesData.length}"
                             .data="${this.salesData}"
                             .superCompactMode="${true}"
                             .defaultExpandState="${true}"
