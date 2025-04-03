@@ -29,7 +29,6 @@ import {
   IgcColumnSeriesModule,
   IgcDataChartVisualDataModule
 } from 'igniteui-webcomponents-charts';
-import { ModuleManager } from "igniteui-webcomponents-core";
 import './sales-trends-chart';
 import { FullAddressFilteringOperand } from '../custom-filtering-operands';
 import { TemplateDataItemExtended } from '../models/TemplateDataItem';
@@ -37,14 +36,8 @@ import { OrderStatus } from '../models/OrderStatus';
 import { erpDataService } from "../services/erp-data.service";
 import { DataPoint } from '../models/DataPoint';
 import { OrderDetails } from '../models/OrderDetails';
+import { BadgeVariant } from '../models/BadgeVariant';
 
-ModuleManager.register(
-  IgcDataChartCoreModule,
-  IgcCategoryXAxisModule,
-  IgcNumericYAxisModule,
-  IgcColumnSeriesModule,
-  IgcDataChartVisualDataModule
-);
 
 defineComponents(
   IgcAvatarComponent, 
@@ -173,44 +166,49 @@ export default class ErpHierarchicalGrid extends LitElement {
       </igc-grid-toolbar>`;
   }
 
+  private getOrderStatusBadgeVariant = (status: string): BadgeVariant => {
+    switch (status) {
+        case this.orderStatus.PACKED:
+            return "primary";
+        case this.orderStatus.IN_TRANSIT:
+          return "warning";
+        case this.orderStatus.CUSTOMS:
+          return "danger";
+        case this.orderStatus.DELIVERED:
+          return "success";
+        default:
+            return "primary";
+    }
+  };
+
+  private getOrderStatusIconName = (status: string): string => {
+    switch (status) {
+        case this.orderStatus.PACKED:
+            return "dropbox";
+        case this.orderStatus.IN_TRANSIT:
+          return "delivery";
+        case this.orderStatus.CUSTOMS:
+          return "bill-paid";
+        case this.orderStatus.DELIVERED:
+          return "check";
+        default:
+            return "dropbox";
+    }
+  };
+
   private statusTemplate = (ctx: IgcCellTemplateContext) => {
     const cellValue: string = ctx.cell.value;
+    const badgeVariant: BadgeVariant = this.getOrderStatusBadgeVariant(cellValue);
+    const iconName: string = this.getOrderStatusIconName(cellValue);
 
     return html`
       <div class="status-cell">
           <span>
           <igc-badge
-            variant="primary"
-            shape="rounded"
-            ?hidden="${cellValue !== this.orderStatus.PACKED}"
-          >
-            <igc-icon name="dropbox" collection="material" class="custom-icon"></igc-icon>
+            variant="${badgeVariant}"
+            shape="rounded">
+            <igc-icon name="${iconName}" collection="material" class="custom-icon"></igc-icon>
           </igc-badge>
-
-          <igc-badge
-            variant="warning"
-            shape="rounded"
-            ?hidden="${cellValue !== this.orderStatus.IN_TRANSIT}"
-          >
-            <igc-icon name="delivery" collection="material" class="custom-icon"></igc-icon>
-          </igc-badge>
-
-          <igc-badge
-            variant="danger"
-            shape="rounded"
-            ?hidden="${cellValue !== this.orderStatus.CUSTOMS}"
-          >
-            <igc-icon name="bill-paid" collection="material" class="custom-icon"></igc-icon>
-          </igc-badge>
-
-          <igc-badge
-            variant="success"
-            shape="rounded"
-            ?hidden="${cellValue !== this.orderStatus.DELIVERED}"
-          >
-            <igc-icon name="check" collection="material" class="custom-icon"></igc-icon>
-          </igc-badge>
-
           </span>
           <span>${cellValue}</span>
       </div>
@@ -281,7 +279,6 @@ export default class ErpHierarchicalGrid extends LitElement {
     });
 
     tooltip.style.display = 'block';
-    tooltip.style.zIndex = '9999';
   }
 
   private hideTooltip = (): void => {
@@ -298,8 +295,7 @@ export default class ErpHierarchicalGrid extends LitElement {
           primary-key="sku" 
           row-selection="multiple"
           width="100%"
-          height="1000px"
-          row-height="32px"
+          height="100%"
           allow-filtering="${true}"
           allow-advanced-filtering="${true}"
           moving="${true}"
@@ -514,14 +510,12 @@ export default class ErpHierarchicalGrid extends LitElement {
       margin: 0 auto;
       padding: 2rem;
       text-align: center;
-      height: 1800px;
+      height: 100%;
       width: 100%;
     }
 
     #hierarchicalGrid {
       --ig-size: var(--ig-size-medium);
-      height: 100%;
-      width: 100%;
 
       igc-badge[variant="primary"]::part(base) {
         background-color: var(--ig-primary-50);
@@ -545,7 +539,6 @@ export default class ErpHierarchicalGrid extends LitElement {
       justify-content: center;
 
       img {
-        border: 1px solid pink;
         height: 22px;
         border-radius: 4px;
       }
@@ -591,6 +584,7 @@ export default class ErpHierarchicalGrid extends LitElement {
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
       border-radius: 4px;
       font-size: 90%;
+      z-index: 9999;
       animation: fadeIn 0.4s ease-in-out forwards;
 
       .dialog-header {
