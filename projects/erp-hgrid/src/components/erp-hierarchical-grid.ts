@@ -22,13 +22,6 @@ import {
   IgcGridComponent, 
   SortingDirection 
 } from "igniteui-webcomponents-grids/grids";
-import { 
-  IgcDataChartCoreModule,
-  IgcCategoryXAxisModule,
-  IgcNumericYAxisModule,
-  IgcColumnSeriesModule,
-  IgcDataChartVisualDataModule
-} from 'igniteui-webcomponents-charts';
 import './sales-trends-chart';
 import { FullAddressFilteringOperand } from '../custom-filtering-operands';
 import { TemplateDataItemExtended } from '../models/TemplateDataItem';
