@@ -130,6 +130,10 @@ stages:
                     $npmUninstallPackages += $_.Name + " "
                     $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
                 }
+            #Update vite.config.ts
+            $viteConfig = Get-Content -Raw ./vite.config.ts
+            $updatedViteConfig = $viteConfig -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
+            $updatedViteConfig | Set-Content ./vite.config.ts
             #Cycle through .html files to do string find a replace
             Get-ChildItem -Path .\projects -Recurse -Filter *.html| ForEach-Object {
                 $filePath = $_.FullName
