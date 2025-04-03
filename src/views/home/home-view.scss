@@ -31,6 +31,7 @@
 .tab-container {
   width: 100%;
   min-height: 132px;
+  overflow: hidden;
   flex-shrink: 0;
   padding: 16px;
   display: flex;
@@ -130,6 +131,7 @@
   }
 
   a {
+    width: unset;
     padding-bottom: 2px;
     transition: background-size 350ms;
     background: linear-gradient(0deg, var(--bg-color), var(--bg-color)) no-repeat right bottom / 0 var(--bg-h);
@@ -160,4 +162,36 @@
   font-weight: 700;
   font-family: "aktiv-grotesk", sans-serif;
   line-height: 20px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+
+  & .tooltip--text {
+    visibility: hidden;
+    background: #85888fe6;
+    box-shadow: rgba(36, 37, 44, 0.2) 0px 2px 2px 0px;
+    color: white;
+    padding: 4px 8px;
+    font-size: .625rem;
+    border-radius: 4px;
+    min-height: 24px;
+    top: 100%;
+    left: 50%;
+    width: 120px;
+    transform: translateX(-50%) translateY(5px);
+    text-align: center;
+    position: absolute;
+    z-index: 1;
+    font-family: var(--ig-font-family);
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  &:hover > .tooltip--text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    visibility: visible;
+    transition-delay: 1s;
+  }
 }
