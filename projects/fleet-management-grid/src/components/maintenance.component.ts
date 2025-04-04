@@ -88,9 +88,5 @@ export class TripHistoryGrid extends LitElement {
             padding-left: 8px;
             color: var(--primary-text-color);
         }
-
-        .child-grid {
-        
-        }
     `;
 }
