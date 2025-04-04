@@ -111,46 +111,37 @@ stages:
           customCommand: 'install --legacy-peer-deps'
           customEndpoint: 'public proget'
 
-      - task: PowerShell@2
-        displayName: 'Uninstall all IG trial packages & re-install their licensed variations'
+      - task: Npm@1
+        displayName: 'Install Ignite UI CLI globally'
         inputs:
-          failOnStderr: true
-          showWarnings: true
-          workingDirectory: '$(Build.SourcesDirectory)'
+          verbose: ${{ parameters.isVerbose }}
+          command: custom
+          workingDir: '$(Build.SourcesDirectory)'
+          customCommand: 'install -g igniteui-cli'
+
+      - task: Bash@3
+        displayName: 'Run Ignite UI Upgrade in Root and All Project Subdirectories'
+        inputs:
           targetType: 'inline'
           script: |
-            $packageJson = Get-Content -Raw .\package.json | ConvertFrom-Json
-            $npmUninstallPackages = "npm uninstall --save "
-            $npmInstallPackages = "npm install --legacy-peer-deps "
-            $packageJson.dependencies.PSObject.Properties | `
-                Where-Object {
-                    $_.Name.StartsWith("igniteui-webcomponents-") `
-                } | `
-                ForEach-Object { `
-                    $npmUninstallPackages += $_.Name + " "
-                    $npmInstallPackages += "@infragistics/" + $_.Name + "@" + $_.Value + " "
-                }
-            #Cycle through .html files to do string find a replace
-            Get-ChildItem -Path .\projects -Recurse -Filter *.html| ForEach-Object {
-                $filePath = $_.FullName
-                $fileContent = Get-Content -Raw -Path $filePath
-                $updatedContent = $fileContent -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
-                $updatedContent | Set-Content -Path $filePath
-                Write-Host "Updated: $filePath"
-            }
-            #Cycle through .ts files to do string find a replace
-            Get-ChildItem -Path .\projects -Recurse -Filter *.ts | ForEach-Object {
-                $filePath = $_.FullName
-                $fileContent = Get-Content -Raw -Path $filePath
-                $updatedContent = $fileContent -replace '(?<!@infragistics/)igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
-                $updatedContent | Set-Content -Path $filePath
-                Write-Host "Updated: $filePath"
-            }
+            echo "Running Ignite UI package upgrade at root level..."
+            npx ig upgrade-packages --skip-install
 
-            Write-Host $npmUninstallPackages
-            Write-Host $npmInstallPackages
-            Invoke-Expression -Command "$npmUninstallPackages"
-            Invoke-Expression -Command "$npmInstallPackages"
+            echo "Running Ignite UI package upgrade in all project subdirectories..."
+            for dir in $(Build.SourcesDirectory)/projects/*/; do
+              if [ -d "$dir" ]; then
+                echo "Processing: $dir"
+                (cd "$dir" && npx ig upgrade-packages --skip-install)
+              fi
+            done
+
+      - task: Npm@1
+        displayName: 'npm install --legacy-peer-deps'
+        inputs:
+          verbose: ${{ parameters.isVerbose }}
+          command: custom
+          workingDir: '$(Build.SourcesDirectory)'
+          customCommand: 'install --legacy-peer-deps'
 
       - task: Npm@1
         displayName: 'npm run build:ci'
