@@ -74,7 +74,7 @@ export class TripHistoryGrid extends LitElement {
         return;
         }
 
-        const driverDetails = dataService.getDriverData(driverName);
+        const driverDetails = dataService.findDriverByName(driverName);
 
         if (!driverDetails) {
         console.error(`No data found for driver: ${driverName}`);

@@ -98,10 +98,12 @@ export class FleetManagementGrid extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback()
-    await dataService.loadAllData();
-    this.vehiclesData = dataService.getVehiclesData();
+    dataService.getVehiclesData().then(() => {
+      this.vehiclesData = dataService.vehicleList;
+      this.requestUpdate();
+    });
 
-    this.requestUpdate();
+    dataService.loadOptionalData();
   }
 
   /** Utility Methods */
@@ -190,14 +192,14 @@ export class FleetManagementGrid extends LitElement {
 
         <igc-tab-panel id="trip-history">
           <trip-history-grid 
-            .tripHistoryData="${ dataService.getTripHistoryData(ctx.implicit.vehicleId) }"
+            .tripHistoryData="${ dataService.findTripHistoryById(ctx.implicit.vehicleId) }"
             @driver-cell-click="${(event: CustomEvent) => this.showDriverOverlay(event)}">
           </trip-history-grid>
         </igc-tab-panel>
 
 
         <igc-tab-panel id="maintenance">
-          <maintenance-grid .maintenanceData="${ dataService.getMaintenanceData(ctx.implicit.vehicleId) }"></maintenance-grid>
+          <maintenance-grid .maintenanceData="${ dataService.findMaintenanceDataById(ctx.implicit.vehicleId) }"></maintenance-grid>
         </igc-tab-panel>
 
 
@@ -226,7 +228,7 @@ export class FleetManagementGrid extends LitElement {
                   labels-position="OutsideEnd"
                   radius-factor="0.7"
                   label-extent="15"
-                  .dataSource="${dataService.getCostsPerTypeData(ctx.implicit.vehicleId, this.periods[ctx.implicit.vehicleId]?.costPerTypePeriod || Period.YTD)}"
+                  .dataSource="${dataService.findCostsPerTypeData(ctx.implicit.vehicleId, this.periods[ctx.implicit.vehicleId]?.costPerTypePeriod || Period.YTD)}"
                   actual-label-outer-color="#ededed"
                   >
                 </igc-pie-chart>
@@ -250,7 +252,7 @@ export class FleetManagementGrid extends LitElement {
                 <igc-category-chart
                   name="chart"
                   class="chart-canvas"
-                  .dataSource="${ dataService.getCostsPerMeterData(ctx.implicit.vehicleId, this.periods[ctx.implicit.vehicleId]?.costPerMeterPeriod || Period.YTD)}"
+                  .dataSource="${ dataService.findCostsPerMeterData(ctx.implicit.vehicleId, this.periods[ctx.implicit.vehicleId]?.costPerMeterPeriod || Period.YTD)}"
                   chart-type="Area"
                   is-horizontal-zoom-enabled="false"
                   is-vertical-zoom-enabled="false"
@@ -319,7 +321,7 @@ export class FleetManagementGrid extends LitElement {
                 id="chart"
                 chart-type="Column"
                 .legend="${this.legend}"
-                .dataSource="${ dataService.getUtilizationData(ctx.implicit.vehicleId)}"
+                .dataSource="${ dataService.findUtilizationDataById(ctx.implicit.vehicleId)}"
                 y-axis-title="Miles"
                 is-horizontal-zoom-enabled="false"
                 is-vertical-zoom-enabled="false"
@@ -374,7 +376,7 @@ export class FleetManagementGrid extends LitElement {
       return;
     }
 
-    const vehicle = dataService.getVehiclesData().find(v => v.vehicleId === vehicleId)
+    const vehicle = this.vehiclesData.find(v => v.vehicleId === vehicleId)
 
     if (!vehicle) {
       console.error(`No vehicle found for ID: ${vehicleId}`);
