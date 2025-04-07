@@ -3,7 +3,7 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 export default defineConfig(({ mode }) => {
   let base = "/";
   if (mode === "ci") {
-    base = "/webcomponents-grid-examples";
+    base = "/webcomponents-grid-examples/";
   }
   return {
     base,

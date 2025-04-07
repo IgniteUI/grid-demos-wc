@@ -144,19 +144,19 @@ export default class HomeView extends LitElement {
       <div class="demo-container">
         <div class="tab-container ">
           <div class="tab-item-container">
-            <a href="/home/inventory">${this.tabItemTemplate("inventory")} </a>
+            <a href="${import.meta.env.BASE_URL}home/inventory">${this.tabItemTemplate("inventory")} </a>
           </div>
           <div class="tab-item-container">
-            <a href="/home/hr-portal">${this.tabItemTemplate("hr-portal")} </a>
+            <a href="${import.meta.env.BASE_URL}home/hr-portal">${this.tabItemTemplate("hr-portal")} </a>
           </div>
           <div class="tab-item-container">
-            <a href="/home/finance">${this.tabItemTemplate("finance")} </a>
+            <a href="${import.meta.env.BASE_URL}home/finance">${this.tabItemTemplate("finance")} </a>
           </div>
           <div class="tab-item-container">
-            <a href="/home/sales">${this.tabItemTemplate("sales")} </a>
+            <a href="${import.meta.env.BASE_URL}home/sales">${this.tabItemTemplate("sales")} </a>
           </div>
           <div class="tab-item-container">
-            <a href="/home/fleet">${this.tabItemTemplate("fleet")} </a>
+            <a href="${import.meta.env.BASE_URL}home/fleet">${this.tabItemTemplate("fleet")} </a>
           </div>
         </div>
         <div class="router-container">
