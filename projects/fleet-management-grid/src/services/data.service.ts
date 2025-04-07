@@ -1,3 +1,10 @@
+import { CostRecord } from "../models/cost.model";
+import { Driver } from "../models/driver.model";
+import { MaintenanceHistory } from "../models/maintenance-history.model";
+import { Trip, TripHistory } from "../models/trip-history.model";
+import { UtilizationRecord } from "../models/utilization.model";
+import { Vehicle } from "../models/vehicle.model";
+
 const VEHICLE_DATA_URL =
   'https://www.infragistics.com/grid-examples-data/data/fleet/vehicles.json';
 const DRIVERS_DATA_URL =
@@ -12,12 +19,12 @@ const TRIP_HISTORY_DATA_URL =
   'https://www.infragistics.com/grid-examples-data/data/fleet/trip_history.json';
 
 export class DataService {
-    private vehiclesRecords: any[] = [];
-    private driverRecords: any[] = [];
-    private tripHistoryRecords: any[] = [];
-    private maintenanceRecords: any[] = [];
-    private costRecords: any[] = [];
-    private utilizationRecords: any[] = [];
+    private vehiclesRecords: Vehicle[] = [];
+    private driverRecords: Driver[] = [];
+    private tripHistoryRecords: TripHistory[] = [];
+    private maintenanceRecords: MaintenanceHistory[] = [];
+    private costRecords: CostRecord[] = [];
+    private utilizationRecords: UtilizationRecord[] = [];
 
     private fuelCostsCache: { [key: string]: any[] } = {};
 
@@ -71,7 +78,7 @@ export class DataService {
     }
 
     public findDriverByName(driverName: string) {
-      return this.driverRecords.find((d: any) => d.name === driverName)
+      return this.driverRecords.find((d: Driver) => d.name === driverName)
     }
 
     public getDriverPhoto(driverName: string) {
@@ -79,20 +86,20 @@ export class DataService {
     }
 
     public findTripHistoryById(vehicleId: string) {
-      return this.tripHistoryRecords.find((d: any) => d.vehicleId === vehicleId)?.tripHistory;
+      return this.tripHistoryRecords.find((d: TripHistory) => d.vehicleId === vehicleId)?.tripHistory;
     }
 
     public findMaintenanceDataById(vehicleId: string) {
-      return this.maintenanceRecords.find((d: any) => d.vehicleId === vehicleId)?.maintenance;
+      return this.maintenanceRecords.find((d: MaintenanceHistory) => d.vehicleId === vehicleId)?.maintenance;
     }
 
     public findCostsPerTypeData(vehicleId: string, period: any) {
-      const item = this.costRecords.find((d: any) => d.vehicleId === vehicleId);
+      const item = this.costRecords.find((d: CostRecord) => d.vehicleId === vehicleId);
       return item?.costPerType?.[period] || [];
     }
 
     public findCostsPerMeterData(vehicleId: string, period: any) {
-      const item = this.costRecords.find((d: any) => d.vehicleId === vehicleId);
+      const item = this.costRecords.find((d: CostRecord) => d.vehicleId === vehicleId);
       return item?.costsPerMeterPerQuarter?.[period] || [];
     }
 
@@ -102,7 +109,7 @@ export class DataService {
         return this.fuelCostsCache[cacheKey];
       }
   
-      const item = this.costRecords.find((d: any) => d.vehicleId === vehicleId);
+      const item = this.costRecords.find((d: CostRecord) => d.vehicleId === vehicleId);
       const fuelCosts = item?.fuelCostsPerMonth || [];
   
       let result: any[] = [];
@@ -127,7 +134,7 @@ export class DataService {
     }
 
     public findUtilizationDataById(vehicleId: string) {
-      const item = this.utilizationRecords.find((d: any) => d.vehicleId === vehicleId);
+      const item = this.utilizationRecords.find((d: UtilizationRecord) => d.vehicleId === vehicleId);
       return item ? item.utilization : [];
     }
 

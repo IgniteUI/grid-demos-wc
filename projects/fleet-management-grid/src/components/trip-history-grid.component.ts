@@ -4,6 +4,7 @@ import { css, html, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { dataService } from "../services/data.service";
 import 'igniteui-webcomponents-grids/grids/combined.js';
+import { Trip } from "../models/trip-history.model";
 
 defineComponents(IgcAvatarComponent, IgcBadgeComponent)
 configureTheme('material');
@@ -15,7 +16,7 @@ export class TripHistoryGrid extends LitElement {
         super();        
     }
 
-    @property({ type: Array }) tripHistoryData: any[] = []
+    @property({ type: Array }) tripHistoryData: Trip[] | undefined = []
 
     @query("#id-column") idColumn!: IgcColumnComponent;
     @query("#driver-column") driverColumn!: IgcColumnComponent;

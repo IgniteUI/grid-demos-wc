@@ -16,10 +16,11 @@ import DRIVER_CATEGORIES from './assets/driver_categories.json'
 import { Period } from "./models/enums";
 import { ChartType } from "./models/enums";
 import { IgcCategoryChartModule, IgcDataChartInteractivityModule, IgcLegendComponent, IgcLegendModule, IgcPieChartModule } from "igniteui-webcomponents-charts";
-import { VehicleDetails } from "./models/vehicle-details.interface";
+import { OverlayVehicle, VehicleDetails } from "./models/vehicle.model";
 import { IgcGeographicMapComponent, IgcGeographicMapModule, IgcGeographicSymbolSeriesComponent, IgcGeographicSymbolSeriesModule } from "igniteui-webcomponents-maps";
 import { computePosition, flip, offset, shift } from "@floating-ui/dom";
-import { DriverDetails } from "./models/driver-details.interface";
+import { Driver } from "./models/driver.model";
+import { Vehicle } from "./models/vehicle.model";
 
 
 defineComponents(IgcIconComponent, IgcButtonComponent, IgcIconComponent, IgcAvatarComponent, IgcBadgeComponent, IgcTabsComponent, IgcCarouselComponent, IgcDividerComponent, IgcSelectComponent, IgcSelectItemComponent, IgcSelectHeaderComponent, IgcCardComponent)
@@ -43,22 +44,22 @@ export class FleetManagementGrid extends LitElement {
   @query('#location-column') locationColumn!: IgcColumnComponent;
   @query('#legend') legend!: IgcLegendComponent;
   @query('#map') map!: IgcGeographicMapComponent
-  @query('#locationOverlay') locationOverlay!: any;
-  @query('#driverOverlay') driverOverlay!: any;
-  @query('#overlayBackdrop') overlayBackdrop!: any
+  @query('#locationOverlay') locationOverlay!: HTMLElement;
+  @query('#driverOverlay') driverOverlay!: HTMLElement;
+  @query('#overlayBackdrop') overlayBackdrop!: HTMLElement
 
   /** Data & References */
 
-  private vehiclesData: any[] = [];
+  private vehiclesData: Vehicle[] = [];
   private lastOverlayTrigger: any;
-  private vehicleDetails: VehicleDetails = {
+  private vehicleDetails: OverlayVehicle = {
     vehiclePhoto: '',
     make: '',
     model: '',
     mileage: '',
     markerLocations: []
   }
-  private driverDetails: DriverDetails = {
+  private driverDetails: Driver = {
     name: "",
     license: "",
     address: "",
@@ -138,7 +139,7 @@ export class FleetManagementGrid extends LitElement {
   /** Templates */
 
   private masterDetailTemplate = (ctx: IgcGridMasterDetailContext) => {
-    const images: any[] = this.getPathToCarImage(ctx.implicit.vehicleId)
+    const images: string[] = this.getPathToCarImage(ctx.implicit.vehicleId)
 
     return html`
       <igc-tabs>

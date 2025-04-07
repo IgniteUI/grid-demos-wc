@@ -4,6 +4,7 @@ import { css, html, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import 'igniteui-webcomponents-grids/grids/combined.js';
 import { check, gitIssue } from "@igniteui/material-icons-extended";
+import { Maintenance } from "../models/maintenance-history.model";
 
 
 defineComponents(IgcBadgeComponent, IgcIconComponent)
@@ -18,7 +19,7 @@ export class TripHistoryGrid extends LitElement {
         registerIconFromText(gitIssue.name, gitIssue.value, 'imx-icons');
     }
 
-    @property({ type: Array }) maintenanceData: any[] = [];
+    @property({ type: Array }) maintenanceData: Maintenance[] | undefined = [];
 
     @query("#id-column") idColumn!: IgcColumnComponent;
     @query("#type-column") typeColumn!: IgcColumnComponent;
