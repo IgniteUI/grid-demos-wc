@@ -9,7 +9,8 @@ export default class FinanceView extends LitElement {
     super();
   }
   render() {
-    return html` <iframe src="/finance"></iframe> `;
+    const iframeSrc = `${import.meta.env.BASE_URL}finance`;
+    return html` <iframe src=${iframeSrc}></iframe> `;
   }
 
   static styles = unsafeCSS(namedStyles);

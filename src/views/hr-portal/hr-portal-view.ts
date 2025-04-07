@@ -9,7 +9,9 @@ export default class HrPortalView extends LitElement {
     super();
   }
   render() {
-    return html` <iframe src="/hr-portal"></iframe> `;
+    const iframeSrc = `${import.meta.env.BASE_URL}hr-portal`;
+
+    return html` <iframe src=${iframeSrc}></iframe> `;
   }
 
   static styles = unsafeCSS(namedStyles);

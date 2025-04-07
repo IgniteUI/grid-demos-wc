@@ -1,7 +1,12 @@
 import { defineConfig } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 export default defineConfig(({ mode }) => {
+  let base = "/";
+  if (mode === "ci") {
+    base = "/webcomponents-grid-examples";
+  }
   return {
+    base,
     resolve: {
       alias: {
         "igniteui-theming": new URL("./node_modules/igniteui-theming", import.meta.url).pathname,
