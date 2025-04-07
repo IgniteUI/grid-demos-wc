@@ -53,7 +53,7 @@ export default class FinanceGrid extends LitElement {
   private readonly updateTimerInMs = 3000;
 
   private getPathToImage(val: string): string {
-    return `/companies/${val.split(" ")[0]}.png`;
+    return `${import.meta.env.BASE_URL}companies/${val.split(" ")[0]}.png`;
   }
 
   private assetTemplate = (ctx: IgcCellTemplateContext) => {
@@ -132,7 +132,7 @@ export default class FinanceGrid extends LitElement {
     configureTheme("bootstrap");
 
     return html`
-      <link rel="stylesheet" href="/themes/bootstrap.css" />
+      <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/bootstrap.css" />
       <igc-grid .data="${this.financeData}" primary-key="id" row-selection="multiple" class="grid-sizing">
         <igc-grid-toolbar>
           <igc-grid-toolbar-title>Financial Portfolio</igc-grid-toolbar-title>

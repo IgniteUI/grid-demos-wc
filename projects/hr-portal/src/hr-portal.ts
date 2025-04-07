@@ -97,7 +97,7 @@ export default class HrPortal extends LitElement {
     configureTheme("fluent");
 
     return html`
-      <link rel="stylesheet" href="/themes/fluent.css" />
+      <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/fluent.css" />
       <div class="ig-typography rootDiv">
         <igc-tree-grid
           id="treeGrid"
