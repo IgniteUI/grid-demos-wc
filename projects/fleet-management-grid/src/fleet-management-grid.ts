@@ -16,7 +16,7 @@ import DRIVER_CATEGORIES from './assets/driver_categories.json'
 import { Period } from "./models/enums";
 import { ChartType } from "./models/enums";
 import { IgcCategoryChartModule, IgcDataChartInteractivityModule, IgcLegendComponent, IgcLegendModule, IgcPieChartModule } from "igniteui-webcomponents-charts";
-import { OverlayVehicle, VehicleDetails } from "./models/vehicle.model";
+import { OverlayVehicle } from "./models/vehicle.model";
 import { IgcGeographicMapComponent, IgcGeographicMapModule, IgcGeographicSymbolSeriesComponent, IgcGeographicSymbolSeriesModule } from "igniteui-webcomponents-maps";
 import { computePosition, flip, offset, shift } from "@floating-ui/dom";
 import { Driver } from "./models/driver.model";

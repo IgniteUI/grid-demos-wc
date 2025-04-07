@@ -1,7 +1,7 @@
 import { CostRecord } from "../models/cost.model";
 import { Driver } from "../models/driver.model";
 import { MaintenanceHistory } from "../models/maintenance-history.model";
-import { Trip, TripHistory } from "../models/trip-history.model";
+import { TripHistory } from "../models/trip-history.model";
 import { UtilizationRecord } from "../models/utilization.model";
 import { Vehicle } from "../models/vehicle.model";
 
