@@ -124,6 +124,11 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
+            #Update vite.config.ts
+            $viteConfig = Get-Content -Raw ./vite.config.ts
+            $updatedViteConfig = $viteConfig -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
+            $updatedViteConfig | Set-Content ./vite.config.ts
+            
             echo "Running Ignite UI package upgrade at root level..."
             npx ig upgrade-packages --skip-install
 
