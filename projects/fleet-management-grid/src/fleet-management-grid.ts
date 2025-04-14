@@ -39,9 +39,6 @@ export class FleetManagementGrid extends LitElement {
   /** Query Selectors */
 
   @query('#main-grid') mainGrid!: IgcGridComponent;
-  @query('#make-column') makeColumn!: IgcColumnComponent;
-  @query('#status-column') statusColumn!: IgcColumnComponent;
-  @query('#location-column') locationColumn!: IgcColumnComponent;
   @query('#legend') legend!: IgcLegendComponent;
   @query('#map') map!: IgcGeographicMapComponent
   @query('#locationOverlay') locationOverlay!: HTMLElement;
@@ -89,12 +86,6 @@ export class FleetManagementGrid extends LitElement {
     });    
 
     this.hasSorting = this.mainGrid.sortingExpressions.length > 0;
-
-    this.makeColumn.bodyTemplate = this.makeCellTemplate;
-    this.statusColumn.bodyTemplate = this.statusCellTemplate;
-    this.locationColumn.bodyTemplate = this.locationCellTemplate;
-
-    this.mainGrid.detailTemplate = this.masterDetailTemplate
   }
 
   async connectedCallback() {
@@ -601,7 +592,7 @@ export class FleetManagementGrid extends LitElement {
   render() {
     return html`
     <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/dark/material.css" />
-    <igc-grid class="main-grid" id="main-grid" .data="${ this.vehiclesData }" height="100%" width="100%">
+    <igc-grid class="main-grid" id="main-grid" .data="${ this.vehiclesData }" height="100%" width="100%" .detailTemplate="${this.masterDetailTemplate}">
       <igc-grid-toolbar>
         <igc-grid-toolbar-title>Fleet Management</igc-grid-toolbar-title>
         <igc-button
@@ -620,13 +611,13 @@ export class FleetManagementGrid extends LitElement {
       </igc-grid-toolbar>
       <igc-column field="vehicleId" header="Vehicle ID" sortable="true" width="9%"></igc-column>
       <igc-column field="licensePlate" header="License Plate" sortable="true" width="9%"></igc-column>
-      <igc-column id="make-column" field="make" header="Make" sortable="true" width="11%"></igc-column>
+      <igc-column id="make-column" field="make" header="Make" sortable="true" width="11%" .bodyTemplate="${this.makeCellTemplate}"></igc-column>
       <igc-column field="model" header="Model" sortable="true" width="8%"></igc-column>
       <igc-column field="type" header="Type" sortable="true" width="10%"></igc-column>
       <igc-column field="vin" header="VIN" width="14%"></igc-column>
-      <igc-column id="status-column" field="status" header="Status" sortable="true" width="14%"></igc-column>
+      <igc-column id="status-column" field="status" header="Status" sortable="true" width="14%" .bodyTemplate="${this.statusCellTemplate}"></igc-column>
       <igc-column field="locationCity" header="Location (City)" sortable="true" width="11%"></igc-column>
-      <igc-column id="location-column" field="locationGps" header="Location (GPS)" width="14%"></igc-column>
+      <igc-column id="location-column" field="locationGps" header="Location (GPS)" width="14%" .bodyTemplate="${this.locationCellTemplate}"></igc-column>
     </igc-grid>
 
     <div class="overlay-backdrop" id="overlayBackdrop"></div>

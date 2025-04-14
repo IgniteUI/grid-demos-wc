@@ -21,17 +21,6 @@ export class TripHistoryGrid extends LitElement {
 
     @property({ type: Array }) maintenanceData: Maintenance[] | undefined = [];
 
-    @query("#id-column") idColumn!: IgcColumnComponent;
-    @query("#type-column") typeColumn!: IgcColumnComponent;
-
-    firstUpdated() {
-        this.typeColumn.bodyTemplate = this.typeCellTemplate;
-
-        this.idColumn.cellStyles = this.rightAlignedCellStyles;
-        this.idColumn.headerStyles = this.rightAlignedHeaderStyles;
-
-    }
-
     private typeCellTemplate = (ctx: IgcCellTemplateContext) => {
         const value = ctx.implicit
         return html`
@@ -70,11 +59,11 @@ export class TripHistoryGrid extends LitElement {
         return html`
             <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/dark/material.css" />
             <igc-grid class="child-grid" .data="${ this.maintenanceData }" height="100%" width="100%">
-                <igc-column id="id-column" field="id" header="ID" width="5%"></igc-column>
+                <igc-column id="id-column" field="id" header="ID" width="5%" .cellStyles="${this.rightAlignedCellStyles}" .headerStyles="${this.rightAlignedHeaderStyles}"></igc-column>
                 <igc-column field="event" header="Event" width="23%"></igc-column>
                 <igc-column field="date" header="Date" width="10%"></igc-column>
                 <igc-column field="location" header="Location" width="10%"></igc-column>
-                <igc-column id="type-column" field="type" header="Type" width="12%"></igc-column>
+                <igc-column id="type-column" field="type" header="Type" width="12%" .bodyTemplate="${this.typeCellTemplate}"></igc-column>
                 <igc-column field="remarks" header="Remarks" width="40%"></igc-column>
             </igc-grid>
         `

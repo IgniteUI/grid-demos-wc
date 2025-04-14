@@ -18,30 +18,6 @@ export class TripHistoryGrid extends LitElement {
 
     @property({ type: Array }) tripHistoryData: Trip[] | undefined = []
 
-    @query("#id-column") idColumn!: IgcColumnComponent;
-    @query("#driver-column") driverColumn!: IgcColumnComponent;
-    @query("#start-meter-column") startMeterColumn!: IgcColumnComponent;
-    @query("#end-meter-column") endMeterColumn!: IgcColumnComponent;
-    @query("#distance-column") distanceColumn!: IgcColumnComponent;
-    @query("#total-time-column") totalTimeColumn!: IgcColumnComponent;
-
-    firstUpdated() {
-        this.idColumn.cellStyles = this.rightAlignedCellStyles;
-        this.startMeterColumn.cellStyles = this.rightAlignedCellStyles;
-        this.endMeterColumn.cellStyles = this.rightAlignedCellStyles;
-        this.distanceColumn.cellStyles = this.rightAlignedCellStyles;
-        this.totalTimeColumn.cellStyles = this.rightAlignedCellStyles;
-
-
-        this.idColumn.headerStyles = this.rightAlignedHeaderStyles;
-        this.startMeterColumn.headerStyles = this.rightAlignedHeaderStyles;
-        this.endMeterColumn.headerStyles = this.rightAlignedHeaderStyles;
-        this.distanceColumn.headerStyles = this.rightAlignedHeaderStyles;
-        this.totalTimeColumn.headerStyles = this.rightAlignedHeaderStyles;
-
-        this.driverColumn.bodyTemplate = this.driverCellTemplate;
-    }
-
     private rightAlignedCellStyles = {
         'justify-content': 'flex-end',
         'display': 'flex'
@@ -104,16 +80,16 @@ export class TripHistoryGrid extends LitElement {
         return html`
             <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/dark/material.css" />
             <igc-grid class="child-grid" .data="${this.tripHistoryData}" height="${null}" width="100%">
-                <igc-column id="id-column" field="id" header="ID" width="5%"></igc-column>
-                <igc-column id="driver-column" field="driverName" header="Driver" width="18%"></igc-column>
+                <igc-column field="id" header="ID" width="5%" .cellStyles="${this.rightAlignedCellStyles}" .headerStyles="${this.rightAlignedHeaderStyles}"></igc-column>
+                <igc-column field="driverName" header="Driver" width="18%" .bodyTemplate="${this.driverCellTemplate}"></igc-column>
                 <igc-column field="start" header="Start" width="9%"></igc-column>
                 <igc-column field="end" header="End" width="9%"></igc-column>
                 <igc-column field="startLocation" header="Start Location" width="10%"></igc-column>
                 <igc-column field="endLocation" header="End Location" width="10%"></igc-column>
-                <igc-column id="start-meter-column" field="startMeter" header="Start Meter" width="9.5%"></igc-column>
-                <igc-column id="end-meter-column" field="endMeter" header="End Meter" width="9.5%"></igc-column>
-                <igc-column id="distance-column" field="distance" header="Distance" width="9%"></igc-column>
-                <igc-column id="total-time-column" field="totalTime" header="Total Time" width="9%"></igc-column>
+                <igc-column field="startMeter" header="Start Meter" width="9.5%" .cellStyles="${this.rightAlignedCellStyles}" .headerStyles="${this.rightAlignedHeaderStyles}"></igc-column>
+                <igc-column field="endMeter" header="End Meter" width="9.5%" .cellStyles="${this.rightAlignedCellStyles}" .headerStyles="${this.rightAlignedHeaderStyles}"></igc-column>
+                <igc-column field="distance" header="Distance" width="9%" .cellStyles="${this.rightAlignedCellStyles}" .headerStyles="${this.rightAlignedHeaderStyles}"></igc-column>
+                <igc-column field="totalTime" header="Total Time" width="9%" .cellStyles="${this.rightAlignedCellStyles}" .headerStyles="${this.rightAlignedHeaderStyles}"></igc-column>
             </igc-grid>
         `
     }
