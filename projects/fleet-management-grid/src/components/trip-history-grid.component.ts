@@ -1,7 +1,7 @@
 import { configureTheme, defineComponents, IgcAvatarComponent, IgcBadgeComponent } from "igniteui-webcomponents";
-import { IgcCellTemplateContext, IgcColumnComponent } from "igniteui-webcomponents-grids/grids";
+import { IgcCellTemplateContext } from "igniteui-webcomponents-grids/grids";
 import { css, html, LitElement } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { dataService } from "../services/data.service";
 import 'igniteui-webcomponents-grids/grids/combined.js';
 import { Trip } from "../models/trip-history.model";

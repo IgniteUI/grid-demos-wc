@@ -1,7 +1,7 @@
 import { configureTheme, defineComponents, IgcBadgeComponent, IgcIconComponent, registerIconFromText } from "igniteui-webcomponents";
-import { IgcCellTemplateContext, IgcColumnComponent } from "igniteui-webcomponents-grids/grids";
+import { IgcCellTemplateContext } from "igniteui-webcomponents-grids/grids";
 import { css, html, LitElement } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import 'igniteui-webcomponents-grids/grids/combined.js';
 import { check, gitIssue } from "@igniteui/material-icons-extended";
 import { Maintenance } from "../models/maintenance-history.model";
