@@ -27,7 +27,7 @@ export class TripHistoryGrid extends LitElement {
             ${value === "Regular"
                 ? html`
                     <igc-badge variant="success">
-                        <igc-icon class="icon-style" collection="imx-icons" name="check"></igc-icons>
+                        <igc-icon class="icon-style" collection="imx-icons" name="check"></igc-icon>
                     </igc-badge>
                 `
                 : ""
