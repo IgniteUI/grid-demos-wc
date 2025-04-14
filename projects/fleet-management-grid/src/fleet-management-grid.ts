@@ -21,6 +21,7 @@ import { IgcGeographicMapComponent, IgcGeographicMapModule, IgcGeographicSymbolS
 import { computePosition, flip, offset, shift } from "@floating-ui/dom";
 import { Driver } from "./models/driver.model";
 import { Vehicle } from "./models/vehicle.model";
+import { STATUS_ICON_MAP, STATUS_TYPE_MAP } from "./models/status.mapping";
 
 
 defineComponents(IgcIconComponent, IgcButtonComponent, IgcIconComponent, IgcAvatarComponent, IgcBadgeComponent, IgcTabsComponent, IgcCarouselComponent, IgcDividerComponent, IgcSelectComponent, IgcSelectItemComponent, IgcSelectHeaderComponent, IgcCardComponent)
@@ -551,21 +552,11 @@ export class FleetManagementGrid extends LitElement {
   /** Data Helpers */
 
   private getStatusType(status: string): string {
-    const types: Record<string, string> = {
-      "Available": "success",
-      "In Maintenance": "danger",
-      "Active": "info",
-    };
-    return types[status] || "default";
+    return STATUS_TYPE_MAP[status] || "default";
   }
 
   private getStatusIcon(status: string): string {
-    const icons: Record<string, string> = {
-      "Available": "check",
-      "In Maintenance": "wrench",
-      "Active": "delivery"
-    };
-    return icons[status] || "info";
+    return STATUS_ICON_MAP[status] || "info";
   }
 
   private getPathToCarImage(vehicleId: string): string[] {
