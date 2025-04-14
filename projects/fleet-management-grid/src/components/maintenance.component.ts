@@ -22,28 +22,15 @@ export class TripHistoryGrid extends LitElement {
     @property({ type: Array }) maintenanceData: Maintenance[] | undefined = [];
 
     private typeCellTemplate = (ctx: IgcCellTemplateContext) => {
-        const value = ctx.implicit
+        const value = ctx.implicit;
+        const variant = value === "Regular" ? "success" : "warning";
+        const iconName = value === "Regular" ? "check" : "git-issue";
         return html`
-            ${value === "Regular"
-                ? html`
-                    <igc-badge variant="success">
-                        <igc-icon class="icon-style" collection="imx-icons" name="check"></igc-icon>
-                    </igc-badge>
-                `
-                : ""
-            }
-
-            ${value === "Incident"
-                ? html`
-                    <igc-badge variant="warning">
-                      <igc-icon class="icon-style" collection="imx-icons" name="git-issue"></igc-icon>
-                    </igc-badge>
-                  `
-                : ""
-            }
-
+            <igc-badge .variant="${variant}">
+                <igc-icon class="icon-style" collection="imx-icons" .name="${iconName}"></igc-icon>
+            </igc-badge>
             <span class="status-value">${value}</span>
-        `;
+        `;        
     }
 
     private rightAlignedCellStyles = {
