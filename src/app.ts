@@ -9,7 +9,9 @@ import "./views/home/home-view";
 export default class App extends LitElement {
   firstUpdated() {
     const outlet = this.shadowRoot?.querySelector("router-outlet");
-    const router = new Router(outlet);
+    const router = new Router(outlet, {
+      baseUrl: "/webcomponents-grid-examples/",
+    });
     router.setRoutes(routes);
   }
 
