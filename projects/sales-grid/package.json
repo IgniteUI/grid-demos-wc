@@ -11,11 +11,10 @@
   },
   "dependencies": {
     "lit": "^3.2.1",
-    "rxjs": "~7.8.0",
     "igniteui-webcomponents": "~5.2.4",
-    "igniteui-webcomponents-core": "5.2.1-beta.0",
-    "igniteui-webcomponents-grids": "5.2.1-beta.0",
-    "igniteui-webcomponents-inputs": "5.2.1-beta.0"
+    "igniteui-webcomponents-core": "5.4.0",
+    "igniteui-webcomponents-grids": "5.4.0",
+    "igniteui-webcomponents-inputs": "5.4.0"
   },
   "devDependencies": {
     "typescript": "~5.7.2",

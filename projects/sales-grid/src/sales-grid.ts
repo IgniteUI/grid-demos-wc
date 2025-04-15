@@ -93,8 +93,38 @@ export class SalesGrid extends LitElement {
     public exportDropdownOpen = false;
 
     public flagsData = FLAGS;
-    public brandFilter = new IgcFilteringExpressionsTree();
-    public bulgariaCountryFilter = new IgcFilteringExpressionsTree();
+    public brandFilter: IgcFilteringExpressionsTree = {
+        operator: FilteringLogic.Or,
+        fieldName: 'Brand',
+        filteringOperands: [
+            {
+                operator: FilteringLogic.Or,
+                fieldName: 'Brand',
+                filteringOperands: [
+                    {
+                        condition: IgcStringFilteringOperand.instance().condition('equals'),
+                        fieldName: 'Brand',
+                        searchVal: 'HM'
+                    },
+                    {
+                        condition: IgcStringFilteringOperand.instance().condition('equals'),
+                        fieldName: 'Brand',
+                        searchVal: 'HM Home'
+                    }
+                ]
+            } 
+        ]
+    };
+    public bulgariaCountryFilter: IgcFilteringExpressionsTree = {
+        operator: FilteringLogic.And,
+        filteringOperands: [
+            {
+                condition: IgcStringFilteringOperand.instance().condition('equals'),
+                fieldName: 'Country',
+                searchVal: 'Bulgaria'
+            },
+        ]
+    };
     // public excelExporter = new IgcExcelExporterService();
     // public csvExporter = new IgcCsvExporterService();
 
@@ -189,8 +219,7 @@ export class SalesGrid extends LitElement {
             {
                 enabled: true,
                 memberName: 'Brand',
-                displayName: 'Brand',
-                filter: this.brandFilter
+                displayName: 'Brand'
             },
             {
                 enabled: false,
@@ -213,6 +242,14 @@ export class SalesGrid extends LitElement {
         values: [
             this.saleValue,
             this.profitValue
+        ],
+        filters: [
+            {
+                enabled: true,
+                memberName: 'Brand',
+                displayName: 'Brand',
+                filter: this.brandFilter
+            },
         ]
     };
     public pivotConfigBrandsCombined: IgcPivotConfiguration = {
@@ -313,33 +350,6 @@ export class SalesGrid extends LitElement {
         registerIcon("visibility", VISIBILITY_SVG, "material");
         registerIcon("file_download", FILE_DOWNLOAD_SVG, "custom");
 
-        //
-        var multipleFilters = new IgcFilteringExpressionsTree();
-        multipleFilters.operator = FilteringLogic.Or;
-        multipleFilters.fieldName = 'Brand';
-        multipleFilters.filteringOperands = [
-            {
-                condition: IgcStringFilteringOperand.instance().condition('equals'),
-                fieldName: 'Brand',
-                searchVal: 'HM'
-            },
-            {
-                condition: IgcStringFilteringOperand.instance().condition('equals'),
-                fieldName: 'Brand',
-                searchVal: 'HM Home'
-            },
-        ];
-        this.brandFilter.operator = FilteringLogic.Or;
-        this.brandFilter.fieldName = 'Brand';
-        this.brandFilter.filteringOperands = [multipleFilters];
-        this.bulgariaCountryFilter.operator = FilteringLogic.And;
-        this.bulgariaCountryFilter.filteringOperands = [
-            {
-                condition: IgcStringFilteringOperand.instance().condition('equals'),
-                fieldName: 'Country',
-                searchVal: 'Bulgaria'
-            },
-        ];
     }
 
     protected firstUpdated(_changedProperties: PropertyValues): void {
@@ -367,7 +377,6 @@ export class SalesGrid extends LitElement {
 
     public onViewSelection(event: CustomEvent<IgcDropdownItemComponent>) {
         this.selectedConfig = <PivotViews>event.detail.id;
-        this.pivotGrid.pivotConfiguration = this.availableConfigs.get(this.selectedConfig)?.config || this.pivotConfigBrands;
     }
 
     public onExportSelection(/*event: CustomEvent<IgcDropdownItemComponent>*/) {
@@ -445,7 +454,7 @@ export class SalesGrid extends LitElement {
                             .data="${this.salesData}"
                             .superCompactMode="${true}"
                             .defaultExpandState="${true}"
-                            .pivotConfiguration="${this.pivotConfigBrands}"
+                            .pivotConfiguration="${this.availableConfigs.get(this.selectedConfig)?.config}"
                             @columnInit="${this.onColumnInit}">
                         </igc-pivot-grid>
                     </div>
