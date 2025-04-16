@@ -11,17 +11,20 @@
     "dev:hr": "vite projects/hr-portal",
     "dev:sales": "vite projects/sales-grid",
     "build": "tsc && vite build",
-    "build:ci": "tsc && vite build --base /webcomponents-grid-examples/",
+    "build:ci": "tsc && vite build --mode ci",
     "preview": "vite preview"
   },
   "dependencies": {
     "@vaadin/router": "^2.0.0",
-    "igniteui-webcomponents": "^5.3.0-RC.1",
     "igniteui-webcomponents-charts": "^5.3.0",
+    "igniteui-theming": "^17.0.0",
+    "igniteui-webcomponents": "^5.3.0",
     "igniteui-webcomponents-grids": "^5.3.0",
-    "lit": "^3.2.1"
+    "lit": "^3.2.1",
+    "sass": "^1.86.0"
   },
   "devDependencies": {
+    "sass-embedded": "^1.86.0",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
     "vite-plugin-static-copy": "^2.3.0"

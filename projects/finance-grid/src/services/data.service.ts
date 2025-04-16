@@ -1,4 +1,4 @@
-const DATA_URL = "https://staging.infragistics.com/grid-examples-data/data/finance/finance.json";
+const DATA_URL = "https://www.infragistics.com/grid-examples-data/data/finance/finance.json";
 
 class DataService {
   public getFinanceData = async () => {
