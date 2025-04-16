@@ -1,17 +1,15 @@
 import { css, html, LitElement } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { ModuleManager } from "igniteui-webcomponents-core";
 import { 
-  IgcCategoryXAxisComponent, 
   IgcCategoryXAxisModule, 
-  IgcColumnSeriesComponent, 
   IgcColumnSeriesModule, 
   IgcDataChartCoreModule, 
   IgcDataChartInteractivityModule, 
-  IgcDataChartVisualDataModule, 
-  IgcNumericYAxisComponent, 
+  IgcDataChartVisualDataModule,
   IgcNumericYAxisModule
  } from "igniteui-webcomponents-charts";
+import { DataPoint } from "../models/DataPoint";
 
 
 ModuleManager.register(
@@ -26,11 +24,7 @@ ModuleManager.register(
 @customElement("app-sales-trends-chart")
 export class GridChart extends LitElement {
 
-    @property({ type: Array }) trendData: any[] = [];
-
-    @query("#xAxis", true) xAxis!: IgcCategoryXAxisComponent;
-    @query("#yAxis", true) yAxis!: IgcNumericYAxisComponent;
-    @query("igc-column-series", true) series!: IgcColumnSeriesComponent;
+    @property({ type: Array }) trendData: DataPoint[] = [];
 
     render() {
       return html`
@@ -69,7 +63,6 @@ export class GridChart extends LitElement {
             show-default-tooltip="true"
             brush="#8A8A8A"
             outline="#8A8A8A"
-            highlighting-mode="fadeOthersOnHover"
             highlighting-fade-opacity="0.3"
             .dataSource=${this.trendData}>
           </igc-column-series>

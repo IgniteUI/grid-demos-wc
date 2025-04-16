@@ -1,6 +1,6 @@
 import { TemplateDataItem, TemplateDataItemExtended } from "../models/TemplateDataItem";
 
-const DATA_URL = "https://staging.infragistics.com/grid-examples-data/data/erp/products.json";
+const DATA_URL = "https://www.infragistics.com/grid-examples-data/data/erp/products.json";
 
 class ErpDataService {
   public async getErpData(): Promise<TemplateDataItemExtended[]> {
@@ -12,7 +12,7 @@ class ErpDataService {
       }
       const currData = await response.json();
 
-      currData.forEach((record: any) => {
+      currData.forEach((record: TemplateDataItem) => {
         // Set unitsSold
         record["unitsSold"] = this.getLastMonthSoldUnits(record);
 
