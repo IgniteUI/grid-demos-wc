@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit'
+import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, query, state } from 'lit/decorators.js'
 import { computePosition, offset, shift, flip } from '@floating-ui/dom';
 import { DROPBOX, DELIVERY, BILL_PAID, CHECK } from "../assets/icons/icons";
@@ -14,7 +14,7 @@ import {
   IgcInputComponent, 
   IgcLinearProgressComponent, 
   IgcRatingComponent, 
-  registerIconFromText
+  registerIconFromText,
 } from "igniteui-webcomponents";
 import { 
   GridSelectionMode, 
@@ -31,7 +31,7 @@ import { erpDataService } from "../services/erp-data.service";
 import { DataPoint } from '../models/DataPoint';
 import { OrderDetails } from '../models/OrderDetails';
 import { BadgeVariant } from '../models/BadgeVariant';
-import { erpGridStyles } from './erp-hierarchical-grid.styles';
+import erpStyles from "./erp-hierarchical-grid.scss?inline";
 
 
 defineComponents(
@@ -44,7 +44,7 @@ defineComponents(
   IgcDialogComponent,
   IgcButtonComponent
 );
-configureTheme("material");
+// configureTheme("material");
 
 @customElement('app-erp-hgrid')
 export default class ErpHierarchicalGrid extends LitElement {
@@ -281,8 +281,12 @@ export default class ErpHierarchicalGrid extends LitElement {
   }
 
   render() {
+    configureTheme("material");
+
     return html`
-      <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/material.css" />
+
+      <!-- <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/material.css" /> -->
+      <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/material.css" />
 
       <igc-hierarchical-grid
           id="hierarchicalGrid"
@@ -498,7 +502,5 @@ export default class ErpHierarchicalGrid extends LitElement {
     `;
   }
 
-  static styles = [
-    erpGridStyles,
-  ]
+  static styles = unsafeCSS(erpStyles);
 }
