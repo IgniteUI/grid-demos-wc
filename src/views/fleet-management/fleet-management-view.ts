@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
-import "../../../projects/fleet-management-grid/src/fleet-management-grid";
+import "../../../projects/fleet-management-grid/src/components/fleet-management/fleet-management-grid";
 
 @customElement("fleet-management-view")
 export default class FinanceView extends LitElement {

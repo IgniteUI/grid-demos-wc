@@ -1,27 +1,27 @@
 import { LitElement, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
-import { dataService } from "./services/data.service";
+import { dataService } from "../../services/data.service";
 import { IgcCellTemplateContext, IgcGridComponent, IgcGridMasterDetailContext, SortingDirection } from 'igniteui-webcomponents-grids/grids';
 import { configureTheme, defineComponents, IgcAvatarComponent, IgcBadgeComponent, IgcButtonComponent, IgcCardComponent, IgcCarouselComponent, IgcDividerComponent, IgcIconComponent, IgcSelectComponent, IgcSelectHeaderComponent, IgcSelectItemComponent, IgcTabsComponent, registerIconFromText } from "igniteui-webcomponents";
 import { check, delivery, wrench } from '@igniteui/material-icons-extended';
 import { DataTemplateMeasureInfo, DataTemplateRenderInfo, IgDataTemplate, ModuleManager } from "igniteui-webcomponents-core";
-import "./components/trip-history-grid.component";
-import "./components/maintenance.component"
+import "../trip-history-grid.component";
+import "../maintenance.component"
 import 'igniteui-webcomponents-grids/grids/combined.js';
-import { CLEAR } from "./assets/icons/icons";
-import CAR_PHOTO_MANIFEST from './assets/car_photo_manifest.json';
-import CAR_IMAGES from './assets/car_images.json';
-import VEHICLE_DETAILS from './assets/vehicle_details.json';
-import DRIVER_CATEGORIES from './assets/driver_categories.json'
-import { Period } from "./models/enums";
-import { ChartType } from "./models/enums";
+import { CLEAR } from "../../assets/icons/icons";
+import CAR_PHOTO_MANIFEST from '../../assets/car_photo_manifest.json';
+import CAR_IMAGES from '../../assets/car_images.json';
+import VEHICLE_DETAILS from '../../assets/vehicle_details.json';
+import DRIVER_CATEGORIES from '../../assets/driver_categories.json'
+import { Period } from "../../models/enums";
+import { ChartType } from "../../models/enums";
 import { IgcCategoryChartModule, IgcDataChartInteractivityModule, IgcLegendComponent, IgcLegendModule, IgcPieChartModule } from "igniteui-webcomponents-charts";
-import { OverlayVehicle } from "./models/vehicle.model";
+import { OverlayVehicle } from "../../models/vehicle.model";
 import { IgcGeographicMapComponent, IgcGeographicMapModule, IgcGeographicSymbolSeriesComponent, IgcGeographicSymbolSeriesModule } from "igniteui-webcomponents-maps";
 import { computePosition, flip, offset, shift } from "@floating-ui/dom";
-import { Driver } from "./models/driver.model";
-import { Vehicle } from "./models/vehicle.model";
-import { STATUS_ICON_MAP, STATUS_TYPE_MAP } from "./models/status.mapping";
+import { Driver } from "../../models/driver.model";
+import { Vehicle } from "../../models/vehicle.model";
+import { STATUS_ICON_MAP, STATUS_TYPE_MAP } from "../../models/status.mapping";
 import { fleetManagementGridStyles } from "./fleet-management-grid.styles";
 
 
