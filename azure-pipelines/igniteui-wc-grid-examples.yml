@@ -119,6 +119,19 @@ stages:
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install -g igniteui-cli'
 
+      - task: PowerShell@2
+        displayName: 'Update vite.config to licensed'
+        inputs:
+          failOnStderr: true
+          showWarnings: true
+          workingDirectory: '$(Build.SourcesDirectory)'
+          targetType: 'inline'
+          script: |
+            #Update vite.config.ts
+            $viteConfig = Get-Content -Raw ./vite.config.ts
+            $updatedViteConfig = $viteConfig -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
+            $updatedViteConfig | Set-Content ./vite.config.ts
+
       - task: Bash@3
         displayName: 'Run Ignite UI Upgrade in Root and All Project Subdirectories'
         inputs:
