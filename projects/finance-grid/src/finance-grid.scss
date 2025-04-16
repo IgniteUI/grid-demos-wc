@@ -1,0 +1,46 @@
+@use "./styles/utils" as *;
+@use "igniteui-theming" as *;
+@use "igniteui-theming/sass/typography/presets/bootstrap" as *;
+@use "igniteui-theming/sass/elevations/presets" as *;
+@use "igniteui-theming/sass/color/presets/light/bootstrap" as *;
+
+:host {
+  height: 100%;
+  width: 100%;
+  font-family: var(--ig-font-family);
+  @include theme($palette, $material-elevations, $typeface, $type-scale, "light");
+}
+
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.profitCondition {
+  color: var(--ig-success-500);
+}
+
+.lossCondition {
+  color: var(--ig-error-500);
+}
+
+.assets-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  & igc-avatar {
+    --size: 24px;
+  }
+}
+
+.grid-sizing {
+  --ig-size: var(--ig-size-small);
+}
+
+.progress-container {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  width: 100%;
+  gap: 0.5rem;
+}

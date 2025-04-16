@@ -1,11 +1,12 @@
 import { Route } from "@vaadin/router";
 
 export const routes: Route[] = [
-  { path: "/", redirect: "/home/inventory" },
+  { path: "", redirect: "home" },
   {
-    path: "/home",
+    path: "home",
     component: "home-view",
     children: [
+      { path: "", redirect: "home/finance" },
       { path: "inventory", component: "erp-hgrid-view" },
       { path: "finance", component: "finance-view" },
       { path: "hr-portal", component: "hr-portal-view" },
@@ -13,10 +14,12 @@ export const routes: Route[] = [
       { path: "fleet", component: "fleet-management-view" },
     ],
   },
-  { path: "/invetory", component: "app-erp-hgrid" },
-  { path: "/finance", component: "app-finance-grid" },
-  { path: "/hr-portal", component: "app-hr-portal" },
-  { path: "/sales", component: "app-sales-grid" },
-  { path: "/fleet", component: "app-fleet-management" },
-  { path: "(.*)", redirect: "/home/inventory" }, // Fallback
+  { path: "inventory", component: "app-erp-hgrid" },
+  { path: "finance", component: "app-finance-grid" },
+  { path: "hr-portal", component: "app-hr-portal" },
+  { path: "sales", component: "app-sales-grid" },
+  { path: "fleet", component: "app-fleet-management" },
+
+  // Fallback route
+  { path: "(.*)", redirect: "home" },
 ];
