@@ -89,8 +89,6 @@ export class SalesGrid extends LitElement {
 
     @state()
     public viewDropdownOpen = false;
-    @state()
-    public exportDropdownOpen = false;
 
     public flagsData = FLAGS;
     public brandFilter: IgcFilteringExpressionsTree = {
@@ -363,23 +361,7 @@ export class SalesGrid extends LitElement {
     }
 
     public onExportDropdownButton(event: MouseEvent) {
-        this.exportDropdown.toggle(event.currentTarget as HTMLElement);
-        this.exportDropdownOpen = !this.exportDropdownOpen;
-    }
-
-    public onViewDropdownVisibility(_: CustomEvent<void>) {
-        this.viewDropdownOpen = !this.viewDropdownOpen;
-    }
-
-    public onExportDropdownVisibility(_: CustomEvent<void>) {
-        this.exportDropdownOpen = !this.exportDropdownOpen;
-    }
-
-    public onViewSelection(event: CustomEvent<IgcDropdownItemComponent>) {
-        this.selectedConfig = <PivotViews>event.detail.id;
-    }
-
-    public onExportSelection(/*event: CustomEvent<IgcDropdownItemComponent>*/) {
+        // TO DO
         // To uncomment once Excel and CSV exporter are available in WC
         // let options!: IgcExporterOptionsBase;
         // const newId = event.detail.id;
@@ -390,13 +372,21 @@ export class SalesGrid extends LitElement {
         //     options = new IgcExcelExporterOptions(this.fileName);
         //     this.excelExporter.export(this.pivotGrid, options);
         // }
-        this.exportDropdown.clearSelection();
+    }
+
+    public onViewDropdownVisibility(_: CustomEvent<void>) {
+        this.viewDropdownOpen = !this.viewDropdownOpen;
+    }
+
+    public onViewSelection(event: CustomEvent<IgcDropdownItemComponent>) {
+        this.selectedConfig = <PivotViews>event.detail.id;
     }
 
     public onColumnInit(event: CustomEvent<IgcColumnComponent>) {
         const col = event.detail;
         var countryKeys = Object.keys(this.flagsData);
         if (countryKeys.includes(col.field)) {
+            // TO DO
             // col.headerTemplate = (_: IgcColumnTemplateContext) => html`
             //     <div class="countryHeader">
             //         <img class="countryImage" src="${(<any>this.flagsData)[col.field]}" /><span>${col.field}</span>
@@ -432,17 +422,12 @@ export class SalesGrid extends LitElement {
                         </igc-button>
                         <igc-button variant="outlined" @click="${this.onExportDropdownButton}">
                             <igc-icon name="file_download" collection="custom"></igc-icon>
-                            Export
-                            <igc-icon .name="${this.exportDropdownOpen ? "arrow_up" : "arrow_down" }" collection="material"></igc-icon>
+                            Export to Excel
                         </igc-button>
                         <igc-dropdown id="viewDropdown"  @igcChange="${this.onViewSelection}" @igcClosed="${this.onViewDropdownVisibility}">
                             ${repeat(this.availableConfigs, (configInfo) => configInfo[0], (configInfo, _) => html`
                                 <igc-dropdown-item id="${configInfo[0]}" ?selected="${this.selectedConfig === configInfo[0]}"><span>${this.availableConfigs.get(configInfo[0])?.title}</span></igc-dropdown-item>
                             `)}
-                        </igc-dropdown>
-                        <igc-dropdown id="exportDropdown"  @igcChange="${this.onExportSelection}" @igcClosed="${this.onExportDropdownVisibility}">
-                            <igc-dropdown-item id="excel"><span>Export to Excel</span></igc-dropdown-item>
-                            <igc-dropdown-item id="csv"><span>Export to CSV</span></igc-dropdown-item>
                         </igc-dropdown>
                     </div>
                 </div>
