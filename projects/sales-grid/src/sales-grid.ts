@@ -1,8 +1,8 @@
-import { LitElement, PropertyValues, html } from "lit";
+import { LitElement, PropertyValues, html, unsafeCSS } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import { SalesDataService } from "./services/data.service";
-import { defineComponents, registerIcon, IgcButtonComponent, IgcDropdownComponent, IgcDropdownItemComponent, IgcIconComponent } from "igniteui-webcomponents";
+import { configureTheme, defineComponents, registerIcon, IgcButtonComponent, IgcDropdownComponent, IgcDropdownItemComponent, IgcIconComponent } from "igniteui-webcomponents";
 import {
     IgcPivotGridComponent,
     IgcFilteringExpressionsTree,
@@ -12,16 +12,10 @@ import {
     IgcPivotConfiguration,
     IgcPivotDateDimension,
     IgcColumnComponent,
-    // CsvFileTypes,
-    // IgcCsvExporterService,
-    // IgcCsvExporterOptions,
-    // IgcExcelExporterService,
-    // IgcExcelExporterOptions,
-    // IgcExporterOptionsBase
 } from "igniteui-webcomponents-grids/grids";
 import 'igniteui-webcomponents-grids/grids/combined.js';
 
-import { salesGridStyles } from './sales-grid.styles';
+import salesGridStyles from './sales-grid.scss?inline';
 import ARROW_DOWN_SVG from "./assets/images/icons/arrow_drop_down.svg";
 import ARROW_UP_SVG from "./assets/images/icons/arrow_drop_up.svg";
 import VISIBILITY_SVG from "./assets/images/icons/visibility.svg";
@@ -78,14 +72,12 @@ export class IgcSaleProfitAggregate {
 export class SalesGrid extends LitElement {
     @query('#viewDropdown')
     private viewDropdown!: IgcDropdownComponent;
-    @query('#exportDropdown')
-    private exportDropdown!: IgcDropdownComponent;
 
     @query('#salesGrid')
     private pivotGrid!: IgcPivotGridComponent;
 
     @state()
-    public salesData: any[] = [];
+    public salesData = [];
 
     @state()
     public viewDropdownOpen = false;
@@ -341,7 +333,9 @@ export class SalesGrid extends LitElement {
         super();
 
         // Fetch data
-        SalesDataService.getSalesData().then(data => this.salesData = data);
+        SalesDataService.getSalesData().then(data => {
+            this.salesData = data;
+        });
 
         registerIcon("arrow_down", ARROW_DOWN_SVG, "material");
         registerIcon("arrow_up", ARROW_UP_SVG, "material");
@@ -360,7 +354,7 @@ export class SalesGrid extends LitElement {
         this.viewDropdownOpen = !this.viewDropdownOpen;
     }
 
-    public onExportDropdownButton(event: MouseEvent) {
+    public onExportDropdownButton() {
         // TO DO
         // To uncomment once Excel and CSV exporter are available in WC
         // let options!: IgcExporterOptionsBase;
@@ -396,6 +390,9 @@ export class SalesGrid extends LitElement {
     }
 
     public currencyFormatter(value: any, field: string) {
+        if (value === undefined || value === null){
+            return "";
+        }
         const valueConfig = this.pivotGrid.pivotConfiguration.values.find(value => value.member === field);
         if (!valueConfig || valueConfig.aggregate.key === "COUNT") {
             return value;
@@ -409,8 +406,10 @@ export class SalesGrid extends LitElement {
     }
 
     render() {
+        configureTheme("indigo");
+
         return html`
-            <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/indigo.css" />
+            <link rel="stylesheet" href="./themes/indigo.css" />
             <div class="rootSample ig-typography">
                 <div class="pivotToolbar igx-grid__tr-pivot">
                     <span class="igx-grid-toolbar__title">Sales Dashboard</span>
@@ -451,9 +450,7 @@ export class SalesGrid extends LitElement {
         `;
     }
 
-    static styles = [
-        salesGridStyles,
-    ];
+    static styles = unsafeCSS(salesGridStyles);
 }
 
 declare global {

@@ -24,11 +24,19 @@ export default defineConfig(() => {
             dest: "",
           },
           {
+            src: "./projects/sales-grid/public/*",
+            dest: "",
+          },
+          {
             src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css",
             dest: "themes",
           },
           {
             src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/fluent.css",
+            dest: "themes",
+          },
+          {
+            src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/indigo.css",
             dest: "themes",
           },
         ],
