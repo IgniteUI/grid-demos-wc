@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, unsafeCSS } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { dataService } from "../../services/data.service";
 import { IgcCellTemplateContext, IgcGridComponent, IgcGridMasterDetailContext, SortingDirection } from 'igniteui-webcomponents-grids/grids';
@@ -22,11 +22,10 @@ import { computePosition, flip, offset, shift } from "@floating-ui/dom";
 import { Driver } from "../../models/driver.model";
 import { Vehicle } from "../../models/vehicle.model";
 import { STATUS_ICON_MAP, STATUS_TYPE_MAP } from "../../models/status.mapping";
-import { fleetManagementGridStyles } from "./fleet-management-grid.styles";
+import fleetStyles from "./fleet-management-grid.scss?inline";
 
 
 defineComponents(IgcIconComponent, IgcButtonComponent, IgcIconComponent, IgcAvatarComponent, IgcBadgeComponent, IgcTabsComponent, IgcCarouselComponent, IgcDividerComponent, IgcSelectComponent, IgcSelectItemComponent, IgcSelectHeaderComponent, IgcCardComponent)
-configureTheme("material");
 
 ModuleManager.register(IgcCategoryChartModule, IgcPieChartModule, IgcLegendModule, IgcGeographicMapModule, IgcGeographicSymbolSeriesModule, IgcDataChartInteractivityModule)
 
@@ -582,8 +581,10 @@ export class FleetManagementGrid extends LitElement {
   }  
 
   render() {
+    configureTheme("material");
+
     return html`
-    <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/dark/material.css" />
+    <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/dark/material.css" />
     <igc-grid class="main-grid" id="main-grid" .data="${ this.vehiclesData }" height="100%" width="100%" .detailTemplate="${this.masterDetailTemplate}">
       <igc-grid-toolbar>
         <igc-grid-toolbar-title>Fleet Management</igc-grid-toolbar-title>
@@ -610,7 +611,7 @@ export class FleetManagementGrid extends LitElement {
       <igc-column id="status-column" field="status" header="Status" sortable="true" width="14%" .bodyTemplate="${this.statusCellTemplate}"></igc-column>
       <igc-column field="locationCity" header="Location (City)" sortable="true" width="11%"></igc-column>
       <igc-column id="location-column" field="locationGps" header="Location (GPS)" width="14%" .bodyTemplate="${this.locationCellTemplate}"></igc-column>
-    </igc-grid>
+    </igc-grid>    
 
     <div class="overlay-backdrop" id="overlayBackdrop"></div>
     <div class="overlay-wrapper" id="locationOverlay">
@@ -677,11 +678,11 @@ export class FleetManagementGrid extends LitElement {
   }
 
 
-  static styles = fleetManagementGridStyles;
+  static styles = unsafeCSS(fleetStyles);
 }
 
-declare global {
+/* declare global {
   interface HTMLElementTagNameMap {
     "app-fleet-management": FleetManagementGrid;
   }
-}
+} */

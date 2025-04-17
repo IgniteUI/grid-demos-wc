@@ -78,7 +78,7 @@ export class TripHistoryGrid extends LitElement {
 
     render() {
         return html`
-            <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/dark/material.css" />
+            <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/dark/material.css" />
             <igc-grid class="child-grid" .data="${this.tripHistoryData}" height="${null}" width="100%">
                 <igc-column field="id" header="ID" width="5%" .cellStyles="${this.rightAlignedCellStyles}" .headerStyles="${this.rightAlignedHeaderStyles}"></igc-column>
                 <igc-column field="driverName" header="Driver" width="18%" .bodyTemplate="${this.driverCellTemplate}"></igc-column>

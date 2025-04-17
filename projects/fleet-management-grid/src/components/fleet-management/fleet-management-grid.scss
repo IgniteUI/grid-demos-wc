@@ -1,6 +1,8 @@
-import { css } from "lit";
-
-export const fleetManagementGridStyles = css`
+@use "../../styles/utils" as *;
+@use "igniteui-theming" as *;
+@use "igniteui-theming/sass/typography/presets/material" as *;
+@use "igniteui-theming/sass/elevations/presets" as *;
+@use "igniteui-theming/sass/color/presets/dark/material" as *;
 
 /* --------------------------------------------- */
 /* GLOBAL STYLES */
@@ -10,6 +12,8 @@ export const fleetManagementGridStyles = css`
   display: block;
   height: 100%;
   width: 100%;
+  font-family: var(--ig-font-family);
+  @include theme($palette, $material-elevations, $typeface, $type-scale, "dark");
 }
 
 igc-tabs {
@@ -338,5 +342,3 @@ igc-divider {
 h3 {
   margin: 0 0;
 }
-
-`;
