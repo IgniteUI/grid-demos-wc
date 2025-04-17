@@ -284,8 +284,6 @@ export default class ErpHierarchicalGrid extends LitElement {
     configureTheme("material");
 
     return html`
-
-      <!-- <link rel="stylesheet" href="node_modules/igniteui-webcomponents-grids/grids/themes/light/material.css" /> -->
       <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/material.css" />
 
       <igc-hierarchical-grid
