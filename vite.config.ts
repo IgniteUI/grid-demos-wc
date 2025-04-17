@@ -24,12 +24,20 @@ export default defineConfig(() => {
             dest: "",
           },
           {
+            src: "./projects/fleet-management-grid/public/*",
+            dest: "",
+          },
+          {
             src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css",
             dest: "themes",
           },
           {
             src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/fluent.css",
             dest: "themes",
+          },
+          {
+            src: "node_modules/igniteui-webcomponents-grids/grids/themes/dark/material.css",
+            dest: "themes/dark",
           },
         ],
       }),
