@@ -13,10 +13,8 @@
     "lit": "^3.2.1",
     "sass": "^1.86.1",
     "igniteui-theming": "^17.1.0",
-    "igniteui-webcomponents": "~5.2.4",
-    "igniteui-webcomponents-core": "5.4.0",
-    "igniteui-webcomponents-grids": "5.4.0",
-    "igniteui-webcomponents-inputs": "5.4.0"
+    "igniteui-webcomponents": "^5.3.0",
+    "igniteui-webcomponents-grids": "^5.4.0"
   },
   "devDependencies": {
     "typescript": "~5.7.2",

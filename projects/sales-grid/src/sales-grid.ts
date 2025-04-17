@@ -2,7 +2,15 @@ import { LitElement, PropertyValues, html, unsafeCSS } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import { SalesDataService } from "./services/data.service";
-import { configureTheme, defineComponents, registerIcon, IgcButtonComponent, IgcDropdownComponent, IgcDropdownItemComponent, IgcIconComponent } from "igniteui-webcomponents";
+import {
+    configureTheme,
+    defineComponents,
+    registerIcon,
+    IgcButtonComponent,
+    IgcDropdownComponent,
+    IgcDropdownItemComponent,
+    IgcIconComponent
+} from "igniteui-webcomponents";
 import {
     IgcPivotGridComponent,
     IgcFilteringExpressionsTree,
@@ -13,9 +21,10 @@ import {
     IgcPivotDateDimension,
     IgcColumnComponent,
 } from "igniteui-webcomponents-grids/grids";
-import 'igniteui-webcomponents-grids/grids/combined.js';
 
+import 'igniteui-webcomponents-grids/grids/combined.js';
 import salesGridStyles from './sales-grid.scss?inline';
+
 import ARROW_DOWN_SVG from "./assets/images/icons/arrow_drop_down.svg";
 import ARROW_UP_SVG from "./assets/images/icons/arrow_drop_up.svg";
 import VISIBILITY_SVG from "./assets/images/icons/visibility.svg";
@@ -333,15 +342,12 @@ export class SalesGrid extends LitElement {
         super();
 
         // Fetch data
-        SalesDataService.getSalesData().then(data => {
-            this.salesData = data;
-        });
+        SalesDataService.getSalesData().then(data => this.salesData = data);
 
         registerIcon("arrow_down", ARROW_DOWN_SVG, "material");
         registerIcon("arrow_up", ARROW_UP_SVG, "material");
         registerIcon("visibility", VISIBILITY_SVG, "material");
         registerIcon("file_download", FILE_DOWNLOAD_SVG, "custom");
-
     }
 
     protected firstUpdated(_changedProperties: PropertyValues): void {
@@ -409,8 +415,8 @@ export class SalesGrid extends LitElement {
         configureTheme("indigo");
 
         return html`
-            <link rel="stylesheet" href="./themes/indigo.css" />
-            <div class="rootSample ig-typography">
+            <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/indigo.css" />
+            <div class="ig-typography rootSample">
                 <div class="pivotToolbar igx-grid__tr-pivot">
                     <span class="igx-grid-toolbar__title">Sales Dashboard</span>
                     <div>
