@@ -585,7 +585,7 @@ export class FleetManagementGrid extends LitElement {
 
     return html`
     <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/dark/material.css" />
-    <igc-grid class="main-grid" id="main-grid" .data="${ this.vehiclesData }" height="100%" width="100%" .detailTemplate="${this.masterDetailTemplate}">
+    <igc-grid class="main-grid ig-typography" id="main-grid" .data="${ this.vehiclesData }" height="100%" width="100%" .detailTemplate="${this.masterDetailTemplate}">
       <igc-grid-toolbar>
         <igc-grid-toolbar-title>Fleet Management</igc-grid-toolbar-title>
         <igc-button
