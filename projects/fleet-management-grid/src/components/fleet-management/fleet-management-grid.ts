@@ -680,9 +680,3 @@ export class FleetManagementGrid extends LitElement {
 
   static styles = unsafeCSS(fleetStyles);
 }
-
-/* declare global {
-  interface HTMLElementTagNameMap {
-    "app-fleet-management": FleetManagementGrid;
-  }
-} */
