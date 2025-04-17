@@ -32,6 +32,10 @@ export default defineConfig(() => {
             dest: "",
           },
           {
+            src: "./projects/sales-grid/public/*",
+            dest: "",
+          },
+          {
             src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css",
             dest: "themes",
           },
@@ -46,6 +50,10 @@ export default defineConfig(() => {
           {
             src: "node_modules/igniteui-webcomponents-grids/grids/themes/dark/material.css",
             dest: "themes/dark",
+          },
+          {
+            src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/indigo.css",
+            dest: "themes",
           },
         ],
       }),
