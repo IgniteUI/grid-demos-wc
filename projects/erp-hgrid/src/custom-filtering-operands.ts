@@ -1,4 +1,4 @@
-import { IgcStringFilteringOperand } from "igniteui-webcomponents-grids/grids";
+import { IgcFilteringOperation, IgcStringFilteringOperand } from "igniteui-webcomponents-grids/grids";
 
 export class FullAddressFilteringOperand extends IgcStringFilteringOperand {
     public constructor(isAddressShort: boolean = false) {
@@ -6,7 +6,7 @@ export class FullAddressFilteringOperand extends IgcStringFilteringOperand {
         const getShortAddress = (target: any) => `${target.streetNumber} ${target.streetName}`;
         const getFullAddress = (target: any) => `${target.streetNumber} ${target.streetName}, ${target.zipCode} ${target.city}, ${target.country}`;
     
-        const customOperations = [
+        const customOperations: IgcFilteringOperation[] = [
             {
               iconName: 'filter_contains',
               isUnary: false,
