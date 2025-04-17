@@ -92,7 +92,7 @@ export default class HomeView extends LitElement {
   ]);
 
   @state()
-  private routeName: string = "finance";
+  private routeName: string = "inventory";
 
   private updateCurrentPath = (event: any) => {
     const { route } = event.detail.location;
