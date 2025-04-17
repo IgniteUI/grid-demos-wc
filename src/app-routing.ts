@@ -6,7 +6,7 @@ export const routes: Route[] = [
     path: "home",
     component: "home-view",
     children: [
-      { path: "", redirect: "home/finance" },
+      { path: "", redirect: "home/inventory" },
       { path: "inventory", component: "erp-hgrid-view" },
       { path: "finance", component: "finance-view" },
       { path: "hr-portal", component: "hr-portal-view" },

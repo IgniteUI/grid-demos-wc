@@ -24,6 +24,10 @@ export default defineConfig(() => {
             dest: "",
           },
           {
+            src: "./projects/erp-hgrid/public/*",
+            dest: "",
+          },
+          {
             src: "./projects/fleet-management-grid/public/*",
             dest: "",
           },
@@ -33,6 +37,10 @@ export default defineConfig(() => {
           },
           {
             src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/fluent.css",
+            dest: "themes",
+          },
+          {
+            src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/material.css",
             dest: "themes",
           },
           {
