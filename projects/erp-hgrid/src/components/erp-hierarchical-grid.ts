@@ -49,9 +49,6 @@ defineComponents(
 @customElement('app-erp-hgrid')
 export default class ErpHierarchicalGrid extends LitElement {
 
-  @query("igc-hierarchical-grid")
-  private hierarchicalGrid!: IgcGridComponent;
-
   @query("igc-row-island")
   private rowisland!: IgcGridComponent;
 
@@ -93,12 +90,6 @@ export default class ErpHierarchicalGrid extends LitElement {
 
   firstUpdated() {
     // Default sortings
-    this.hierarchicalGrid.sortingExpressions = [
-      {
-          dir: SortingDirection.Asc, fieldName: 'sku',
-          ignoreCase: true
-      }
-    ];
     this.rowisland.sortingExpressions = [
       {
           dir: SortingDirection.Desc, fieldName: 'delivery.dateOrdered',
