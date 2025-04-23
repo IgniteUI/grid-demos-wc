@@ -49,9 +49,6 @@ defineComponents(
 @customElement('app-erp-hgrid')
 export default class ErpHierarchicalGrid extends LitElement {
 
-  @query("igc-hierarchical-grid")
-  private hierarchicalGrid!: IgcGridComponent;
-
   @query("igc-row-island")
   private rowisland!: IgcGridComponent;
 
