@@ -93,12 +93,6 @@ export default class ErpHierarchicalGrid extends LitElement {
 
   firstUpdated() {
     // Default sortings
-    this.hierarchicalGrid.sortingExpressions = [
-      {
-          dir: SortingDirection.Asc, fieldName: 'sku',
-          ignoreCase: true
-      }
-    ];
     this.rowisland.sortingExpressions = [
       {
           dir: SortingDirection.Desc, fieldName: 'delivery.dateOrdered',
