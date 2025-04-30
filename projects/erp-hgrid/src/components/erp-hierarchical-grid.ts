@@ -24,7 +24,7 @@ import {
   SortingDirection 
 } from "igniteui-webcomponents-grids/grids";
 import './sales-trends-chart';
-import { FullAddressFilteringOperand } from '../custom-filtering-operands';
+import { FullAddressFilteringOperand } from '../services/custom-operations/custom-filtering-operands';
 import { TemplateDataItemExtended } from '../models/TemplateDataItem';
 import { OrderStatus } from '../models/OrderStatus';
 import { erpDataService } from "../services/erp-data.service";
@@ -32,6 +32,7 @@ import { DataPoint } from '../models/DataPoint';
 import { OrderDetails } from '../models/OrderDetails';
 import { BadgeVariant } from '../models/BadgeVariant';
 import erpStyles from "./erp-hierarchical-grid.scss?inline";
+import { AddressSortStrategy } from '../services/custom-operations/custom-sorting-strategy';
 
 
 defineComponents(
@@ -227,13 +228,17 @@ export default class ErpHierarchicalGrid extends LitElement {
   }
 
   private formatAddress = (value: OrderDetails): string =>  {
-    return `${value.streetName} ${value.streetNumber}`;
+    return `${value.streetNumber} ${value.streetName}`;
   }
 
   private formatFullAddress = (value: OrderDetails): string => {
     return `${value.streetNumber} ${value.streetName}, ${value.zipCode} ${value.city}, ${value.country}`;
   }
   
+  // Custom sorting strategy
+  public shortAddressSortStrategy = new AddressSortStrategy(this.formatAddress);
+  public fullAddressSortStrategy = new AddressSortStrategy(this.formatFullAddress);
+
   // PRODUCT IMAGE COLUMN OVERLAYS
   private showTooltip = (event: MouseEvent, context: IgcCellTemplateContext): void => {
     const targetEl: HTMLElement = event.target as HTMLElement;
@@ -454,6 +459,7 @@ export default class ErpHierarchicalGrid extends LitElement {
                     header="Address"
                     data-type="string"
                     ?sortable=${true}
+                    .sortStrategy="${this.shortAddressSortStrategy}"
                     ?resizable=${true}
                     visible-when-collapsed=${false}
                     .formatter="${this.formatAddress}"
@@ -466,6 +472,7 @@ export default class ErpHierarchicalGrid extends LitElement {
                     header="Address"
                     dataType="string"
                     ?sortable=${true}
+                    .sortStrategy="${this.fullAddressSortStrategy}"
                     ?resizable=${true}
                     visible-when-collapsed=${true}
                     .formatter="${this.formatFullAddress}"
