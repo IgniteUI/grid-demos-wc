@@ -24,7 +24,7 @@ import {
   SortingDirection 
 } from "igniteui-webcomponents-grids/grids";
 import './sales-trends-chart';
-import { FullAddressFilteringOperand } from '../custom-filtering-operands';
+import { FullAddressFilteringOperand } from '../services/custom-operations/custom-filtering-operands';
 import { TemplateDataItemExtended } from '../models/TemplateDataItem';
 import { OrderStatus } from '../models/OrderStatus';
 import { erpDataService } from "../services/erp-data.service";
@@ -227,13 +227,13 @@ export default class ErpHierarchicalGrid extends LitElement {
   }
 
   private formatAddress = (value: OrderDetails): string =>  {
-    return `${value.streetName} ${value.streetNumber}`;
+    return `${value.streetNumber} ${value.streetName}`;
   }
 
   private formatFullAddress = (value: OrderDetails): string => {
     return `${value.streetNumber} ${value.streetName}, ${value.zipCode} ${value.city}, ${value.country}`;
   }
-  
+
   // PRODUCT IMAGE COLUMN OVERLAYS
   private showTooltip = (event: MouseEvent, context: IgcCellTemplateContext): void => {
     const targetEl: HTMLElement = event.target as HTMLElement;
@@ -453,7 +453,7 @@ export default class ErpHierarchicalGrid extends LitElement {
                     field="orderInformation"
                     header="Address"
                     data-type="string"
-                    ?sortable=${true}
+                    ?sortable=${false}
                     ?resizable=${true}
                     visible-when-collapsed=${false}
                     .formatter="${this.formatAddress}"
@@ -465,7 +465,7 @@ export default class ErpHierarchicalGrid extends LitElement {
                     field="orderInformation"
                     header="Address"
                     dataType="string"
-                    ?sortable=${true}
+                    ?sortable=${false}
                     ?resizable=${true}
                     visible-when-collapsed=${true}
                     .formatter="${this.formatFullAddress}"
