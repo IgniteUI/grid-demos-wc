@@ -1,0 +1,69 @@
+@use "./styles/utils" as *;
+@use "igniteui-theming" as *;
+@use "igniteui-theming/sass/typography/presets/fluent" as *;
+@use "igniteui-theming/sass/elevations/presets" as *;
+@use "igniteui-theming/sass/color/presets/light/fluent" as *;
+
+:host {
+  height: 100%;
+  width: 100%;
+  display: block;
+
+  font-family: var(--ig-font-family);
+  @include theme($palette, $material-elevations, $typeface, $type-scale, "light");
+}
+
+.rootDiv {
+  width: 100%;
+  height: 100%;
+}
+
+.gridStyle {
+  --ig-size: var(--ig-size-medium);
+  --row-even-background: #ffffff;
+}
+
+.small {
+  --ig-size: var(--ig-size-small);
+}
+
+.medium {
+  --ig-size: var(--ig-size-medium);
+}
+
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  gap: 8px;
+}
+
+.employeeDiv {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+igc-avatar::part(base) {
+  --size: 28px;
+}
+
+.flagDiv {
+  gap: 8px;
+  display: flex;
+}
+
+.flagDiv igc-icon {
+  height: 14px;
+  width: 18px;
+  display: flex;
+  align-items: center;
+  border-radius: 1px;
+  box-shadow: var(--ig-elevation-1);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
