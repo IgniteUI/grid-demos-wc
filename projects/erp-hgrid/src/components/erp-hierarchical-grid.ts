@@ -32,7 +32,6 @@ import { DataPoint } from '../models/DataPoint';
 import { OrderDetails } from '../models/OrderDetails';
 import { BadgeVariant } from '../models/BadgeVariant';
 import erpStyles from "./erp-hierarchical-grid.scss?inline";
-import { AddressSortStrategy } from '../services/custom-operations/custom-sorting-strategy';
 
 
 defineComponents(
@@ -234,10 +233,6 @@ export default class ErpHierarchicalGrid extends LitElement {
   private formatFullAddress = (value: OrderDetails): string => {
     return `${value.streetNumber} ${value.streetName}, ${value.zipCode} ${value.city}, ${value.country}`;
   }
-  
-  // Custom sorting strategy
-  public shortAddressSortStrategy = new AddressSortStrategy(this.formatAddress);
-  public fullAddressSortStrategy = new AddressSortStrategy(this.formatFullAddress);
 
   // PRODUCT IMAGE COLUMN OVERLAYS
   private showTooltip = (event: MouseEvent, context: IgcCellTemplateContext): void => {
@@ -458,8 +453,7 @@ export default class ErpHierarchicalGrid extends LitElement {
                     field="orderInformation"
                     header="Address"
                     data-type="string"
-                    ?sortable=${true}
-                    .sortStrategy="${this.shortAddressSortStrategy}"
+                    ?sortable=${false}
                     ?resizable=${true}
                     visible-when-collapsed=${false}
                     .formatter="${this.formatAddress}"
@@ -471,8 +465,7 @@ export default class ErpHierarchicalGrid extends LitElement {
                     field="orderInformation"
                     header="Address"
                     dataType="string"
-                    ?sortable=${true}
-                    .sortStrategy="${this.fullAddressSortStrategy}"
+                    ?sortable=${false}
                     ?resizable=${true}
                     visible-when-collapsed=${true}
                     .formatter="${this.formatFullAddress}"
