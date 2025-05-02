@@ -46,7 +46,7 @@ export default class HomeView extends LitElement {
         theme: "Material Light",
         content: "Tracking and managing quantity, location and details of products in stock.",
         moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/hierarchicalgrid/hierarchical-grid",
-        downloadLink: "https://www.infragistics.com/resources/sample-applications/erp-inventory-sample-app",
+        downloadLink: "https://www.infragistics.com/resources/sample-applications/erp-inventory-sample-app-web-components",
       },
     ],
     [
@@ -56,7 +56,7 @@ export default class HomeView extends LitElement {
         theme: "Fluent Light",
         content: "Displaying company's hierarchical structure and showing employees data.",
         moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/treegrid/tree-grid",
-        downloadLink: "https://www.infragistics.com/resources/sample-applications/org-charthr-portal-sample-app",
+        downloadLink: "https://www.infragistics.com/resources/sample-applications/org-charthr-portal-sample-app-web-components",
       },
     ],
     [
@@ -66,7 +66,7 @@ export default class HomeView extends LitElement {
         theme: "Bootstrap Light",
         content: "Asset tracking, profit and loss analysis, featuring interactive dynamic charts.",
         moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/grid/grid",
-        downloadLink: "https://www.infragistics.com/resources/sample-applications/financial-portfolio-sample-app",
+        downloadLink: "https://www.infragistics.com/resources/sample-applications/financial-portfolio-sample-app-web-components",
       },
     ],
     [
@@ -76,7 +76,7 @@ export default class HomeView extends LitElement {
         theme: "Indigo Light",
         content: "For trend analysis, KPIs and viewing sales summaries by region, product, etc.",
         moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/pivotGrid/pivot-grid",
-        downloadLink: "https://www.infragistics.com/resources/sample-applications/sales-grid-sample-app",
+        downloadLink: "https://www.infragistics.com/resources/sample-applications/sales-grid-sample-app-web-components",
       },
     ],
     [
@@ -86,7 +86,7 @@ export default class HomeView extends LitElement {
         theme: "Material Dark",
         content: "A master-detail grid for managing vehicle acquisition, operations, and maintenance.",
         moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/grid/master-detail",
-        downloadLink: "https://www.infragistics.com/resources/sample-applications/fleet-management-sample-app",
+        downloadLink: "https://www.infragistics.com/resources/sample-applications/fleet-management-sample-app-web-components",
       },
     ],
   ]);
