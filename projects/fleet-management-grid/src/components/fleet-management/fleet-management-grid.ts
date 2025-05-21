@@ -65,7 +65,7 @@ export class FleetManagementGrid extends LitElement {
     phone: "",
     email: "",
     photo: ""
-  }  
+  }
 
   /** Lifecycle Methods */
 
@@ -74,8 +74,8 @@ export class FleetManagementGrid extends LitElement {
     registerIconFromText("clear", CLEAR, "material");
     registerIconFromText(check.name, check.value, "imx-icons");
     registerIconFromText(wrench.name, wrench.value, "imx-icons");
-    registerIconFromText(delivery.name, delivery.value, "imx-icons");    
-  }  
+    registerIconFromText(delivery.name, delivery.value, "imx-icons");
+  }
 
   firstUpdated() {
     this.mainGrid.sortingExpressions = [
@@ -84,7 +84,7 @@ export class FleetManagementGrid extends LitElement {
 
     this.mainGrid.addEventListener("sortingDone", () => {
       this.hasSorting = this.mainGrid.sortingExpressions.length > 0;
-    });    
+    });
 
     this.hasSorting = this.mainGrid.sortingExpressions.length > 0;
   }
@@ -151,7 +151,7 @@ export class FleetManagementGrid extends LitElement {
                 ${images.map(image => html`
                   <igc-carousel-slide>
                     <div class="image-container">
-                      <img src="${ image }" alt="Vehicle Image" />
+                      <img src="${image}" alt="Vehicle Image" />
                     </div>
                   </igc-carousel-slide>  
                 `)}
@@ -159,40 +159,40 @@ export class FleetManagementGrid extends LitElement {
             </div>
 
             <div class="details-table">
-              ${ [VEHICLE_DETAILS.detailsCategories, VEHICLE_DETAILS.engineCategories].map(categorySet => html`
+              ${[VEHICLE_DETAILS.detailsCategories, VEHICLE_DETAILS.engineCategories].map(categorySet => html`
                 <div class="detail-block-container">
                   <div class="detail-category-container">
-                    ${ categorySet.map(category => html`
+                    ${categorySet.map(category => html`
                       <div class="detail-item">
-                        <span class="detail-category">${ category.label }:</span>
+                        <span class="detail-category">${category.label}:</span>
                         <igc-divider></igc-divider>
                       </div>
                     `)}
                   </div>
                   <div class="detail-content-container">
-                    ${ categorySet.map(category => html`
+                    ${categorySet.map(category => html`
                       <div class="detail-item">
-                        <span class="detail-value">${ this.getValueByPath(ctx.implicit, category.key) }</span>
+                        <span class="detail-value">${this.getValueByPath(ctx.implicit, category.key)}</span>
                         <igc-divider></igc-divider>
                       </div>
-                    `) }
+                    `)}
                   </div>
                 </div>    
-              `) }
+              `)}
             </div>
           </div>
         </igc-tab-panel>
 
         <igc-tab-panel id="trip-history">
           <trip-history-grid 
-            .tripHistoryData="${ dataService.findTripHistoryById(ctx.implicit.vehicleId) }"
+            .tripHistoryData="${dataService.findTripHistoryById(ctx.implicit.vehicleId)}"
             @driver-cell-click="${(event: CustomEvent) => this.showDriverOverlay(event)}">
           </trip-history-grid>
         </igc-tab-panel>
 
 
         <igc-tab-panel id="maintenance">
-          <maintenance-grid .maintenanceData="${ dataService.findMaintenanceDataById(ctx.implicit.vehicleId) }"></maintenance-grid>
+          <maintenance-grid .maintenanceData="${dataService.findMaintenanceDataById(ctx.implicit.vehicleId)}"></maintenance-grid>
         </igc-tab-panel>
 
 
@@ -201,13 +201,13 @@ export class FleetManagementGrid extends LitElement {
             <div class="chart-container pie-chart-container">
               <div class="chart-header">
                 <span class="chart-title">Costs per Type</span>
-                <igc-select #select class="chart-select" .value="${ this.periods[ctx.implicit.vehicleId]?.costPerTypePeriod || Period.YTD }"
-                @igcChange="${ (event: any) => this.onPeriodChange(event, 'costsPerType', ctx.implicit.vehicleId) }">
+                <igc-select #select class="chart-select" .value="${this.periods[ctx.implicit.vehicleId]?.costPerTypePeriod || Period.YTD}"
+                @igcChange="${(event: any) => this.onPeriodChange(event, 'costsPerType', ctx.implicit.vehicleId)}">
                   <igc-select-header>Period</igc-select-header>
-                  <igc-select-item value="${ Period.YTD }">YTD</igc-select-item>
-                  <igc-select-item value="${ Period.ThreeMonths }">Last 3 Months</igc-select-item>
-                  <igc-select-item value="${ Period.SixMonths }">Last 6 Months</igc-select-item>
-                  <igc-select-item value="${ Period.TwelveMonths }">Last 12 Months</igc-select-item>
+                  <igc-select-item value="${Period.YTD}">YTD</igc-select-item>
+                  <igc-select-item value="${Period.ThreeMonths}">Last 3 Months</igc-select-item>
+                  <igc-select-item value="${Period.SixMonths}">Last 6 Months</igc-select-item>
+                  <igc-select-item value="${Period.TwelveMonths}">Last 12 Months</igc-select-item>
                 </igc-select>
               </div>
               <div class="chart-content">
@@ -245,7 +245,7 @@ export class FleetManagementGrid extends LitElement {
                 <igc-category-chart
                   name="chart"
                   class="chart-canvas"
-                  .dataSource="${ dataService.findCostsPerMeterData(ctx.implicit.vehicleId, this.periods[ctx.implicit.vehicleId]?.costPerMeterPeriod || Period.YTD)}"
+                  .dataSource="${dataService.findCostsPerMeterData(ctx.implicit.vehicleId, this.periods[ctx.implicit.vehicleId]?.costPerMeterPeriod || Period.YTD)}"
                   chart-type="Area"
                   is-horizontal-zoom-enabled="false"
                   is-vertical-zoom-enabled="false"
@@ -280,7 +280,7 @@ export class FleetManagementGrid extends LitElement {
                   class="column-chart"
                   #chart
                   chart-type="Column"
-                  .dataSource="${ dataService.getFuelCostsData(ctx.implicit.vehicleId, this.periods[ctx.implicit.vehicleId]?.fuelCostPeriod || Period.YTD)}"
+                  .dataSource="${dataService.getFuelCostsData(ctx.implicit.vehicleId, this.periods[ctx.implicit.vehicleId]?.fuelCostPeriod || Period.YTD)}"
                   y-axis-title="Costs in USD"
                   is-horizontal-zoom-enabled="false"
                   is-vertical-zoom-enabled="false"
@@ -314,7 +314,7 @@ export class FleetManagementGrid extends LitElement {
                 id="chart"
                 chart-type="Column"
                 .legend="${this.legend}"
-                .dataSource="${ dataService.findUtilizationDataById(ctx.implicit.vehicleId)}"
+                .dataSource="${dataService.findUtilizationDataById(ctx.implicit.vehicleId)}"
                 y-axis-title="Miles"
                 is-horizontal-zoom-enabled="false"
                 is-vertical-zoom-enabled="false"
@@ -341,7 +341,7 @@ export class FleetManagementGrid extends LitElement {
     `
   }
 
-  private statusCellTemplate = (ctx: IgcCellTemplateContext) => {    
+  private statusCellTemplate = (ctx: IgcCellTemplateContext) => {
     return html`
       <igc-badge variant="${this.getStatusType(ctx.implicit)}">
         <igc-icon class="icon-style" collection="imx-icons" name="${this.getStatusIcon(ctx.implicit)}"></igc-icon>
@@ -398,7 +398,7 @@ export class FleetManagementGrid extends LitElement {
 
     const target = event.target as HTMLElement;
     const overlay = this.locationOverlay
-    
+
     computePosition(target, overlay, {
       placement: 'left-start',
       middleware: [offset(8), flip(), shift()],
@@ -407,7 +407,7 @@ export class FleetManagementGrid extends LitElement {
         left: `${x}px`,
         top: `${y}px`,
       });
-    }); 
+    });
 
     this.overlayBackdrop.classList.add("visible");
     this.locationOverlay.style.display = 'block';
@@ -415,7 +415,7 @@ export class FleetManagementGrid extends LitElement {
     requestAnimationFrame(() => {
       overlay.classList.add('visible');
     });
-    
+
 
     this.lastOverlayTrigger = target;
     document.addEventListener("mousedown", this.locationEventHandler);
@@ -456,7 +456,7 @@ export class FleetManagementGrid extends LitElement {
     requestAnimationFrame(() => {
       overlay.classList.add('visible');
     });
-    
+
 
     this.lastOverlayTrigger = target;
     document.addEventListener("mousedown", this.driverEventHandler);
@@ -499,7 +499,7 @@ export class FleetManagementGrid extends LitElement {
         overlay.style.display = 'none';
       }, { once: true })
     }
-  
+
     document.removeEventListener("mousedown", this.locationEventHandler);
     window.removeEventListener("wheel", this.locationEventHandler, true);
   }
@@ -515,7 +515,7 @@ export class FleetManagementGrid extends LitElement {
         overlay.style.display = 'none';
       }, { once: true })
     }
-  
+
     document.removeEventListener("mousedown", this.driverEventHandler);
     window.removeEventListener("wheel", this.driverEventHandler, true);
   }
@@ -527,7 +527,7 @@ export class FleetManagementGrid extends LitElement {
     symbolSeries.dataSource = locations;
     symbolSeries.latitudeMemberPath = "latitude";
     symbolSeries.longitudeMemberPath = "longitude";
-    symbolSeries.markerBrush  = "White";
+    symbolSeries.markerBrush = "White";
     symbolSeries.markerOutline = brush;
     symbolSeries.markerTemplate = {
       measure: (measureInfo: DataTemplateMeasureInfo) => {
@@ -578,14 +578,14 @@ export class FleetManagementGrid extends LitElement {
 
   private getValueByPath(obj: any, path: string) {
     return path.split('.').reduce((o, key) => (o && o[key] !== undefined) ? o[key] : 'N/A', obj);
-  }  
+  }
 
   render() {
     configureTheme("material");
 
     return html`
     <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/dark/material.css" />
-    <igc-grid class="main-grid ig-typography" id="main-grid" .data="${ this.vehiclesData }" height="100%" width="100%" .detailTemplate="${this.masterDetailTemplate}">
+    <igc-grid class="main-grid ig-typography" id="main-grid" .data="${this.vehiclesData}" height="100%" width="100%" .detailTemplate="${this.masterDetailTemplate}">
       <igc-grid-toolbar>
         <igc-grid-toolbar-title>Fleet Management</igc-grid-toolbar-title>
         <igc-button
