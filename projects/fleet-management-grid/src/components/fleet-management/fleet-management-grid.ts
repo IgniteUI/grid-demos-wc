@@ -598,7 +598,6 @@ export class FleetManagementGrid extends LitElement {
         <igc-grid-toolbar-actions>
                 <igc-grid-toolbar-hiding></igc-grid-toolbar-hiding>
                 <igc-grid-toolbar-pinning></igc-grid-toolbar-pinning>
-                <igc-grid-toolbar-exporter></igc-grid-toolbar-exporter>
                 <igc-grid-toolbar-advanced-filtering></igc-grid-toolbar-advanced-filtering>
           </igc-grid-toolbar-actions>
       </igc-grid-toolbar>
