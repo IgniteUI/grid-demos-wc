@@ -107,14 +107,6 @@ export default class HomeView extends LitElement {
     this.routeName = route.path;
   };
 
-  private onLinkClick = (event: MouseEvent) => {
-    const targetHTML = event.currentTarget as HTMLAnchorElement;
-    window.open(targetHTML.href, "_blank")?.focus();
-
-    event.preventDefault();
-    event.stopPropagation();
-  };
-
   private onDownloadClick = (event: MouseEvent, tabName: string) => {
     const downloadLink = this.tabInfo.get(tabName)?.downloadLink;
     window.open(downloadLink, "_blank")?.focus();
