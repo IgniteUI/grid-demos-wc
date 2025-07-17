@@ -1,7 +1,7 @@
 import { LitElement, html, unsafeCSS } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { defineComponents, IgcChipComponent, IgcIconButtonComponent, IgcRippleComponent, registerIconFromText } from "igniteui-webcomponents";
-import { FILE_DOWNLOAD, FULL_SCREEN, VIEW_MORE } from "../../assets/icons";
+import { EXIT_FULL_SCREEN, FILE_DOWNLOAD, FULL_SCREEN, VIEW_MORE } from "../../assets/icons";
 import styles from "./home-view.scss?inline";
 
 import "../finance/finance-view";
@@ -24,21 +24,51 @@ interface TabInfo {
 
 @customElement("home-view")
 export default class HomeView extends LitElement {
+
+  @query('#fullscreenElement') fullscreenElement!: HTMLElement;
+  @property({ type: Boolean }) isFullscreen = false;
+  @property({type: Array}) tabs = [
+    { key: 'inventory' },
+    { key: 'hr-portal' },
+    { key: 'finance' },
+    { key: 'sales' },
+    { key: 'fleet' },
+  ];
+  @state()
+  private routeName: string = "inventory";
+  
   constructor() {
     super();
     registerIconFromText("file_download", FILE_DOWNLOAD, "indigo_internal");
     registerIconFromText("view_more", VIEW_MORE, "indigo_internal");
     registerIconFromText("full_screen", FULL_SCREEN, "indigo_internal");
+    registerIconFromText("exit_full_screen", EXIT_FULL_SCREEN, "indigo_internal");
   }
 
   connectedCallback(): void {
     super.connectedCallback();
-    window.addEventListener("vaadin-router-location-changed", this.updateCurrentPath);
+  
+    if (typeof window !== 'undefined') {
+      window.addEventListener('vaadin-router-location-changed', this.updateCurrentPath);
+      window.addEventListener('resize', this.onResize);
+    }
+  
+    if (typeof document !== 'undefined') {
+      document.addEventListener('fullscreenchange', this.onFullscreenChange);
+    }
   }
-
+  
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    window.removeEventListener("vaadin-router-location-changed", this.updateCurrentPath);
+  
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('vaadin-router-location-changed', this.updateCurrentPath);
+      window.removeEventListener('resize', this.onResize);
+    }
+  
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('fullscreenchange', this.onFullscreenChange);
+    }
   }
 
   public tabInfo = new Map<string, TabInfo>([
@@ -99,41 +129,58 @@ export default class HomeView extends LitElement {
     ],
   ]);
 
-  @state()
-  private routeName: string = "inventory";
-
   private updateCurrentPath = (event: any) => {
     const { route } = event.detail.location;
     this.routeName = route.path;
   };
 
   private onDownloadClick = (event: MouseEvent, tabName: string) => {
+    event.preventDefault();
+    event.stopPropagation();
+  
     const downloadLink = this.tabInfo.get(tabName)?.downloadLink;
-    window.open(downloadLink, "_blank")?.focus();
-
+    if (typeof window !== 'undefined' && downloadLink) {
+      window.open(downloadLink, "_blank")?.focus();
+    }
+  };
+  
+  private onViewMoreClick = (event: MouseEvent, tabName: string) => {
     event.preventDefault();
     event.stopPropagation();
-  };
-
-  public onViewMoreClick(event: MouseEvent, tabName: string) {
+  
     const viewMoreLink = this.tabInfo.get(tabName)?.moreLink;
-    window.open(viewMoreLink, '_blank')?.focus();
-
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  public onFullscreenClick = () => {
-    const fullPath = window.location.pathname;
-    const pathSegments = fullPath.split('/').filter(Boolean);
-    const newPathSegments = pathSegments.filter(segment => segment !== 'home');
-    const trimmedPath = '/' + newPathSegments.join('/');
-    const newUrl = window.location.origin + trimmedPath;
-  
-    window.open(newUrl, '_blank');
+    if (typeof window !== 'undefined' && viewMoreLink) {
+      window.open(viewMoreLink, '_blank')?.focus();
+    }
   };
   
+  private async onToggleFullscreen() {
+    if (typeof document === 'undefined') return;
+
+    if (!document.fullscreenElement) {
+      await this.fullscreenElement?.requestFullscreen?.();
+    } else {
+      await document.exitFullscreen?.();
+    }
+  }
   
+  private onResize = () => {
+    if (typeof window === 'undefined' || typeof screen === 'undefined') return;
+
+    const isF11 =
+      window.innerWidth === screen.width &&
+      window.innerHeight === screen.height;
+
+    if (this.isFullscreen !== isF11) {
+      this.isFullscreen = isF11;
+    }
+  };
+
+  private onFullscreenChange = () => {
+    if (typeof document === 'undefined') return;
+    this.isFullscreen = !!document.fullscreenElement;
+  };
+
   private tabItemTemplate = (tabName: string) => {
     return html`
       <div class="tab-item ${classMap({ "tab-item--selected": this.routeName === tabName })}">
@@ -156,11 +203,10 @@ export default class HomeView extends LitElement {
           <div class="theme-info">Theme: ${info?.theme}</div>
           <div class="theme-info">Mode: ${info?.themeMode}</div>
   
-          <div>
+          <div class="action-buttons">
             <igc-button
               variant="outlined"
               class="custom-button"
-              style="margin-right: 8px"
               @click="${(e: MouseEvent) => this.onDownloadClick(e, tabName)}"
             >
             <igc-icon name="file_download" collection="indigo_internal"></igc-icon>
@@ -170,7 +216,6 @@ export default class HomeView extends LitElement {
             <igc-button
               variant="outlined"
               class="custom-button"
-              style="margin-right: 8px"
               @click="${(e: MouseEvent) => this.onViewMoreClick(e, tabName)}"
             >
               <igc-icon name="view_more" collection="indigo_internal"></igc-icon>
@@ -180,10 +225,13 @@ export default class HomeView extends LitElement {
             <igc-button
               variant="outlined"
               class="custom-button"
-              @click="${this.onFullscreenClick}"
+              @click="${this.onToggleFullscreen}"
             >
-              <igc-icon name="full_screen" collection="indigo_internal"></igc-icon>
-              Fullscreen
+              <igc-icon
+                name="${this.isFullscreen ? 'exit_full_screen' : 'full_screen'}"
+                collection="indigo_internal"
+              ></igc-icon>
+              ${this.isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
             </igc-button>
           </div>
         </div>
@@ -191,30 +239,26 @@ export default class HomeView extends LitElement {
     `;
   };
 
-
   render() {
     return html`
-      <div class="demo-container">
+      <div class="demo-container" id="fullscreenElement">
         <div class="tabs-info-wrapper-element">
-          <div class="tab-container ">
-            <div class="tab-item-container">
-              <a href="${import.meta.env.BASE_URL}home/inventory">${this.tabItemTemplate("inventory")} </a>
-            </div>
-            <div class="tab-item-container">
-              <a href="${import.meta.env.BASE_URL}home/hr-portal">${this.tabItemTemplate("hr-portal")} </a>
-            </div>
-            <div class="tab-item-container">
-              <a href="${import.meta.env.BASE_URL}home/finance">${this.tabItemTemplate("finance")} </a>
-            </div>
-            <div class="tab-item-container">
-              <a href="${import.meta.env.BASE_URL}home/sales">${this.tabItemTemplate("sales")} </a>
-            </div>
-            <div class="tab-item-container">
-              <a href="${import.meta.env.BASE_URL}home/fleet">${this.tabItemTemplate("fleet")} </a>
-            </div>
+        ${!this.isFullscreen ? html`
+          <div class="tab-container">
+            ${this.tabs.map(
+              (tab) => html`
+                <div class="tab-item-container">
+                  <a href="${import.meta.env.BASE_URL}home/${tab.key}">
+                    ${this.tabItemTemplate(tab.key)}
+                  </a>
+                </div>
+              `
+            )}
           </div>
-
-          <div> ${this.tabInfoTemplate(this.routeName, this.tabInfo?.get(this.routeName))}
+        ` : ''}
+  
+          <div>
+            ${this.tabInfoTemplate(this.routeName, this.tabInfo?.get(this.routeName))}
           </div>
         </div>
         <div class="router-container">

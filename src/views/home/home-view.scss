@@ -137,7 +137,6 @@
     display: flex;
     gap: 8px;
     align-items: center;
-    flex-wrap: wrap;
     line-height: 100%;
     font-size: 14px;
 
@@ -152,14 +151,27 @@
       border-right: 1px solid #D6D6D6;
     }
 
-    .custom-button::part(base) {
-      color: black;
-      border-color: #D6D6D6;
-      text-transform: unset;
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
 
-      igc-icon::part(icon) {
+      .custom-button::part(base) {
         color: black;
+        border-color: #D6D6D6;
+        text-transform: unset;
+
+        igc-icon::part(icon) {
+          color: black;
+        }
       }
     }
   }
+}
+
+:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background: white;
 }
