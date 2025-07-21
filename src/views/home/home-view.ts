@@ -185,7 +185,7 @@ export default class HomeView extends LitElement {
     return html`
       <div class="tab-item ${classMap({ "tab-item--selected": this.routeName === tabName })}">
         <div class="tab-header ${classMap({ "tab-header--disabled": this.routeName !== tabName })}">
-          ${this.tabInfo.get(tabName)?.title}
+          ${this.tabInfo.get(tabName)?.title.toUpperCase()}
         </div>
       </div>
     `;
