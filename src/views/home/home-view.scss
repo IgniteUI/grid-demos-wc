@@ -72,10 +72,7 @@
   }
 
   &:hover {
-    background-color: #e6f2ff;
-    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
-    transition: all 0.5s ease;
-    transform: translateY(-2px);
+    background-color: var(--ig-gray-200);
   }
 }
 
