@@ -32,7 +32,6 @@
   width: 100%;
   overflow: hidden;
   flex-shrink: 0;
-  padding: 16px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -86,22 +85,6 @@
   line-height: 20px;
   letter-spacing: 0.15px;
   --ig-size: var(--ig-size-medium);
-}
-
-.tab-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  color: var(--ig-gray-900);
-  font-size: 14px;
-  font-weight: 400;
-  font-family: "aktiv-grotesk", sans-serif;
-  line-height: 20px;
-  letter-spacing: 0.25px;
-
-  &--disabled {
-    color: var(--ig-gray-700) !important;
-  }
 }
 
 .tabs-info-wrapper-element {
