@@ -1,0 +1,15 @@
+.container {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 35px 16px 105px 16px;
+}
+
+.chart-wrapper,
+igc-category-chart {
+  height: 100%;
+  --brushes: #C5E0FF, #FFB5C2, #B2E5B2;
+  --outlines: #C5E0FF, #FFB5C2, #B2E5B2;
+  --marker-brushes: #C5E0FF, #FFB5C2, #B2E5B2;
+  --marker-outlines: #C5E0FF, #FFB5C2, #B2E5B2;
+}
