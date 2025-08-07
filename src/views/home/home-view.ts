@@ -180,7 +180,7 @@ export default class HomeView extends LitElement {
     if (typeof window !== 'undefined') {
       window.addEventListener('vaadin-router-location-changed', this.updateCurrentPath);
       window.addEventListener('resize', this.onResize);
-      
+
       // Initial setting of the correct route
       const path = window.location.pathname;
       this.routeName = this.extractRouteKey(path);
@@ -211,7 +211,7 @@ export default class HomeView extends LitElement {
     const base = path.split('/home/')[1] || '';
     return base;
   }
-
+  
   private updateCurrentPath = (_event: any) => {
     // The full pathname -> like '/webcomponents-grid-examples/home/charts/line-chart'
     const fullPath = window.location.pathname; 
@@ -224,7 +224,6 @@ export default class HomeView extends LitElement {
     this.updateTabsBasedOnRoute(fullPath);
   };
   
-
   private onDownloadClick = (event: MouseEvent, tabName: string) => {
     event.preventDefault();
     event.stopPropagation();
@@ -273,7 +272,7 @@ export default class HomeView extends LitElement {
   };
 
   private updateTabsBasedOnRoute(url: string) {
-    this.routeName = url.replace('/home/', '');
+    this.routeName = url.replace(/^.*home\//, '');
     
     if (url.includes('charts')) {
       this.tabInfo = this.tabInfoCharts;
@@ -304,9 +303,8 @@ export default class HomeView extends LitElement {
     `;
   };
   
-  
+  private tabInfoTemplate = (tabName: string, info: TabInfo | undefined) => {
 
-  private tabInfoTemplate = (tabName: string, info: TabInfo) => {
     return html`
       <div class="current-tab-info">
         <div class="sample-info">

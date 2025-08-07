@@ -38,12 +38,12 @@ export class ColumnChart extends LitElement {
         <igc-category-chart
           .dataSource=${this.chartData}
           .chartType=${"Column"}
-          yAxisTitle="Temperature in °C"
-          yAxisTitleLeftMargin="10"
-          yAxisTitleRightMargin="5"
-          yAxisLabelLeftMargin="0"
-          highlightingMode="FadeOthersSpecific"
-          highlightingBehavior="NearestItemsAndSeries"
+          y-Axis-Title="Temperature in °C"
+          y-axis-title-left-margin="10"
+          y-axis-title-right-margin="5"
+          y-axis-label-left-margin="0"
+          highlighting-mode="FadeOthersSpecific"
+          highlighting-behavior="NearestItemsAndSeries"
           .isHorizontalZoomEnabled=${false}
           .isVerticalZoomEnabled=${false}
         >
