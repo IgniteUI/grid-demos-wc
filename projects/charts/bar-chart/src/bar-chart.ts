@@ -1,5 +1,5 @@
-import { LitElement, html, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { LitElement, html, unsafeCSS } from "lit";
+import { customElement, property } from "lit/decorators.js";
 import {
   IgcLegendModule,
   IgcBarSeriesModule,
@@ -9,13 +9,13 @@ import {
   IgcDataChartCategoryModule,
   IgcDataChartInteractivityModule,
   IgcDataToolTipLayerModule,
-  IgcCategoryHighlightLayerModule
-} from 'igniteui-webcomponents-charts';
+  IgcCategoryHighlightLayerModule,
+} from "igniteui-webcomponents-charts";
 
-import { configureTheme } from 'igniteui-webcomponents';
-import { ModuleManager } from 'igniteui-webcomponents-core';
+import { configureTheme } from "igniteui-webcomponents";
+import { ModuleManager } from "igniteui-webcomponents-core";
 
-import styles from './bar-chart.scss?inline';
+import styles from "./bar-chart.scss?inline";
 
 ModuleManager.register(
   IgcLegendModule,
@@ -29,22 +29,25 @@ ModuleManager.register(
   IgcCategoryHighlightLayerModule
 );
 
-@customElement('app-bar-chart')
+@customElement("app-bar-chart")
 export class BarChartSample extends LitElement {
   @property({ type: Array }) highestGrossingMovies = [
-    { franchise: 'Marvel Universe', totalRevenue: 22.55, highestGrossing: 2.8 },
-    { franchise: 'Star Wars', totalRevenue: 10.32, highestGrossing: 2.07 },
-    { franchise: 'Harry Potter', totalRevenue: 9.19, highestGrossing: 1.34 },
-    { franchise: 'Avengers', totalRevenue: 7.76, highestGrossing: 2.8 },
-    { franchise: 'Spider Man', totalRevenue: 7.22, highestGrossing: 1.28 },
-    { franchise: 'James Bond', totalRevenue: 7.12, highestGrossing: 1.11 },
+    { franchise: "Marvel Universe", totalRevenue: 22.55, highestGrossing: 2.8 },
+    { franchise: "Star Wars", totalRevenue: 10.32, highestGrossing: 2.07 },
+    { franchise: "Harry Potter", totalRevenue: 9.19, highestGrossing: 1.34 },
+    { franchise: "Avengers", totalRevenue: 7.76, highestGrossing: 2.8 },
+    { franchise: "Spider Man", totalRevenue: 7.22, highestGrossing: 1.28 },
+    { franchise: "James Bond", totalRevenue: 7.12, highestGrossing: 1.11 },
   ];
 
   render() {
-    configureTheme('fluent');
+    configureTheme("fluent");
 
     return html`
-      <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/fluent.css" />
+      <link
+        rel="stylesheet"
+        href="${import.meta.env.BASE_URL}themes/fluent.css"
+      />
 
       <div class="container">
         <div class="legend-title">Highest Grossing Movie Franchises</div>
@@ -83,8 +86,6 @@ export class BarChartSample extends LitElement {
               show-default-tooltip="true"
               is-transition-in-enabled="true"
               is-highlighting-enabled="true"
-              brush="#C5E0FF"
-              outline="#8AB9F1"
             ></igc-bar-series>
 
             <igc-bar-series
@@ -97,8 +98,6 @@ export class BarChartSample extends LitElement {
               show-default-tooltip="true"
               is-transition-in-enabled="true"
               is-highlighting-enabled="true"
-              brush="#FFB5C2"
-              outline="#FF6F91"
             ></igc-bar-series>
 
             <igc-data-tool-tip-layer></igc-data-tool-tip-layer>

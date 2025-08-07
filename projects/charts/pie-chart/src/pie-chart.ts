@@ -1,21 +1,18 @@
-import { LitElement, html, unsafeCSS } from 'lit';
-import { customElement, query } from 'lit/decorators.js';
+import { LitElement, html, unsafeCSS } from "lit";
+import { customElement } from "lit/decorators.js";
 import {
   IgcPieChartModule,
   IgcItemLegendModule,
   SliceClickEventArgs,
   IgcPieChartComponent,
-} from 'igniteui-webcomponents-charts';
-import { configureTheme } from 'igniteui-webcomponents';
-import pieChartStyles from './pie-chart.scss?inline';
-import { ModuleManager } from 'igniteui-webcomponents-core';
+} from "igniteui-webcomponents-charts";
+import { configureTheme } from "igniteui-webcomponents";
+import pieChartStyles from "./pie-chart.scss?inline";
+import { ModuleManager } from "igniteui-webcomponents-core";
 
-ModuleManager.register(
-  IgcItemLegendModule,
-  IgcPieChartModule
-);
+ModuleManager.register(IgcItemLegendModule, IgcPieChartModule);
 
-@customElement('app-pie-chart')
+@customElement("app-pie-chart")
 export class PieChartSample extends LitElement {
   static styles = unsafeCSS(pieChartStyles);
 
@@ -36,26 +33,37 @@ export class PieChartSample extends LitElement {
   ];
 
   firstUpdated() {
-    const pieChart = this.renderRoot.querySelector('#chart2') as any;
-  
-    pieChart.sliceClick = (_: IgcPieChartComponent, args: SliceClickEventArgs) => {
+    const pieChart = this.renderRoot.querySelector("#chart2") as any;
+
+    pieChart.sliceClick = (
+      _: IgcPieChartComponent,
+      args: SliceClickEventArgs
+    ) => {
       args.isExploded = !args.isExploded;
     };
   }
-  
 
   render() {
-    configureTheme('fluent');
+    configureTheme("fluent");
 
     return html`
-      <link rel="stylesheet" href="${import.meta.env.BASE_URL}themes/fluent.css" />
+      <link
+        rel="stylesheet"
+        href="${import.meta.env.BASE_URL}themes/fluent.css"
+      />
 
       <div class="charts-container">
         <div class="chart-wrapper">
           <div class="pie-chart-variant">PIE CHART</div>
-          <div class="legend-title">Global Electricity Demand by Energy Use</div>
+          <div class="legend-title">
+            Global Electricity Demand by Energy Use
+          </div>
 
-          <igc-item-legend id="legend" name="legend" orientation="Horizontal"></igc-item-legend>
+          <igc-item-legend
+            id="legend"
+            name="legend"
+            orientation="Horizontal"
+          ></igc-item-legend>
 
           <div class="pie-chart">
             <igc-pie-chart
@@ -66,8 +74,9 @@ export class PieChartSample extends LitElement {
               label-member-path="summary"
               labels-position="BestFit"
               value-member-path="value"
-              radius-factor="0.7">
-              </igc-pie-chart>
+              radius-factor="0.7"
+            >
+            </igc-pie-chart>
           </div>
         </div>
 
@@ -83,7 +92,8 @@ export class PieChartSample extends LitElement {
               value-member-path="MarketShare"
               labels-position="OutsideEnd"
               label-extent="30"
-              exploded-slices="3">
+              exploded-slices="3"
+            >
             </igc-pie-chart>
           </div>
         </div>

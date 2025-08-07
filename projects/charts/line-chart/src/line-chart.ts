@@ -1,20 +1,17 @@
-import { LitElement, html, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { LitElement, html, unsafeCSS } from "lit";
+import { customElement, property } from "lit/decorators.js";
 import {
   IgcCategoryChartModule,
-  IgcLegendModule
-} from 'igniteui-webcomponents-charts';
-import { ModuleManager } from 'igniteui-webcomponents-core';
+  IgcLegendModule,
+} from "igniteui-webcomponents-charts";
+import { ModuleManager } from "igniteui-webcomponents-core";
 
-import lineChartStyles from './line-chart.scss?inline';
-import { configureTheme } from 'igniteui-webcomponents';
+import lineChartStyles from "./line-chart.scss?inline";
+import { configureTheme } from "igniteui-webcomponents";
 
-ModuleManager.register(
-  IgcCategoryChartModule,
-  IgcLegendModule
-);
+ModuleManager.register(IgcCategoryChartModule, IgcLegendModule);
 
-@customElement('app-line-chart')
+@customElement("app-line-chart")
 export class LineChart extends LitElement {
   @property({ type: Array }) data = [
     { year: "2009", europe: 34, china: 21, america: 19 },
@@ -31,8 +28,8 @@ export class LineChart extends LitElement {
   ];
 
   render() {
-    configureTheme('fluent');
-    
+    configureTheme("fluent");
+
     return html`
       <div class="container">
         <div class="legend-title">Renewable Electricity Generated</div>
@@ -47,7 +44,7 @@ export class LineChart extends LitElement {
             width="100%"
             height="100%"
             .dataSource=${this.data}
-            .chartType=${"Line"} 
+            .chartType=${"Line"}
             includedProperties='["year", "europe", "china", "america"]'
             .isHorizontalZoomEnabled=${false}
             .isVerticalZoomEnabled=${false}
@@ -56,7 +53,8 @@ export class LineChart extends LitElement {
             yAxisTitleRightMargin="5"
             yAxisLabelLeftMargin="0"
             computedPlotAreaMarginMode="Series"
-            legend="legend">
+            legend="legend"
+          >
           </igc-category-chart>
         </div>
       </div>
