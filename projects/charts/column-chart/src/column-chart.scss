@@ -1,8 +1,9 @@
 .container {
   display: block;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
-  padding: 35px 16px 205px 16px;
+  padding: 32px 16px 40px 16px;
   --brushes: #C5E0FF;
   --outlines: #C5E0FF;
 }

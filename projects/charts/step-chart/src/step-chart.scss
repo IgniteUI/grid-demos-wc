@@ -1,15 +1,12 @@
 .container {
   display: block;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
-  padding: 35px 16px 105px 16px;
-
-  
+  padding: 32px 16px 56px 16px;
 }
 
 .legend-title {
-  border: 2px soid red;
-  color: red;
   padding-bottom: 20px;
 }
 
