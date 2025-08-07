@@ -41,6 +41,10 @@ export class PolarChart extends LitElement {
     configureTheme("fluent");
 
     return html`
+      <link
+        rel="stylesheet"
+        href="${import.meta.env.BASE_URL}themes/fluent.css"
+      />
       <div class="polar-chart-container">
         <div class="legend-title">Wind Speed vs Boat Speed</div>
 

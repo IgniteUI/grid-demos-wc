@@ -44,12 +44,12 @@ export class PieChartSample extends LitElement {
   }
 
   render() {
-    configureTheme("fluent");
+    configureTheme("indigo");
 
     return html`
       <link
         rel="stylesheet"
-        href="${import.meta.env.BASE_URL}themes/fluent.css"
+        href="${import.meta.env.BASE_URL}themes/indigo.css"
       />
 
       <div class="charts-container">

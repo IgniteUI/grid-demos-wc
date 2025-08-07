@@ -27,9 +27,13 @@ export class ColumnChart extends LitElement {
   ];
 
   render() {
-    configureTheme("fluent");
+    configureTheme("material");
 
     return html`
+      <link
+        rel="stylesheet"
+        href="${import.meta.env.BASE_URL}themes/material.css"
+      />
       <div class="container">
         <igc-category-chart
           .dataSource=${this.chartData}

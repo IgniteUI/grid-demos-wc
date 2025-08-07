@@ -1,6 +1,5 @@
 import { LitElement, unsafeCSS, html } from "lit";
 import { customElement } from "lit/decorators.js";
-// import "../../../projects/charts/polar-chart/src/polar-chart";
 import "../../../../projects/charts/polar-chart/src/polar-chart";
 import namedStyles from "./polar-chart-view.scss?inline";
 import sharedStyles from "../../../shared/styles.scss?inline";

@@ -29,9 +29,13 @@ export class StepChart extends LitElement {
   ];
 
   render() {
-    configureTheme("fluent");
+    configureTheme("material");
 
     return html`
+      <link
+        rel="stylesheet"
+        href="${import.meta.env.BASE_URL}themes/material.css"
+      />
       <div class="container">
         <div class="legend-title">Renewable Electricity Generated</div>
 

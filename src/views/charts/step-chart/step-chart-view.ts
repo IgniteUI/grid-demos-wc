@@ -2,7 +2,6 @@ import { LitElement, unsafeCSS, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import "../../../../projects/charts/step-chart/src/step-chart";
 import namedStyles from "./step-chart-view.scss?inline";
-// import sharedStyles from "../../shared/styles.scss?inline";
 import sharedStyles from "../../../shared/styles.scss?inline";
 
 @customElement("step-chart-view")

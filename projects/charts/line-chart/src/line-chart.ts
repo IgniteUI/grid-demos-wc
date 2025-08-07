@@ -28,9 +28,14 @@ export class LineChart extends LitElement {
   ];
 
   render() {
-    configureTheme("fluent");
+    configureTheme("bootstrap");
 
     return html`
+      <link
+        rel="stylesheet"
+        href="${import.meta.env.BASE_URL}themes/bootstrap.css"
+      />
+
       <div class="container">
         <div class="legend-title">Renewable Electricity Generated</div>
 
