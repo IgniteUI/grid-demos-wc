@@ -134,7 +134,7 @@ stages:
           script: |
             $packageJson = Get-Content -Raw .\package.json | ConvertFrom-Json
             $properties = $packageJson.dependencies.PSObject.Properties `
-                | where-object { $_.Name.StartsWith("igniteui-react") -or $_.Name.StartsWith("igniteui-dockmanager") }
+                | where-object { $_.Name.StartsWith("igniteui-webcomponents") -or $_.Name.StartsWith("igniteui-dockmanager") }
 
             foreach( $property in $properties )
             {
