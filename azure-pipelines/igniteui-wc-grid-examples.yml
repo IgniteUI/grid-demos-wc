@@ -151,7 +151,7 @@ stages:
                 $packageJson.dependencies | Add-Member -NotePropertyName $newName -NotePropertyValue $value;
             }
 
-            ConvertTo-Json -InputObject $packageJson | Set-Content -Path .\package.json
+            $packageJson | ConvertTo-Json -Depth 10 | Set-Content -Path .\package.json
 
       - task: Npm@1
         displayName: 'npm install --legacy-peer-deps'
