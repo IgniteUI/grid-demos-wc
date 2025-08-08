@@ -153,6 +153,14 @@ stages:
 
             ConvertTo-Json -InputObject $packageJson | Set-Content -Path .\package.json
 
+      - task: Npm@1
+        displayName: 'npm install --legacy-peer-deps'
+        inputs:
+          verbose: ${{ parameters.isVerbose }}
+          command: custom
+          workingDir: '$(Build.SourcesDirectory)'
+          customCommand: 'install --legacy-peer-deps'
+
       - task: PowerShell@2
         displayName: 'Replace references to IG trial packages with licensed ones in TSX files'
         inputs:
@@ -164,14 +172,6 @@ stages:
             Get-ChildItem -Include "*.tsx","*.ts" -Recurse | `
             ForEach {  (Get-Content $_.PSPath | ForEach { ($_ -replace '([from|import])\s?[''"](igniteui-[react|dockmanager].*)[''"]', '$1 "@infragistics/$2"') }) | `
             Set-Content $_.PSPath }
-
-      - task: Npm@1
-        displayName: 'npm install --legacy-peer-deps'
-        inputs:
-          verbose: ${{ parameters.isVerbose }}
-          command: custom
-          workingDir: '$(Build.SourcesDirectory)'
-          customCommand: 'install --legacy-peer-deps'
 
       - task: Npm@1
         displayName: 'npm run build:ci'
