@@ -196,6 +196,7 @@ stages:
             Get-ChildItem -Include "*.tsx","*.ts" -Recurse | `
             ForEach {  (Get-Content $_.PSPath | ForEach { ($_ -replace '([from|import])\s?[''"](igniteui-[webcomponents|dockmanager].*)[''"]', '$1 "@infragistics/$2"') }) | `
             Set-Content $_.PSPath }
+            cat package.json
 
       - task: Npm@1
         displayName: 'npm run build:ci'
