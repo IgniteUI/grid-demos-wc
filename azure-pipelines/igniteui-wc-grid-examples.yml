@@ -111,6 +111,14 @@ stages:
           customCommand: 'install --legacy-peer-deps'
           customEndpoint: 'public proget'
 
+      - task: Npm@1
+        displayName: 'Install Ignite UI CLI globally'
+        inputs:
+          verbose: ${{ parameters.isVerbose }}
+          command: custom
+          workingDir: '$(Build.SourcesDirectory)'
+          customCommand: 'install -g igniteui-cli'
+
       - task: PowerShell@2
         displayName: 'Update vite.config to licensed'
         inputs:
@@ -124,34 +132,50 @@ stages:
             $updatedViteConfig = $viteConfig -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
             $updatedViteConfig | Set-Content ./vite.config.ts
 
-      - task: PowerShell@2
-        displayName: 'Replace references to IG trial packages with licensed ones'
+      - task: Bash@3
+        displayName: 'Run Ignite UI Upgrade in Root and All Project Subdirectories'
         inputs:
-          failOnStderr: true
-          showWarnings: true
-          workingDirectory: '$(Build.SourcesDirectory)'
           targetType: 'inline'
           script: |
-            $packageJson = Get-Content -Raw .\package.json | ConvertFrom-Json
-            $properties = $packageJson.dependencies.PSObject.Properties `
-                | where-object { $_.Name.StartsWith("igniteui-webcomponents") -or $_.Name.StartsWith("igniteui-dockmanager") }
+            echo "Running Ignite UI package upgrade at root level..."
+            npx ig upgrade-packages --skip-install
 
-            foreach( $property in $properties )
-            {
-                $oldName = $property.Name;
-                $newName = "@infragistics/" + $oldName
+            echo "Running Ignite UI package upgrade in all project subdirectories..."
+            for dir in $(Build.SourcesDirectory)/projects/*/; do
+              if [ -d "$dir" ]; then
+                echo "Processing: $dir"
+                (cd "$dir" && npx ig upgrade-packages --skip-install)
+              fi
+            done
 
-                # remember the current value of the old property
-                $value = $property.Value;
+      # - task: PowerShell@2
+      #   displayName: 'Replace references to IG trial packages with licensed ones'
+      #   inputs:
+      #     failOnStderr: true
+      #     showWarnings: true
+      #     workingDirectory: '$(Build.SourcesDirectory)'
+      #     targetType: 'inline'
+      #     script: |
+      #       $packageJson = Get-Content -Raw .\package.json | ConvertFrom-Json
+      #       $properties = $packageJson.dependencies.PSObject.Properties `
+      #           | where-object { $_.Name.StartsWith("igniteui-webcomponents") -or $_.Name.StartsWith("igniteui-dockmanager") }
 
-                # remove reference to the trial package reference
-                $packageJson.dependencies.psobject.Properties.Remove($oldName);
+      #       foreach( $property in $properties )
+      #       {
+      #           $oldName = $property.Name;
+      #           $newName = "@infragistics/" + $oldName
 
-                # add reference to the licensed package reference
-                $packageJson.dependencies | Add-Member -NotePropertyName $newName -NotePropertyValue $value;
-            }
+      #           # remember the current value of the old property
+      #           $value = $property.Value;
 
-            $packageJson | ConvertTo-Json -Depth 10 | Set-Content -Path .\package.json
+      #           # remove reference to the trial package reference
+      #           $packageJson.dependencies.psobject.Properties.Remove($oldName);
+
+      #           # add reference to the licensed package reference
+      #           $packageJson.dependencies | Add-Member -NotePropertyName $newName -NotePropertyValue $value;
+      #       }
+
+      #       $packageJson | ConvertTo-Json | Set-Content -Path .\package.json
 
       - task: Npm@1
         displayName: 'npm install --legacy-peer-deps'
