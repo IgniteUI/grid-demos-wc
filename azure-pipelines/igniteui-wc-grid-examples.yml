@@ -193,9 +193,10 @@ stages:
           workingDirectory: '$(Build.SourcesDirectory)'
           targetType: 'inline'
           script: |
-            Get-ChildItem -Include "*.tsx","*.ts" -Recurse | `
-            (Get-Content $_.PSPath | ForEach { ($_ -replace '(from|import)\s?[''"](igniteui-webcomponents-[^''"]+|dockmanager[^''"]*)[''"]', '$1 "@infragistics/$2"') }) | `
-            Set-Content $_.PSPath }
+            Get-ChildItem -Include "*.tsx","*.ts" -Recurse | ForEach-Object {
+            Get-Content $_.PSPath | ForEach-Object {
+              $_ -replace '(from|import)\s?[''"](igniteui-webcomponents-[^''"]+|dockmanager[^''"]*)[''"]', '$1 "@infragistics/$2"'
+            } | Set-Content $_.PSPath
             cat package.json
 
       - task: Npm@1
