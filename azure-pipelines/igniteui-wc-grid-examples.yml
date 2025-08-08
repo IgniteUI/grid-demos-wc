@@ -111,14 +111,6 @@ stages:
           customCommand: 'install --legacy-peer-deps'
           customEndpoint: 'public proget'
 
-      - task: Npm@1
-        displayName: 'Install Ignite UI CLI globally'
-        inputs:
-          verbose: ${{ parameters.isVerbose }}
-          command: custom
-          workingDir: '$(Build.SourcesDirectory)'
-          customCommand: 'install -g igniteui-cli'
-
       - task: PowerShell@2
         displayName: 'Update vite.config to licensed'
         inputs:
@@ -132,21 +124,43 @@ stages:
             $updatedViteConfig = $viteConfig -replace 'igniteui-webcomponents-', '@infragistics/igniteui-webcomponents-'
             $updatedViteConfig | Set-Content ./vite.config.ts
 
-      - task: Bash@3
-        displayName: 'Run Ignite UI Upgrade in Root and All Project Subdirectories'
+      - task: PowerShell@2
+        displayName: 'package.json - trial to licensed'
         inputs:
           targetType: 'inline'
           script: |
-            echo "Running Ignite UI package upgrade at root level..."
-            npx ig upgrade-packages --skip-install
+            $filePath = "$(Build.SourcesDirectory)\package.json"
+            $trialStringsToReplace = @(
+                [pscustomobject]@{ Pattern = '"igniteui-webcomponents(-[a-z0-9-]+)?"'; Replacement = '"@infragistics/igniteui-webcomponents$1"' },
+                [pscustomobject]@{ Pattern = '(\"igniteui-trial.*\d+\.\d+\.\d+\"(,?))'; Replacement = '' }
+            )
+            
+            $fileContents = Get-Content -Path $filePath -Raw
+            
+            $trialStringsToReplace | ForEach-Object {
+            if ($fileContents -notmatch $_.Pattern) {
+              throw "No matches for $($_.Pattern) in $filePath !!!"
+            }
+            else {
+              Write-Output "Found matches for $($_.Pattern) in $filePath. Replacing with $($_.Replacement)"
+            }
+              
+            $fileContents = $fileContents -replace $_.Pattern, $_.Replacement
+            }
 
-            echo "Running Ignite UI package upgrade in all project subdirectories..."
-            for dir in $(Build.SourcesDirectory)/projects/*/; do
-              if [ -d "$dir" ]; then
-                echo "Processing: $dir"
-                (cd "$dir" && npx ig upgrade-packages --skip-install)
-              fi
-            done
+            Set-Content -Path $filePath -Value $fileContents -Force
+
+      - task: PowerShell@2
+        displayName: 'Replace references to IG trial packages with licensed ones in TSX files'
+        inputs:
+          failOnStderr: true
+          showWarnings: true
+          workingDirectory: '$(Build.SourcesDirectory)'
+          targetType: 'inline'
+          script: |
+            Get-ChildItem -Include "*.tsx","*.ts" -Recurse | `
+            ForEach {  (Get-Content $_.PSPath | ForEach { ($_ -replace '([from|import])\s?[''"](igniteui-[react|dockmanager].*)[''"]', '$1 "@infragistics/$2"') }) | `
+            Set-Content $_.PSPath }
 
       - task: Npm@1
         displayName: 'npm install --legacy-peer-deps'
