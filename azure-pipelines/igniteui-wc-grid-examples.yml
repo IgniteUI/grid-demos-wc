@@ -131,7 +131,7 @@ stages:
           script: |
             $filePath = "$(Build.SourcesDirectory)\package.json"
             $trialStringsToReplace = @(
-                [pscustomobject]@{ Pattern = '"igniteui-webcomponents(-[a-z0-9-]+)?"'; Replacement = '"@infragistics/igniteui-webcomponents$1"' },
+                [pscustomobject]@{ Pattern = '"igniteui-webcomponents(-[a-z0-9-]+)?"'; Replacement = '"@infragistics/igniteui-webcomponents$1"' }
             )
             
             $fileContents = Get-Content -Path $filePath -Raw
