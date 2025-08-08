@@ -197,6 +197,7 @@ stages:
             Get-Content $_.PSPath | ForEach-Object {
               $_ -replace '(from|import)\s?[''"](igniteui-webcomponents-[^''"]+|dockmanager[^''"]*)[''"]', '$1 "@infragistics/$2"'
             } | Set-Content $_.PSPath
+            }
             cat package.json
 
       - task: Npm@1
