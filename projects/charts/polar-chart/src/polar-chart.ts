@@ -37,6 +37,12 @@ export class PolarChart extends LitElement {
     { direction: 360, boatSpeed: 70, windSpeed: 90 },
   ];
 
+  firstUpdated() {
+    const legendEl = this.renderRoot.querySelector('#legend') as any;
+    const chartEl = this.renderRoot.querySelector('igc-data-chart') as any;
+    chartEl.legend = legendEl;
+  }
+
   render() {
     configureTheme("fluent");
 
@@ -59,7 +65,6 @@ export class PolarChart extends LitElement {
             height="100%"
             name="chart"
             id="chart"
-            legend="legend"
             .dataSource=${this.boatSailingData}
             is-horizontal-zoom-enabled="false"
             is-vertical-zoom-enabled="false"

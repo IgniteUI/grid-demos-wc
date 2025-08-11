@@ -41,6 +41,11 @@ export class PieChartSample extends LitElement {
     ) => {
       args.isExploded = !args.isExploded;
     };
+
+    // Adding legend to the first pie chart
+    const legendEl = this.renderRoot.querySelector('#legend') as any;
+    const chartEl = this.renderRoot.querySelector('#chart') as any;
+    chartEl.legend = legendEl;
   }
 
   render() {
@@ -59,11 +64,13 @@ export class PieChartSample extends LitElement {
             Global Electricity Demand by Energy Use
           </div>
 
-          <igc-item-legend
-            id="legend"
-            name="legend"
-            orientation="Horizontal"
-          ></igc-item-legend>
+          <div class="legend">
+            <igc-item-legend
+              id="legend"
+              name="legend"
+              orientation="Horizontal"
+            ></igc-item-legend>
+          </div>
 
           <div class="pie-chart">
             <igc-pie-chart

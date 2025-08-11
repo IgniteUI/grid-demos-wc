@@ -27,6 +27,12 @@ export class LineChart extends LitElement {
     { year: "2019", europe: 80, china: 96, america: 38 },
   ];
 
+  firstUpdated() {
+    const legendEl = this.renderRoot.querySelector('#legend') as any;
+    const chartEl = this.renderRoot.querySelector('igc-category-chart') as any;
+    chartEl.legend = legendEl;
+  }
+
   render() {
     configureTheme("bootstrap");
 
@@ -58,7 +64,6 @@ export class LineChart extends LitElement {
             yAxisTitleRightMargin="5"
             yAxisLabelLeftMargin="0"
             computedPlotAreaMarginMode="Series"
-            legend="legend"
           >
           </igc-category-chart>
         </div>

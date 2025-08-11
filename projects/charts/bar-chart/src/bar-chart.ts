@@ -40,6 +40,12 @@ export class BarChartSample extends LitElement {
     { franchise: "James Bond", totalRevenue: 7.12, highestGrossing: 1.11 },
   ];
 
+  firstUpdated() {
+    const legendEl = this.renderRoot.querySelector('#legend') as any;
+    const chartEl = this.renderRoot.querySelector('igc-data-chart') as any;
+    chartEl.legend = legendEl;
+  }
+  
   render() {
     configureTheme("fluent");
 
@@ -53,11 +59,11 @@ export class BarChartSample extends LitElement {
         <div class="legend-title">Highest Grossing Movie Franchises</div>
 
         <div class="legend">
-          <igc-legend orientation="Horizontal" id="legend"></igc-legend>
+          <igc-legend orientation="Horizontal" id="legend" name="legend"></igc-legend>
         </div>
 
         <div class="chart-wrapper">
-          <igc-data-chart width="100%" height="100%" legend="legend">
+          <igc-data-chart width="100%" height="100%">
             <igc-category-y-axis
               name="yAxis"
               label="franchise"

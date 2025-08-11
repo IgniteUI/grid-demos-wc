@@ -28,6 +28,12 @@ export class StepChart extends LitElement {
     { year: "2019", europe: 80, china: 96, america: 38 },
   ];
 
+  firstUpdated() {
+    const legendEl = this.renderRoot.querySelector('#legend') as any;
+    const chartEl = this.renderRoot.querySelector('igc-category-chart') as any;
+    chartEl.legend = legendEl;
+  }
+
   render() {
     configureTheme("material");
 
@@ -47,7 +53,6 @@ export class StepChart extends LitElement {
           <igc-category-chart
             id="chart"
             .dataSource=${this.countryRenewableElectricity}
-            legend="legend"
             chart-type="StepArea"
             title-alignment="Left"
             title-left-margin="25"
