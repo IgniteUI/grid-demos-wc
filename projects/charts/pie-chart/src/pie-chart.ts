@@ -46,15 +46,20 @@ export class PieChartSample extends LitElement {
     const legendEl = this.renderRoot.querySelector('#legend') as any;
     const chartEl = this.renderRoot.querySelector('#chart') as any;
     chartEl.legend = legendEl;
+
+    // Adding legend to the second pie chart
+    const legendEl2 = this.renderRoot.querySelector('#legend2') as any;
+    const chartEl2 = this.renderRoot.querySelector('#chart2') as any;
+    chartEl2.legend = legendEl2;
   }
 
   render() {
-    configureTheme("indigo");
+    configureTheme("material");
 
     return html`
       <link
         rel="stylesheet"
-        href="${import.meta.env.BASE_URL}themes/indigo.css"
+        href="${import.meta.env.BASE_URL}themes/material.css"
       />
 
       <div class="charts-container">
@@ -89,6 +94,17 @@ export class PieChartSample extends LitElement {
 
         <div class="chart-wrapper">
           <div class="pie-chart-variant">PIE CHART EXPLOSION</div>
+          <div class="legend-title">
+            Global Electricity Demand by Energy Use
+          </div>
+
+          <div class="legend">
+            <igc-item-legend
+              id="legend2"
+              name="legend2"
+              orientation="Horizontal"
+            ></igc-item-legend>
+          </div>
           <div class="pie-chart chart2">
             <igc-pie-chart
               name="chart2"

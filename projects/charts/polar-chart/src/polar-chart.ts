@@ -44,12 +44,12 @@ export class PolarChart extends LitElement {
   }
 
   render() {
-    configureTheme("fluent");
+    configureTheme("material");
 
     return html`
       <link
         rel="stylesheet"
-        href="${import.meta.env.BASE_URL}themes/fluent.css"
+        href="${import.meta.env.BASE_URL}themes/material.css"
       />
       <div class="polar-chart-container">
         <div class="legend-title">Wind Speed vs Boat Speed</div>
@@ -96,6 +96,7 @@ export class PolarChart extends LitElement {
               radius-axis-name="radiusAxis"
               title="Wind Speed"
               marker-type="Circle"
+              area-fill-opacity="0.3"
             ></igc-polar-area-series>
 
             <igc-polar-area-series
@@ -105,6 +106,7 @@ export class PolarChart extends LitElement {
               radius-axis-name="radiusAxis"
               title="Boat Speed"
               marker-type="Circle"
+              area-fill-opacity="0.3"
             ></igc-polar-area-series>
 
             <igc-data-tool-tip-layer

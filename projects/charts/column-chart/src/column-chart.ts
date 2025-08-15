@@ -1,11 +1,11 @@
 import { LitElement, html, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { IgcCategoryChartModule } from "igniteui-webcomponents-charts";
+import { IgcCategoryChartModule, IgcLegendModule } from "igniteui-webcomponents-charts";
 import { configureTheme } from "igniteui-webcomponents";
 import { ModuleManager } from "igniteui-webcomponents-core";
 import chartStyles from "./column-chart.scss?inline";
 
-ModuleManager.register(IgcCategoryChartModule);
+ModuleManager.register(IgcCategoryChartModule, IgcLegendModule);
 
 @customElement("app-column-chart")
 export class ColumnChart extends LitElement {
@@ -26,6 +26,12 @@ export class ColumnChart extends LitElement {
     { month: "December", temperature: 5 },
   ];
 
+  firstUpdated() {
+    const legendEl = this.renderRoot.querySelector('#legend') as any;
+    const chartEl = this.renderRoot.querySelector('igc-category-chart') as any;
+    chartEl.legend = legendEl;
+  }
+
   render() {
     configureTheme("material");
 
@@ -35,6 +41,12 @@ export class ColumnChart extends LitElement {
         href="${import.meta.env.BASE_URL}themes/material.css"
       />
       <div class="container">
+        <div class="legend-title">Average Max Temperature</div>
+
+        <div class="legend">
+          <igc-legend id="legend" orientation="Horizontal"></igc-legend>
+        </div>
+
         <igc-category-chart
           .dataSource=${this.chartData}
           .chartType=${"Column"}

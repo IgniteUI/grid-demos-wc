@@ -34,12 +34,12 @@ export class LineChart extends LitElement {
   }
 
   render() {
-    configureTheme("bootstrap");
+    configureTheme("material");
 
     return html`
       <link
         rel="stylesheet"
-        href="${import.meta.env.BASE_URL}themes/bootstrap.css"
+        href="${import.meta.env.BASE_URL}themes/material.css"
       />
 
       <div class="container">

@@ -47,12 +47,12 @@ export class BarChartSample extends LitElement {
   }
   
   render() {
-    configureTheme("fluent");
+    configureTheme("material");
 
     return html`
       <link
         rel="stylesheet"
-        href="${import.meta.env.BASE_URL}themes/fluent.css"
+        href="${import.meta.env.BASE_URL}themes/material.css"
       />
 
       <div class="container">

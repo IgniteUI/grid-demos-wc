@@ -123,7 +123,7 @@ export default class HomeView extends LitElement {
     }],
     ['charts/bar-chart', {
       title: "Bar Chart",
-      theme: "Fluent",
+      theme: "Material",
       themeMode: 'Light',
       content: "Quickly compare frequency, count, total, or average of data in different categories",
       moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/bar-chart",
@@ -131,7 +131,7 @@ export default class HomeView extends LitElement {
     }],
     ['charts/line-chart', {
       title: "Line Chart",
-      theme: "Bootstrap",
+      theme: "Material",
       themeMode: 'Light',
       content: "Show trends and perform comparative analysis of one or more quantities over a period of time",
       moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/line-chart",
@@ -139,7 +139,7 @@ export default class HomeView extends LitElement {
     }],
     ['charts/pie-chart', {
       title: "Pie Chart",
-      theme: "Indigo",
+      theme: "Material",
       themeMode: 'Light',
       content: "Part-to-whole chart that shows how categories (parts) of a data set add up to a total (whole) value.",
       moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/pie-chart",
@@ -155,7 +155,7 @@ export default class HomeView extends LitElement {
     }],
     ['charts/polar-chart', {
       title: "Polar Chart",
-      theme: "Fluent",
+      theme: "Material",
       themeMode: 'Light',
       content: "Emphasizes the amount of change over a period of time or compares multiple items at once.",
       moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/polar-chart",
