@@ -1,1 +1,0 @@
-export type BadgeVariant = "primary" | "info" | "success" | "warning" | "danger";
