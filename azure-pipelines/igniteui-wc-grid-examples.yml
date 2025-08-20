@@ -148,8 +148,12 @@ stages:
             echo "Running Ignite UI package upgrade in all project subdirectories..."
             for dir in $(Build.SourcesDirectory)/projects/*/; do
               if [ -d "$dir" ]; then
-                echo "Processing: $dir"
-                (cd "$dir" && npx ig upgrade-packages --skip-install)
+                if [ -f "$dir/.igniteui-cli.json" ]; then
+                  echo "Processing Ignite UI project: $dir"
+                  (cd "$dir" && npx ig upgrade-packages --skip-install)
+                else
+                  echo "Skipping $dir (not an Ignite UI CLI project)"
+                fi
               fi
             done
 
