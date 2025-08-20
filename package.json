@@ -10,8 +10,8 @@
     "dev:fleet": "vite projects/fleet-management-grid",
     "dev:hr": "vite projects/hr-portal",
     "dev:sales": "vite projects/sales-grid",
-    "build": "tsc && vite build",
-    "build:ci": "tsc && vite build --mode ci",
+    "build": "tsc && node --max-old-space-size=8192 node_modules/vite/bin/vite.js build",
+    "build:ci": "tsc && node --max-old-space-size=8192 node_modules/vite/bin/vite.js build --mode ci",
     "preview": "vite preview"
   },
   "dependencies": {

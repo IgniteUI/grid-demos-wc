@@ -58,5 +58,13 @@ export default defineConfig(() => {
         ],
       }),
     ],
+    build: {
+      target: "esnext",
+      sourcemap: false,
+      chunkSizeWarningLimit: 3000,
+      rollupOptions: {
+        treeshake: true
+      }
+    }
   };
 });

@@ -9,6 +9,14 @@ import "../hr-portal/hr-portal-view";
 import "../erp-hgrid/erp-hgrid-view";
 import "../fleet-management/fleet-management-view";
 import "../sales/sales-view";
+
+import "../charts/bar-chart/bar-chart-view";
+import "../charts/column-chart/column-chart-view";
+import "../charts/line-chart/line-chart-view";
+import "../charts/pie-chart/pie-chart-view";
+import "../charts/polar-chart/polar-chart-view";
+import "../charts/step-chart/step-chart-view";
+
 import { classMap } from "lit/directives/class-map.js";
 
 defineComponents(IgcIconButtonComponent, IgcChipComponent, IgcRippleComponent);
@@ -27,51 +35,26 @@ export default class HomeView extends LitElement {
 
   @query('#fullscreenElement') fullscreenElement!: HTMLElement;
   @property({ type: Boolean }) isFullscreen = false;
-  @property({type: Array}) tabs = [
+  @property({ type: Boolean }) isChartsSection = false;
+  @property({type: Array}) tabsGrids = [
     { key: 'inventory' },
     { key: 'hr-portal' },
     { key: 'finance' },
     { key: 'sales' },
     { key: 'fleet' },
   ];
+  @property({type: Array}) tabsCharts = [
+    { key: 'column-chart' },
+    { key: 'bar-chart' },
+    { key: 'line-chart' },
+    { key: 'pie-chart' },
+    { key: 'step-chart' },
+    { key: 'polar-chart' }
+  ];
   @state()
   private routeName: string = "inventory";
-  
-  constructor() {
-    super();
-    registerIconFromText("file_download", FILE_DOWNLOAD, "indigo_internal");
-    registerIconFromText("view_more", VIEW_MORE, "indigo_internal");
-    registerIconFromText("full_screen", FULL_SCREEN, "indigo_internal");
-    registerIconFromText("exit_full_screen", EXIT_FULL_SCREEN, "indigo_internal");
-  }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-  
-    if (typeof window !== 'undefined') {
-      window.addEventListener('vaadin-router-location-changed', this.updateCurrentPath);
-      window.addEventListener('resize', this.onResize);
-    }
-  
-    if (typeof document !== 'undefined') {
-      document.addEventListener('fullscreenchange', this.onFullscreenChange);
-    }
-  }
-  
-  disconnectedCallback(): void {
-    super.disconnectedCallback();
-  
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('vaadin-router-location-changed', this.updateCurrentPath);
-      window.removeEventListener('resize', this.onResize);
-    }
-  
-    if (typeof document !== 'undefined') {
-      document.removeEventListener('fullscreenchange', this.onFullscreenChange);
-    }
-  }
-
-  public tabInfo = new Map<string, TabInfo>([
+  public tabInfoGrids = new Map<string, TabInfo>([
     [
       "inventory",
       {
@@ -129,11 +112,118 @@ export default class HomeView extends LitElement {
     ],
   ]);
 
-  private updateCurrentPath = (event: any) => {
-    const { route } = event.detail.location;
-    this.routeName = route.path;
-  };
+  public tabInfoCharts = new Map<string, TabInfo>([
+    ['charts/column-chart', {
+      title: "Column Chart",
+      theme: "Material",
+      themeMode: 'Light',
+      content: "Render a collection of data points connected by a straight line to emphasize the amount of change over a period of time",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/column-chart",
+      downloadLink: ""
+    }],
+    ['charts/bar-chart', {
+      title: "Bar Chart",
+      theme: "Material",
+      themeMode: 'Light',
+      content: "Quickly compare frequency, count, total, or average of data in different categories",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/bar-chart",
+      downloadLink: ""
+    }],
+    ['charts/line-chart', {
+      title: "Line Chart",
+      theme: "Material",
+      themeMode: 'Light',
+      content: "Show trends and perform comparative analysis of one or more quantities over a period of time",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/line-chart",
+      downloadLink: ""
+    }],
+    ['charts/pie-chart', {
+      title: "Pie Chart",
+      theme: "Material",
+      themeMode: 'Light',
+      content: "Part-to-whole chart that shows how categories (parts) of a data set add up to a total (whole) value.",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/pie-chart",
+      downloadLink: ""
+    }],
+    ['charts/step-chart', {
+      title: "Step Chart",
+      theme: "Material",
+      themeMode: 'Light',
+      content: "Emphasizes the amount of change over a period of time or compares multiple items at once.",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/step-chart",
+      downloadLink: ""
+    }],
+    ['charts/polar-chart', {
+      title: "Polar Chart",
+      theme: "Material",
+      themeMode: 'Light',
+      content: "Emphasizes the amount of change over a period of time or compares multiple items at once.",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/polar-chart",
+      downloadLink: ""
+    }],
+  ]);
 
+  public tabInfo = this.tabInfoGrids;
+  public activeTabs = this.tabsGrids;
+  
+  constructor() {
+    super();
+    registerIconFromText("file_download", FILE_DOWNLOAD, "indigo_internal");
+    registerIconFromText("view_more", VIEW_MORE, "indigo_internal");
+    registerIconFromText("full_screen", FULL_SCREEN, "indigo_internal");
+    registerIconFromText("exit_full_screen", EXIT_FULL_SCREEN, "indigo_internal");
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+  
+    if (typeof window !== 'undefined') {
+      window.addEventListener('vaadin-router-location-changed', this.updateCurrentPath);
+      window.addEventListener('resize', this.onResize);
+
+      // Initial setting of the correct route
+      const path = window.location.pathname;
+      this.routeName = this.extractRouteKey(path);
+      this.updateTabsBasedOnRoute(path);
+    }
+  
+    if (typeof document !== 'undefined') {
+      document.addEventListener('fullscreenchange', this.onFullscreenChange);
+    }
+  }
+  
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+  
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('vaadin-router-location-changed', this.updateCurrentPath);
+      window.removeEventListener('resize', this.onResize);
+      this.updateTabsBasedOnRoute(window.location.pathname);
+    }
+  
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('fullscreenchange', this.onFullscreenChange);
+    }
+  }
+
+  private extractRouteKey(path: string): string {
+    // Get the part after '/home/', (for example 'charts/column-chart')
+    const base = path.split('/home/')[1] || '';
+    return base;
+  }
+  
+  private updateCurrentPath = (_event: any) => {
+    // The full pathname -> like '/webcomponents-grid-examples/home/charts/line-chart'
+    const fullPath = window.location.pathname; 
+  
+    // Extract the last segment as routeName for tab selection -> like 'line-chart'
+    const segments = fullPath.split('/').filter(Boolean); 
+    const lastSegment = segments[segments.length - 1] || '';
+    this.routeName = lastSegment;
+
+    this.updateTabsBasedOnRoute(fullPath);
+  };
+  
   private onDownloadClick = (event: MouseEvent, tabName: string) => {
     event.preventDefault();
     event.stopPropagation();
@@ -181,17 +271,40 @@ export default class HomeView extends LitElement {
     this.isFullscreen = !!document.fullscreenElement;
   };
 
+  private updateTabsBasedOnRoute(url: string) {
+    this.routeName = url.replace(/^.*home\//, '');
+    
+    if (url.includes('charts')) {
+      this.tabInfo = this.tabInfoCharts;
+      this.activeTabs = this.tabsCharts;
+      this.isChartsSection = true;
+    } else {
+      this.tabInfo = this.tabInfoGrids;
+      this.activeTabs = this.tabsGrids;
+      this.isChartsSection = false;
+    }
+  }
+
   private tabItemTemplate = (tabName: string) => {
+    const currentTabName  = this.routeName.startsWith('charts/')
+      ? this.routeName.substring('charts/'.length)
+      : this.routeName;
+  
+    const isSelected = currentTabName  === tabName;
+    const fullTabKey = this.isChartsSection ? `charts/${tabName}` : tabName;
+    const info = this.tabInfo.get(fullTabKey);
+  
     return html`
-      <div class="tab-item ${classMap({ "tab-item--selected": this.routeName === tabName })}">
-        <div class="tab-header ${classMap({ "tab-header--disabled": this.routeName !== tabName })}">
-          ${this.tabInfo.get(tabName)?.title.toUpperCase()}
+      <div class="tab-item ${classMap({ "tab-item--selected": isSelected })}">
+        <div class="tab-header ${classMap({ "tab-header--disabled": !isSelected })}">
+          ${info?.title?.toUpperCase() ?? tabName}
         </div>
       </div>
     `;
   };
-
+  
   private tabInfoTemplate = (tabName: string, info: TabInfo | undefined) => {
+
     return html`
       <div class="current-tab-info">
         <div class="sample-info">
@@ -245,10 +358,10 @@ export default class HomeView extends LitElement {
         <div class="tabs-info-wrapper-element">
         ${!this.isFullscreen ? html`
           <div class="tab-container">
-            ${this.tabs.map(
+            ${this.activeTabs.map(
               (tab) => html`
                 <div class="tab-item-container">
-                  <a href="${import.meta.env.BASE_URL}home/${tab.key}">
+                  <a href="${import.meta.env.BASE_URL}home/${this.isChartsSection ? 'charts/' : ''}${tab.key}">
                     ${this.tabItemTemplate(tab.key)}
                   </a>
                 </div>
