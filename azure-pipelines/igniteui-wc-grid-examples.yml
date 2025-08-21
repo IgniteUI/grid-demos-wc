@@ -165,39 +165,27 @@ stages:
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install --legacy-peer-deps'
 
-      - task: PowerShell@2
-        displayName: 'Replace references to IG trial packages with licensed ones in TSX files'
+      - task: Bash@3
+        displayName: 'Replace IG trial packages with licensed ones in TSX/TS files'
         inputs:
-          failOnStderr: true
-          showWarnings: true
-          workingDirectory: '$(Build.SourcesDirectory)'
           targetType: 'inline'
+          workingDirectory: '$(Build.SourcesDirectory)'
           script: |
-            $filePath = "$(Build.SourcesDirectory)"
-            $trialStringsToReplace = @(
-                [pscustomobject]@{ 
-                    Pattern = "(from|import)\s+['""]([^'""]*(igniteui-webcomponents-[^'""]+|dockmanager[^'""]*))['""]"; 
-                    ReplacementScript = { param($match) 
-                        $pkg = $match.Groups[2].Value
-                        $pkg = $pkg -replace '.*igniteui-webcomponents-', ''
-                        $pkg = $pkg -replace '.*dockmanager', 'dockmanager'
-                        "from `"@infragistics/$pkg`""
-                    } 
-                }
-            )
+            #!/bin/bash
+            set -euo pipefail
 
-            Get-ChildItem -Path $filePath -Include "*.ts","*.tsx" -Recurse | ForEach-Object {
-                $fileContents = Get-Content $_.FullName -Raw
-                $trialStringsToReplace | ForEach-Object {
-                    if ($fileContents -notmatch $_.Pattern) {
-                        Write-Host "No matches for pattern: $($_.Pattern) in file: $($_.FullName)"
-                    } else {
-                        Write-Host "Found matches for pattern: $($_.Pattern) in file: $($_.FullName)"
-                        $fileContents = [regex]::Replace($fileContents, $_.Pattern, $_.ReplacementScript)
-                    }
-                }
-                Set-Content -Path $_.FullName -Value $fileContents -Force
-            }
+            # Find all TSX/TS files
+            FILES=$(find . -type f \( -name "*.ts" -o -name "*.tsx" \))
+
+            for FILE in $FILES; do
+              echo "Processing $FILE"
+
+              # Replace igniteui-webcomponents-* imports
+              sed -i -E "s|(from|import)[[:space:]]+['\"]igniteui-webcomponents-([^'\"]+)['\"]|\1 \"@infragistics/\2\"|g" "$FILE"
+
+              # Replace dockmanager imports
+              sed -i -E "s|(from|import)[[:space:]]+['\"]dockmanager[^'\"]*['\"]|\1 \"@infragistics/dockmanager\"|g" "$FILE"
+            done
 
       - task: Npm@1
         displayName: 'npm run build:ci'
