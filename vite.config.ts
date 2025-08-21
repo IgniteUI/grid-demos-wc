@@ -16,24 +16,24 @@ export default defineConfig(() => {
             dest: "",
           },
           {
-            src: "./projects/finance-grid/public/*",
-            dest: "",
+            src: "./projects/grids/finance-grid/public/*",
+            dest: "grids",
           },
           {
-            src: "./projects/hr-portal/public/*",
-            dest: "",
+            src: "./projects/grids/hr-portal/public/*",
+            dest: "grids",
           },
           {
-            src: "./projects/erp-hgrid/public/*",
-            dest: "",
+            src: "./projects/grids/erp-hgrid/public/*",
+            dest: "grids",
           },
           {
-            src: "./projects/fleet-management-grid/public/*",
-            dest: "",
+            src: "./projects/grids/fleet-management-grid/public/*",
+            dest: "grids",
           },
           {
-            src: "./projects/sales-grid/public/*",
-            dest: "",
+            src: "./projects/grids/sales-grid/public/*",
+            dest: "grids",
           },
           {
             src: "node_modules/igniteui-webcomponents-grids/grids/themes/light/bootstrap.css",

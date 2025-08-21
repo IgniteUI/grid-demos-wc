@@ -63,6 +63,7 @@ export default class HrPortal extends LitElement {
 
   public countryIconTemplate = (ctx: IgcCellTemplateContext) => {
     let row = ctx.cell.row;
+
     return html` <div class="flagDiv">
       <igc-icon collection="country-icons" name="${row.data.Country}"></igc-icon>
       <span>${row.data.Location}, ${row.data.Country}</span>

@@ -1,8 +1,8 @@
 import { LitElement, html, unsafeCSS } from "lit";
 import { customElement } from "lit/decorators.js";
-import "../../../projects/fleet-management-grid/src/components/fleet-management/fleet-management-grid";
+import "../../../../projects/grids/fleet-management-grid/src/components/fleet-management/fleet-management-grid";
 import namedStyles from './fleet-management-view.scss?inline';
-import sharedStyles from '../../shared/styles.scss?inline';
+import sharedStyles from '../../../shared/styles.scss?inline';
 
 @customElement("fleet-management-view")
 export default class FinanceView extends LitElement {
@@ -14,7 +14,7 @@ export default class FinanceView extends LitElement {
     event.target.parentElement.classList.remove("loading");
   };
   render() {
-    const iframeSrc = `${import.meta.env.BASE_URL}fleet`;
+    const iframeSrc = `${import.meta.env.BASE_URL}grids/fleet`;
     return html` <div class="iframe-wrapper loading">
       <iframe src=${iframeSrc} @load=${this.onLoad}></iframe>
     </div>`;

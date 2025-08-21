@@ -53,7 +53,7 @@ export default class FinanceGrid extends LitElement {
   private readonly updateTimerInMs = 3000;
 
   private getPathToImage(val: string): string {
-    return `${import.meta.env.BASE_URL}companies/${val.split(" ")[0]}.png`;
+    return `${import.meta.env.BASE_URL}grids/companies/${val.split(" ")[0]}.png`;
   }
 
   private assetTemplate = (ctx: IgcCellTemplateContext) => {

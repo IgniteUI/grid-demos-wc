@@ -1,20 +1,20 @@
 import { LitElement, html, unsafeCSS } from "lit";
 import { customElement } from "lit/decorators.js";
-import "../../../projects/hr-portal/src/hr-portal";
-import namedStyles from "./hr-portal-view.scss?inline";
-import sharedStyles from "../../shared/styles.scss?inline";
+import "../../../../projects/grids/finance-grid/src/finance-grid";
+import namedStyles from "./finance-view.scss?inline";
+import sharedStyles from "../../../shared/styles.scss?inline";
 
-@customElement("hr-portal-view")
-export default class HrPortalView extends LitElement {
+@customElement("finance-view")
+export default class FinanceView extends LitElement {
   constructor() {
     super();
   }
+
   private onLoad = (event: any) => {
     event.target.parentElement.classList.remove("loading");
   };
   render() {
-    const iframeSrc = `${import.meta.env.BASE_URL}hr-portal`;
-
+    const iframeSrc = `${import.meta.env.BASE_URL}grids/finance`;
     return html` <div class="iframe-wrapper loading">
       <iframe src=${iframeSrc} @load=${this.onLoad}></iframe>
     </div>`;

@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:finance": "vite projects/finance-grid",
-    "dev:erp": "vite projects/erp-hgrid",
-    "dev:fleet": "vite projects/fleet-management-grid",
-    "dev:hr": "vite projects/hr-portal",
-    "dev:sales": "vite projects/sales-grid",
+    "dev:finance": "vite projects/grids/finance-grid",
+    "dev:erp": "vite projects/grids/erp-hgrid",
+    "dev:fleet": "vite projects/grids/fleet-management-grid",
+    "dev:hr": "vite projects/grids/hr-portal",
+    "dev:sales": "vite projects/grids/sales-grid",
     "build": "tsc && node --max-old-space-size=8192 node_modules/vite/bin/vite.js build",
     "build:ci": "tsc && node --max-old-space-size=8192 node_modules/vite/bin/vite.js build --mode ci",
     "preview": "vite preview"

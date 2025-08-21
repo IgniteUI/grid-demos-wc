@@ -1,11 +1,12 @@
-import { LitElement, unsafeCSS, html } from "lit";
+import { LitElement, html, unsafeCSS } from "lit";
 import { customElement } from "lit/decorators.js";
-import "../../../projects/erp-hgrid/src/components/erp-hierarchical-grid";
-import namedStyles from "./erp-hgrid-view.scss?inline";
-import sharedStyles from "../../shared/styles.scss?inline";
+import "../../../../projects/grids/sales-grid/src/sales-grid";
 
-@customElement("erp-hgrid-view")
-export default class ErpHgridView extends LitElement {
+import namedStyles from "./sales-view.scss?inline";
+import sharedStyles from "../../../shared/styles.scss?inline";
+
+@customElement("sales-view")
+export default class SalesView extends LitElement {
   constructor() {
     super();
   }
@@ -13,12 +14,12 @@ export default class ErpHgridView extends LitElement {
   private onLoad = (event: any) => {
     event.target.parentElement.classList.remove("loading");
   };
-
   render() {
-    const iframeSrc = `${import.meta.env.BASE_URL}inventory`;
+    const iframeSrc = `${import.meta.env.BASE_URL}grids/sales`;
     return html` <div class="iframe-wrapper loading">
       <iframe src=${iframeSrc} @load=${this.onLoad}></iframe>
     </div>`;
   }
+
   static styles = [unsafeCSS(namedStyles), unsafeCSS(sharedStyles)];
 }
