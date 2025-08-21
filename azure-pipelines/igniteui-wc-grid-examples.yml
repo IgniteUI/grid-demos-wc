@@ -149,7 +149,7 @@ stages:
 
             # Regex pattern (same as PowerShell)
             pattern='(from|import)[[:space:]]*["'\''](igniteui-webcomponents-[^"'\'' ]+|dockmanager.*)["'\'']'
-            replacement='\1 "@infragistics/\2"'
+            replacement='\\1 "@infragistics/\\2"'
 
             replacements_made=0
 
@@ -159,7 +159,6 @@ stages:
               if grep -qE "$pattern" "$file"; then
                 echo "Found matches in $file. Applying replacements..."
                 grep -E "$pattern" "$file"
-                # Use | as sed delimiter instead of / 
                 sed -i -E "s|$pattern|$replacement|g" "$file"
                 echo "Replacements applied in: $file"
                 replacements_made=1
