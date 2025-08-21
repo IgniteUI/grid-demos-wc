@@ -138,24 +138,20 @@ stages:
             $updatedViteConfig | Set-Content ./vite.config.ts
 
       - task: Bash@3
-        displayName: 'Run Ignite UI Upgrade in Root and All Project Subdirectories'
+        displayName: 'Replace references to IG trial packages with licensed ones (fast & robust)'
         inputs:
           targetType: 'inline'
           script: |
-            echo "Running Ignite UI package upgrade at root level..."
-            npx ig upgrade-packages --skip-install
+            #!/bin/bash
+            set -euo pipefail
 
-            echo "Running Ignite UI package upgrade in all project subdirectories..."
-            for dir in $(Build.SourcesDirectory)/projects/*/; do
-              if [ -d "$dir" ]; then
-                if [ -f "$dir/.igniteui-cli.json" ]; then
-                  echo "Processing Ignite UI project: $dir"
-                  (cd "$dir" && npx ig upgrade-packages --skip-install)
-                else
-                  echo "Skipping $dir (not an Ignite UI CLI project)"
-                fi
-              fi
-            done
+            echo "Replacing IG trial package imports with licensed ones..."
+
+            # Find all .ts and .tsx files excluding node_modules
+            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) ! -path "*/node_modules/*" -print0 |
+            xargs -0 perl -pi -e 's/(from|import)[[:space:]]+[\"'\''](igniteui-webcomponents-[^\"'\''\/]+|dockmanager[^\"'\''\/]*)[\"'\'']/$1 "@infragistics\/$2"/g'
+
+            echo "All references updated."
 
       - task: Npm@1
         displayName: 'npm install --legacy-peer-deps'
