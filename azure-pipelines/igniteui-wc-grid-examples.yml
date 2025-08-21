@@ -180,15 +180,12 @@ stages:
             )
 
             Get-ChildItem -Path $filePath -Include "*.ts","*.tsx" -Recurse | ForEach-Object {
-                $fileContents = Get-Content $_.FullName
+                $fileContents = Get-Content $_.FullName -Raw
                 $trialStringsToReplace | ForEach-Object {
-                    $matches = $fileContents -match $_.Pattern
-
-                    if(-not $matches) {
+                    if ($fileContents -notmatch $_.Pattern) {
                         Write-Host "No matches for pattern: $($_.Pattern) in file: $($_.FullName)"
                     } else {
                         Write-Host "Found matches for pattern: $($_.Pattern) in file: $($_.FullName)"
-                        Write-Host $matches
                         $fileContents = $fileContents -replace $_.Pattern, $_.Replacement
                     }
                 }
