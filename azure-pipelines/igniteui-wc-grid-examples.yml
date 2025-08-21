@@ -175,8 +175,15 @@ stages:
           script: |
             $filePath = "$(Build.SourcesDirectory)"
             $trialStringsToReplace = @(
-                [pscustomobject]@{ Pattern = "(from|import)\s?['""]igniteui-webcomponents-[^'""]+['""]"; Replacement = 'from "@infragistics/$($Matches[0] -replace ".*igniteui-webcomponents-", "")"' },
-                [pscustomobject]@{ Pattern = "(from|import)\s?['""]dockmanager[^'""]+['""]"; Replacement = 'from "@infragistics/$($Matches[0] -replace ".*dockmanager", "dockmanager")"' }
+                [pscustomobject]@{ 
+                    Pattern = "(from|import)\s+['""]([^'""]*(igniteui-webcomponents-[^'""]+|dockmanager[^'""]*))['""]"; 
+                    ReplacementScript = { param($match) 
+                        $pkg = $match.Groups[2].Value
+                        $pkg = $pkg -replace '.*igniteui-webcomponents-', ''
+                        $pkg = $pkg -replace '.*dockmanager', 'dockmanager'
+                        "from `"@infragistics/$pkg`""
+                    } 
+                }
             )
 
             Get-ChildItem -Path $filePath -Include "*.ts","*.tsx" -Recurse | ForEach-Object {
@@ -186,7 +193,7 @@ stages:
                         Write-Host "No matches for pattern: $($_.Pattern) in file: $($_.FullName)"
                     } else {
                         Write-Host "Found matches for pattern: $($_.Pattern) in file: $($_.FullName)"
-                        $fileContents = $fileContents -replace $_.Pattern, $_.Replacement
+                        $fileContents = [regex]::Replace($fileContents, $_.Pattern, $_.ReplacementScript)
                     }
                 }
                 Set-Content -Path $_.FullName -Value $fileContents -Force
