@@ -138,20 +138,23 @@ stages:
             $updatedViteConfig | Set-Content ./vite.config.ts
 
       - task: Bash@3
-        displayName: 'Replace references to IG trial packages with licensed ones in TSX/TS files'
+        displayName: 'Run Ignite UI Upgrade in Root and All Project Subdirectories'
         inputs:
           targetType: 'inline'
           script: |
-            echo "Replacing IG trial package imports with licensed ones..."
-
-            # Find all .ts and .tsx files in the source directory
-            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) | while read file; do
-              echo "Processing $file"
-              # Replace trial imports with licensed imports
-              sed -i 's/\(from\|import\)\s\+["'\'']\(igniteui-webcomponents-[^"'\'']\+\|dockmanager.*\)["'\'']/\1 "@infragistics\/\2"/g' "$file"
+            echo "Running Ignite UI package upgrade at root level..."
+            npx ig upgrade-packages --skip-install
+            echo "Running Ignite UI package upgrade in all project subdirectories..."
+            for dir in $(Build.SourcesDirectory)/projects/*/; do
+              if [ -d "$dir" ]; then
+                if [ -f "$dir/.igniteui-cli.json" ]; then
+                  echo "Processing Ignite UI project: $dir"
+                  (cd "$dir" && npx ig upgrade-packages --skip-install)
+                else
+                  echo "Skipping $dir (not an Ignite UI CLI project)"
+                fi
+              fi
             done
-
-            echo "All references updated."
 
       - task: Npm@1
         displayName: 'npm install --legacy-peer-deps'
@@ -160,6 +163,26 @@ stages:
           command: custom
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install --legacy-peer-deps'
+
+      - task: PowerShell@2
+        displayName: 'Replace references to IG trial packages with licensed ones in TSX files'
+        inputs:
+          failOnStderr: true
+          showWarnings: true
+          workingDirectory: '$(Build.SourcesDirectory)'
+          targetType: 'inline'
+          script: |
+            Get-ChildItem -Include "*.tsx","*.ts" -Recurse | ForEach {  
+              Write-Host "Processing file: $($_.FullName)"
+              $content = Get-Content $_.FullName
+              $updatedContent = $content | ForEach-Object { 
+                  $_ -replace '(from|import)\s?[''"](igniteui-webcomponents-[^''"]+|dockmanager.*)[''"]', '$1 "@infragistics/$2"'
+              }
+              if ($updatedContent -ne $content) {
+                  Write-Host "Replacements applied in: $($_.FullName)"
+                  $updatedContent | Set-Content $_.FullName
+              }
+            }
 
       - task: Npm@1
         displayName: 'npm run build:ci'
