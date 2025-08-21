@@ -147,17 +147,17 @@ stages:
 
             echo "Replacing IG trial package imports with licensed ones..."
 
-            # Find all .ts and .tsx files in the source directory
-            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) | while read -r file; do
+            # Find all .ts and .tsx files, excluding node_modules
+            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) ! -path "*/node_modules/*" | while IFS= read -r file; do
               echo "Processing $file"
 
-              # Check for matches first
-              if grep -qE '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']' "$file"; then
+              # Check for matches before replacement
+              if grep -qE '(from|import)[[:space:]]+["'\''](igniteui-webcomponents-[^"\'']+|dockmanager.*)["'\'']' "$file"; then
                 echo "Found matches in $file:"
-                grep -E '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']' "$file"
+                grep -E '(from|import)[[:space:]]+["'\''](igniteui-webcomponents-[^"\'']+|dockmanager.*)["'\'']' "$file"
 
-                # Replace trial imports with licensed imports
-                sed -i -E 's|(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']|\1 "@infragistics/\2"|g' "$file"
+                # Replace trial imports with licensed imports safely
+                sed -i -E "s|(from|import)[[:space:]]+[\"'](igniteui-webcomponents-[^\"']+|dockmanager.*)[\"']|\1 \"@infragistics/\2\"|g" "$file"
 
                 echo "Replacements applied in $file"
               else
