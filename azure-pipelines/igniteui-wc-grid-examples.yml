@@ -186,20 +186,45 @@ stages:
           customCommand: 'install --legacy-peer-deps'
 
       - task: Bash@3
-        displayName: 'Replace references to IG trial packages with licensed ones in TSX/TS files'
+        displayName: 'Replace trial strings with licensed (robust)'
         inputs:
           targetType: 'inline'
           script: |
-            echo "Replacing IG trial package imports with licensed ones..."
+            #!/bin/bash
+            set -euo pipefail
 
-            # Find all .ts and .tsx files in the source directory
-            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) | while read file; do
-              echo "Processing $file"
-              # Replace trial imports with licensed imports
-              sed -i 's/\(from\|import\)\s\+["'\'']\(igniteui-webcomponents-[^"'\'']\+\|dockmanager.*\)["'\'']/\1 "@infragistics\/\2"/g' "$file"
+            files=(
+              "$(Build.SourcesDirectory)/vite.config.ts"
+            )
+
+            # Add TS/TSX files to be processed
+            while IFS= read -r file; do
+              files+=("$file")
+            done < <(find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \))
+
+            # Patterns and replacements
+            declare -A patterns
+            patterns["igniteui-webcomponents-"]="@infragistics/igniteui-webcomponents-"
+
+            for file in "${files[@]}"; do
+              echo "Processing $file..."
+              for pattern in "${!patterns[@]}"; do
+                replacement="${patterns[$pattern]}"
+                matches=$(grep -E "$pattern" "$file" || true)
+
+                if [ -z "$matches" ]; then
+                  echo "ERROR: Pattern '$pattern' not found in $file"
+                  exit 1
+                else
+                  echo "Found matches for '$pattern' in $file:"
+                  echo "$matches"
+                  # Perform replacement
+                  sed -i -E "s/$pattern/$replacement/g" "$file"
+                fi
+              done
             done
 
-            echo "All references updated."
+            echo "All replacements completed successfully."
 
       - task: Npm@1
         displayName: 'npm run build:ci'
