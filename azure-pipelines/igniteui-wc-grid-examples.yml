@@ -145,6 +145,7 @@ stages:
             echo "Running Ignite UI package upgrade at root level..."
             npx ig upgrade-packages --skip-install
             echo "Running Ignite UI package upgrade in all project subdirectories..."
+
             for dir in $(Build.SourcesDirectory)/projects/*/; do
               if [ -d "$dir" ]; then
                 if [ -f "$dir/.igniteui-cli.json" ]; then
@@ -178,6 +179,7 @@ stages:
               $updatedContent = $content | ForEach-Object { 
                   $_ -replace '(from|import)\s?[''"](igniteui-webcomponents-[^''"]+|dockmanager.*)[''"]', '$1 "@infragistics/$2"'
               }
+
               if ($updatedContent -ne $content) {
                   Write-Host "Replacements applied in: $($_.FullName)"
                   $updatedContent | Set-Content $_.FullName
