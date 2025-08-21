@@ -147,21 +147,20 @@ stages:
 
             echo "Replacing IG trial package imports with licensed ones..."
 
-            # Regex pattern (using the same strings as PowerShell version)
+            # Regex pattern (same as PowerShell)
             pattern='(from|import)[[:space:]]*["'\''](igniteui-webcomponents-[^"'\'' ]+|dockmanager.*)["'\'']'
             replacement='\1 "@infragistics/\2"'
 
-            # Track if at least one replacement was made
             replacements_made=0
 
-            # Find all .ts and .tsx files recursively
             while IFS= read -r file; do
               echo "Processing file: $file"
 
               if grep -qE "$pattern" "$file"; then
                 echo "Found matches in $file. Applying replacements..."
                 grep -E "$pattern" "$file"
-                sed -i -E "s/$pattern/$replacement/g" "$file"
+                # Use | as sed delimiter instead of / 
+                sed -i -E "s|$pattern|$replacement|g" "$file"
                 echo "Replacements applied in: $file"
                 replacements_made=1
               else
