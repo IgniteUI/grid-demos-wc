@@ -144,6 +144,7 @@ stages:
           script: |
             echo "Running Ignite UI package upgrade at root level..."
             npx ig upgrade-packages --skip-install
+
             echo "Running Ignite UI package upgrade in all project subdirectories..."
             for dir in $(Build.SourcesDirectory)/projects/*/; do
               if [ -d "$dir" ]; then
@@ -154,6 +155,7 @@ stages:
                   echo "Skipping $dir (not an Ignite UI CLI project)"
                 fi
               fi
+            done
 
       - task: Npm@1
         displayName: 'npm install --legacy-peer-deps'
