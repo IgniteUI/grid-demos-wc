@@ -172,12 +172,17 @@ stages:
           script: |
             set -eo pipefail
             echo "Replacing IG trial package imports with licensed ones..."
-            # Find all .ts and .tsx files in the source directory
-            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) | while read file; do
+
+            # Process each file with logging but faster than a while-loop
+            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) \
+              ! -path "*/node_modules/*" -print0 |
+            xargs -0 -n 1 bash -c '
+              file="$0"
               echo "Processing $file"
-              # Replace trial imports with licensed imports
-              sed -i 's/\(from\|import\)\s\+["'\'']\(igniteui-webcomponents-[^"'\'']\+\|dockmanager.*\)["'\'']/\1 "@infragistics\/\2"/g' "$file"
-            done
+              sed -i '\''s/\(from\|import\)\s\+["'\''"]\(igniteui-webcomponents-[^"'\''"]\+\|dockmanager.*\)["'\''"]/\\1 "@infragistics\/\2"/g'\'' "$file"
+            '
+
+            echo "All references updated."
 
       - task: Npm@1
         displayName: 'npm run build:ci'
