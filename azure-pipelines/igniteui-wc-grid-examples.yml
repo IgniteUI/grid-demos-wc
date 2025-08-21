@@ -165,26 +165,35 @@ stages:
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install --legacy-peer-deps'
 
-      - task: PowerShell@2
-        displayName: 'Replace references to IG trial packages with licensed ones in TSX files'
+      - task: Bash@3
+        displayName: 'Replace references to IG trial packages with licensed ones in TSX/TS files'
         inputs:
-          failOnStderr: true
-          showWarnings: true
-          workingDirectory: '$(Build.SourcesDirectory)'
           targetType: 'inline'
           script: |
-            Get-ChildItem -Include "*.tsx","*.ts" -Recurse | ForEach {  
-              Write-Host "Processing file: $($_.FullName)"
-              $content = Get-Content $_.FullName
-              $updatedContent = $content | ForEach-Object { 
-                  $_ -replace '(from|import)\s?[''"](igniteui-webcomponents-[^''"]+|dockmanager.*)[''"]', '$1 "@infragistics/$2"'
-              }
+            #!/bin/bash
+            set -euo pipefail
 
-              if ($updatedContent -ne $content) {
-                  Write-Host "Replacements applied in: $($_.FullName)"
-                  $updatedContent | Set-Content $_.FullName
-              }
-            }
+            echo "Replacing IG trial package imports with licensed ones..."
+
+            # Find all .ts and .tsx files, excluding node_modules
+            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) ! -path "*/node_modules/*" | while IFS= read -r file; do
+              echo "Processing $file"
+
+              # Check for matches before replacement
+              if grep -qE '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager[^"'"'"']*)["'"'"']' "$file"; then
+                echo "Found matches in $file:"
+                grep -E '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager[^"'"'"']*)["'"'"']' "$file"
+
+                # Replace trial imports with licensed imports
+                sed -i -E 's#(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager[^"'"'"']*)["'"'"']#\1 "@infragistics/\2"#g' "$file"
+
+                echo "Replacements applied in $file"
+              else
+                echo "No matches in $file"
+              fi
+            done
+
+            echo "All references updated."
 
       - task: Npm@1
         displayName: 'npm run build:ci'
