@@ -166,29 +166,20 @@ stages:
           customCommand: 'install --legacy-peer-deps'
 
       - task: Bash@3
-        displayName: 'Replace IG trial packages with licensed ones in TSX/TS files'
+        displayName: 'Replace references to IG trial packages with licensed ones in TSX/TS files'
         inputs:
           targetType: 'inline'
-          workingDirectory: '$(Build.SourcesDirectory)'
           script: |
-            #!/bin/bash
-            set -euo pipefail
+            echo "Replacing IG trial package imports with licensed ones..."
 
-            # Find all TSX/TS files
-            FILES=$(find . -type f \( -name "*.ts" -o -name "*.tsx" \))
-
-            for FILE in $FILES; do
-              echo "Processing $FILE"
-
-              sed -i -E "s/(from|import)[[:space:]]+['\"]igniteui-webcomponents-([^'\"]+)['\"]/\1 \"@infragistics\/\2\"/g" "$FILE"
-              sed -i -E "s/(from|import)[[:space:]]+['\"]dockmanager[^'\"]*['\"]/\1 \"@infragistics\/dockmanager\"/g" "$FILE"
-
-              # Replace igniteui-webcomponents-* imports
-              #sed -i -E 's/(from|import)[[:space:]]+["'\'']igniteui-webcomponents-([^"'\'']+)["'\'']/\1 "@infragistics\/\2"/g' "$FILE"
-
-              # Replace dockmanager imports
-              #sed -i -E 's/(from|import)[[:space:]]+["'\'']dockmanager[^"'\'']*["'\'']/\1 "@infragistics\/dockmanager"/g' "$FILE"
+            # Find all .ts and .tsx files in the source directory
+            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) | while read file; do
+              echo "Processing $file"
+              # Replace trial imports with licensed imports
+              sed -i 's/\(from\|import\)\s\+["'\'']\(igniteui-webcomponents-[^"'\'']\+\|dockmanager.*\)["'\'']/\1 "@infragistics\/\2"/g' "$file"
             done
+
+            echo "All references updated."
 
       - task: Npm@1
         displayName: 'npm run build:ci'
