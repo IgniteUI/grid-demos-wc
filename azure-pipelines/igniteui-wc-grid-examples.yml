@@ -138,44 +138,43 @@ stages:
             $updatedViteConfig | Set-Content ./vite.config.ts
 
       - task: Bash@3
-        displayName: 'Replace trial watermark with licensed'
+        displayName: 'Replace references to IG trial packages with licensed ones in TSX/TS files'
         inputs:
           targetType: 'inline'
           script: |
             #!/bin/bash
             set -euo pipefail
 
-            # File(s) to process
-            files=$(find "$(Build.SourcesDirectory)/src/components/dockmanager" -type f -name "dockmanager-component.tsx")
+            echo "Replacing IG trial package imports with licensed ones..."
 
-            # Patterns and replacements
-            declare -A patterns
-            patterns["import.*'igniteui-trial-watermark';"]=""
-            patterns["<igc-trial-watermark.*</igc-trial-watermark>"]=""
+            # Regex pattern (using the same strings as PowerShell version)
+            pattern='(from|import)[[:space:]]*["'\''](igniteui-webcomponents-[^"'\'' ]+|dockmanager.*)["'\'']'
+            replacement='\1 "@infragistics/\2"'
 
-            for file in $files; do
+            # Track if at least one replacement was made
+            replacements_made=0
+
+            # Find all .ts and .tsx files recursively
+            while IFS= read -r file; do
               echo "Processing file: $file"
 
-              for pattern in "${!patterns[@]}"; do
-                replacement="${patterns[$pattern]}"
-
-                # Check if pattern exists
-                matches=$(grep -P "$pattern" "$file" || true)
-
-                if [ -z "$matches" ]; then
-                  echo "ERROR: No matches for pattern '$pattern' in $file"
-                  exit 1
-                else
-                  echo "Matches for '$pattern' in $file:"
-                  echo "$matches"
-                fi
-
-                # Perform in-place replacement
+              if grep -qE "$pattern" "$file"; then
+                echo "Found matches in $file. Applying replacements..."
+                grep -E "$pattern" "$file"
                 sed -i -E "s/$pattern/$replacement/g" "$file"
-              done
-            done
+                echo "Replacements applied in: $file"
+                replacements_made=1
+              else
+                echo "No matches in: $file"
+              fi
+            done < <(find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \))
 
-            echo "All trial imports replaced successfully."
+            if [[ $replacements_made -eq 0 ]]; then
+              echo "ERROR: No matching imports found in any .ts/.tsx files!"
+              exit 1
+            fi
+
+            echo "All references updated."
 
       - task: Npm@1
         displayName: 'npm install --legacy-peer-deps'
