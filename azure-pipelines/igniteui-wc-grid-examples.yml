@@ -173,17 +173,26 @@ stages:
           workingDirectory: '$(Build.SourcesDirectory)'
           targetType: 'inline'
           script: |
-            Get-ChildItem -Include "*.tsx","*.ts" -Recurse | ForEach {  
-              Write-Host "Processing file: $($_.FullName)"
-              $content = Get-Content $_.FullName
-              $updatedContent = $content | ForEach-Object { 
-                  $_ -replace '(from|import)\s?[''"](igniteui-webcomponents-[^''"]+|dockmanager.*)[''"]', '$1 "@infragistics/$2"'
-              }
+            $filePath = "$(Build.SourcesDirectory)"
+            $trialStringsToReplace = @(
+                [pscustomobject]@{ Pattern = "(from|import)\s?['""]igniteui-webcomponents-[^'""]+['""]"; Replacement = 'from "@infragistics/$($Matches[0] -replace ".*igniteui-webcomponents-", "")"' },
+                [pscustomobject]@{ Pattern = "(from|import)\s?['""]dockmanager[^'""]+['""]"; Replacement = 'from "@infragistics/$($Matches[0] -replace ".*dockmanager", "dockmanager")"' }
+            )
 
-              if ($updatedContent -ne $content) {
-                  Write-Host "Replacements applied in: $($_.FullName)"
-                  $updatedContent | Set-Content $_.FullName
-              }
+            Get-ChildItem -Path $filePath -Include "*.ts","*.tsx" -Recurse | ForEach-Object {
+                $fileContents = Get-Content $_.FullName
+                $trialStringsToReplace | ForEach-Object {
+                    $matches = $fileContents -match $_.Pattern
+
+                    if(-not $matches) {
+                        Write-Host "No matches for pattern: $($_.Pattern) in file: $($_.FullName)"
+                    } else {
+                        Write-Host "Found matches for pattern: $($_.Pattern) in file: $($_.FullName)"
+                        Write-Host $matches
+                        $fileContents = $fileContents -replace $_.Pattern, $_.Replacement
+                    }
+                }
+                Set-Content -Path $_.FullName -Value $fileContents -Force
             }
 
       - task: Npm@1
