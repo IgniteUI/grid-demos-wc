@@ -181,10 +181,10 @@ stages:
               echo "Processing $FILE"
 
               # Replace igniteui-webcomponents-* imports
-              sed -i -E "s|(from|import)[[:space:]]+['\"]igniteui-webcomponents-([^'\"]+)['\"]|\1 \"@infragistics/\2\"|g" "$FILE"
+              sed -i -E 's/(from|import)[[:space:]]+["'\'']igniteui-webcomponents-([^"'\'']+)["'\'']/\1 "@infragistics\/\2"/g' "$FILE"
 
               # Replace dockmanager imports
-              sed -i -E "s|(from|import)[[:space:]]+['\"]dockmanager[^'\"]*['\"]|\1 \"@infragistics/dockmanager\"|g" "$FILE"
+              sed -i -E 's/(from|import)[[:space:]]+["'\'']dockmanager[^"'\'']*["'\'']/\1 "@infragistics\/dockmanager"/g' "$FILE"
             done
 
       - task: Npm@1
