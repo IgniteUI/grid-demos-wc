@@ -152,12 +152,12 @@ stages:
               echo "Processing $file"
 
               # Check for matches before replacement
-              if grep -qE '(from|import)[[:space:]]+["'\''](igniteui-webcomponents-[^"\'']+|dockmanager.*)["'\'']' "$file"; then
+              if grep -qE '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']' "$file"; then
                 echo "Found matches in $file:"
-                grep -E '(from|import)[[:space:]]+["'\''](igniteui-webcomponents-[^"\'']+|dockmanager.*)["'\'']' "$file"
+                grep -E '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']' "$file"
 
-                # Replace trial imports with licensed imports safely
-                sed -i -E "s|(from|import)[[:space:]]+[\"'](igniteui-webcomponents-[^\"']+|dockmanager.*)[\"']|\1 \"@infragistics/\2\"|g" "$file"
+                # Replace trial imports with licensed imports using double quotes around the expression
+                sed -i -E "s#(from|import)[[:space:]]+[\"'](igniteui-webcomponents-[^\"']+|dockmanager.*)[\"']#\1 \"@infragistics/\2\"#g" "$file"
 
                 echo "Replacements applied in $file"
               else
