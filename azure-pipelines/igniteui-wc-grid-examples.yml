@@ -179,9 +179,9 @@ stages:
             xargs -0 -n 1 bash -c '
               file="$1"
               echo "Processing $file"
-              sed -i "s/\(from\|import\)\s\+[\"'\'' ]\(igniteui-webcomponents-[^\"'\'' ]\+\|dockmanager.*\)[\"'\'' ]/\1 \"@infragistics\/\2\"/g" "$file"
+              sed -i "s/\(from\|import\)[[:space:]]\+[\"'\'']\(igniteui-webcomponents-[^\"'\'']\+\|dockmanager.*\)[\"'\'']/\1 \"@infragistics\/\2\"/g" "$file"
             ' _
-
+            
             echo "All references updated."
 
       - task: Npm@1
