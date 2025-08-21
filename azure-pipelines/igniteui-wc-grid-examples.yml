@@ -138,24 +138,44 @@ stages:
             $updatedViteConfig | Set-Content ./vite.config.ts
 
       - task: Bash@3
-        displayName: 'Run Ignite UI Upgrade in Root and All Project Subdirectories'
+        displayName: 'Replace trial watermark with licensed'
         inputs:
           targetType: 'inline'
           script: |
-            echo "Running Ignite UI package upgrade at root level..."
-            npx ig upgrade-packages --skip-install
+            #!/bin/bash
+            set -euo pipefail
 
-            echo "Running Ignite UI package upgrade in all project subdirectories..."
-            for dir in $(Build.SourcesDirectory)/projects/*/; do
-              if [ -d "$dir" ]; then
-                if [ -f "$dir/.igniteui-cli.json" ]; then
-                  echo "Processing Ignite UI project: $dir"
-                  (cd "$dir" && npx ig upgrade-packages --skip-install)
+            # File(s) to process
+            files=$(find "$(Build.SourcesDirectory)/src/components/dockmanager" -type f -name "dockmanager-component.tsx")
+
+            # Patterns and replacements
+            declare -A patterns
+            patterns["import.*'igniteui-trial-watermark';"]=""
+            patterns["<igc-trial-watermark.*</igc-trial-watermark>"]=""
+
+            for file in $files; do
+              echo "Processing file: $file"
+
+              for pattern in "${!patterns[@]}"; do
+                replacement="${patterns[$pattern]}"
+
+                # Check if pattern exists
+                matches=$(grep -P "$pattern" "$file" || true)
+
+                if [ -z "$matches" ]; then
+                  echo "ERROR: No matches for pattern '$pattern' in $file"
+                  exit 1
                 else
-                  echo "Skipping $dir (not an Ignite UI CLI project)"
+                  echo "Matches for '$pattern' in $file:"
+                  echo "$matches"
                 fi
-              fi
+
+                # Perform in-place replacement
+                sed -i -E "s/$pattern/$replacement/g" "$file"
+              done
             done
+
+            echo "All trial imports replaced successfully."
 
       - task: Npm@1
         displayName: 'npm install --legacy-peer-deps'
