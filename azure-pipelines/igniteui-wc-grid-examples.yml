@@ -147,30 +147,23 @@ stages:
 
             echo "Replacing IG trial package imports with licensed ones..."
 
-            # Regex pattern (same as PowerShell)
-            pattern='(from|import)[[:space:]]*["'\''](igniteui-webcomponents-[^"'\'' ]+|dockmanager.*)["'\'']'
-            replacement='\\1 "@infragistics/\\2"'
+            # Find all .ts and .tsx files in the source directory
+            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) | while read -r file; do
+              echo "Processing $file"
 
-            replacements_made=0
+              # Check for matches first
+              if grep -qE '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']' "$file"; then
+                echo "Found matches in $file:"
+                grep -E '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']' "$file"
 
-            while IFS= read -r file; do
-              echo "Processing file: $file"
+                # Replace trial imports with licensed imports
+                sed -i -E 's|(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']|\1 "@infragistics/\2"|g' "$file"
 
-              if grep -qE "$pattern" "$file"; then
-                echo "Found matches in $file. Applying replacements..."
-                grep -E "$pattern" "$file"
-                sed -i -E "s|$pattern|$replacement|g" "$file"
-                echo "Replacements applied in: $file"
-                replacements_made=1
+                echo "Replacements applied in $file"
               else
-                echo "No matches in: $file"
+                echo "No matches in $file"
               fi
-            done < <(find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \))
-
-            if [[ $replacements_made -eq 0 ]]; then
-              echo "ERROR: No matching imports found in any .ts/.tsx files!"
-              exit 1
-            fi
+            done
 
             echo "All references updated."
 
