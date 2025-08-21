@@ -142,13 +142,27 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
+            #!/bin/bash
+            set -euo pipefail
+
             echo "Replacing IG trial package imports with licensed ones..."
 
-            # Find all .ts and .tsx files in the source directory
-            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) | while read file; do
+            # Find all .ts and .tsx files, excluding node_modules
+            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) ! -path "*/node_modules/*" | while IFS= read -r file; do
               echo "Processing $file"
-              # Replace trial imports with licensed imports
-              sed -i 's/\(from\|import\)\s\+["'\'']\(igniteui-webcomponents-[^"'\'']\+\|dockmanager.*\)["'\'']/\1 "@infragistics\/\2"/g' "$file"
+
+              # Check for matches before replacement
+              if grep -qE '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']' "$file"; then
+                echo "Found matches in $file:"
+                grep -E '(from|import)[[:space:]]+["'"'"'](igniteui-webcomponents-[^"'"'"']+|dockmanager.*)["'"'"']' "$file"
+
+                # Replace trial imports with licensed imports using double quotes around the expression
+                sed -i -E "s#(from|import)[[:space:]]+[\"'](igniteui-webcomponents-[^\"']+|dockmanager.*)[\"']#\1 \"@infragistics/\2\"#g" "$file"
+
+                echo "Replacements applied in $file"
+              else
+                echo "No matches in $file"
+              fi
             done
 
             echo "All references updated."
@@ -160,47 +174,6 @@ stages:
           command: custom
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install --legacy-peer-deps'
-
-      - task: Bash@3
-        displayName: 'Replace trial strings with licensed (robust)'
-        inputs:
-          targetType: 'inline'
-          script: |
-            #!/bin/bash
-            set -euo pipefail
-
-            files=(
-              "$(Build.SourcesDirectory)/vite.config.ts"
-            )
-
-            # Add TS/TSX files to be processed
-            while IFS= read -r file; do
-              files+=("$file")
-            done < <(find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \))
-
-            # Patterns and replacements
-            declare -A patterns
-            patterns["igniteui-webcomponents-"]="@infragistics/igniteui-webcomponents-"
-
-            for file in "${files[@]}"; do
-              echo "Processing $file..."
-              for pattern in "${!patterns[@]}"; do
-                replacement="${patterns[$pattern]}"
-                matches=$(grep -E "$pattern" "$file" || true)
-
-                if [ -z "$matches" ]; then
-                  echo "ERROR: Pattern '$pattern' not found in $file"
-                  exit 1
-                else
-                  echo "Found matches for '$pattern' in $file:"
-                  echo "$matches"
-                  # Perform replacement
-                  sed -i -E "s/$pattern/$replacement/g" "$file"
-                fi
-              done
-            done
-
-            echo "All replacements completed successfully."
 
       - task: Npm@1
         displayName: 'npm run build:ci'
