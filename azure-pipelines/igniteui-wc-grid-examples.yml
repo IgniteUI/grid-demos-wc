@@ -173,7 +173,7 @@ stages:
             set -eo pipefail
             echo "Replacing IG trial package imports with licensed ones..."
 
-            # Process each file with logging but faster than while-read
+            # Process each file with logging
             find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) \
               ! -path "*/node_modules/*" -print0 |
             xargs -0 -n 1 bash -c '
