@@ -181,7 +181,7 @@ stages:
               echo "Processing $file"
               sed -i "s/\(from\|import\)[[:space:]]\+[\"'\'']\(igniteui-webcomponents-[^\"'\'']\+\|dockmanager.*\)[\"'\'']/\1 \"@infragistics\/\2\"/g" "$file"
             ' _
-            
+
             echo "All references updated."
 
       - task: Npm@1
