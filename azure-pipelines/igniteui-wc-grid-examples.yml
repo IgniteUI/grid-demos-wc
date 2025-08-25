@@ -107,25 +107,6 @@ stages:
           workingFile: '$(Build.SourcesDirectory)/.npmrc'
           customEndpoint: 'public proget'
 
-      - task: Bash@3
-        displayName: 'Replace references to IG trial packages with licensed ones in TSX/TS files'
-        inputs:
-          targetType: 'inline'
-          script: |
-            set -eo pipefail
-            echo "Replacing IG trial package imports with licensed ones..."
-
-            # Process each file with logging
-            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) \
-              ! -path "*/node_modules/*" -print0 |
-            xargs -0 -n 1 bash -c '
-              file="$1"
-              echo "Processing $file"
-              sed -i "s/\(from\|import\)[[:space:]]\+[\"'\'']\(igniteui-webcomponents-[^\"'\'']\+\|dockmanager.*\)[\"'\'']/\1 \"@infragistics\/\2\"/g" "$file"
-            ' _
-
-            echo "All references updated."
-
       - task: Npm@1
         displayName: 'npm install --legacy-peer-deps'
         inputs:
@@ -183,6 +164,25 @@ stages:
           command: custom
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'install --legacy-peer-deps'
+
+      - task: Bash@3
+        displayName: 'Replace references to IG trial packages with licensed ones in TSX/TS files'
+        inputs:
+          targetType: 'inline'
+          script: |
+            set -eo pipefail
+            echo "Replacing IG trial package imports with licensed ones..."
+
+            # Process each file with logging
+            find "$(Build.SourcesDirectory)" -type f \( -name "*.ts" -o -name "*.tsx" \) \
+              ! -path "*/node_modules/*" -print0 |
+            xargs -0 -n 1 bash -c '
+              file="$1"
+              echo "Processing $file"
+              sed -i "s/\(from\|import\)[[:space:]]\+[\"'\'']\(igniteui-webcomponents-[^\"'\'']\+\|dockmanager.*\)[\"'\'']/\1 \"@infragistics\/\2\"/g" "$file"
+            ' _
+
+            echo "All references updated."
 
       - task: Npm@1
         displayName: 'npm run build:ci'
