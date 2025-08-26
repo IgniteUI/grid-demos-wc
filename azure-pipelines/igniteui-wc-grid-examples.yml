@@ -149,10 +149,10 @@ stages:
             for dir in $(Build.SourcesDirectory)/projects/*/; do
               if [ -d "$dir" ]; then
                 if [ -f "$dir/.igniteui-cli.json" ]; then
-                  echo "Processing Ignite UI project: $dir"
+                  echo "Identify IgniteUI CLI-compatible project: $dir"
                   (cd "$dir" && npx ig upgrade-packages --skip-install)
                 else
-                  echo "Skipping $dir (not an Ignite UI CLI project)"
+                  echo "WARNING: Skipping $dir (not an Ignite UI CLI project)"
                 fi
               fi
             done
