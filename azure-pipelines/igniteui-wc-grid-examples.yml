@@ -153,8 +153,6 @@ stages:
                   (cd "$dir" && npx ig upgrade-packages --skip-install)
                 else
                   echo "WARNING: Skipping $dir (not an Ignite UI CLI project)"
-                else
-                  echo "Skipping $dir (not an Ignite UI CLI project)"
                 fi
               fi
             done
