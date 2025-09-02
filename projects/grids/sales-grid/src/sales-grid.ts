@@ -20,6 +20,7 @@ import {
     IgcPivotConfiguration,
     IgcPivotDateDimension,
     IgcColumnComponent,
+    IgcColumnTemplateContext,
 } from "igniteui-webcomponents-grids/grids";
 
 import 'igniteui-webcomponents-grids/grids/combined.js';
@@ -386,12 +387,11 @@ export class SalesGrid extends LitElement {
         const col = event.detail;
         var countryKeys = Object.keys(this.flagsData);
         if (countryKeys.includes(col.field)) {
-            // TO DO
-            // col.headerTemplate = (_: IgcColumnTemplateContext) => html`
-            //     <div class="countryHeader">
-            //         <img class="countryImage" src="${(<any>this.flagsData)[col.field]}" /><span>${col.field}</span>
-            //     </div>
-            // `;
+            col.headerTemplate = (_: IgcColumnTemplateContext) => html`
+                <div class="countryHeader">
+                    <img class="countryImage" src="${(<any>this.flagsData)[col.field]}" /><span>${col.field}</span>
+                </div>
+            `;
         }
     }
 
