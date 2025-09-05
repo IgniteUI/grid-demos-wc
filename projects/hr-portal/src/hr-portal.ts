@@ -102,6 +102,7 @@ export default class HrPortal extends LitElement {
         <igc-tree-grid
           id="treeGrid"
           .data="${this.data}"
+          .isLoading="${!this.data.length}"
           primary-key="ID"
           child-data-key="Employees"
           row-selection="multipleCascade"
