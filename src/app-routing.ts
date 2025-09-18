@@ -6,12 +6,17 @@ export const routes: Route[] = [
     path: "home",
     component: "home-view",
     children: [
-      { path: "", redirect: "home/inventory" },
-      { path: "inventory", component: "erp-hgrid-view" },
-      { path: "finance", component: "finance-view" },
-      { path: "hr-portal", component: "hr-portal-view" },
-      { path: "sales", component: "sales-view" },
-      { path: "fleet", component: "fleet-management-view" },
+      { path: "", redirect: "grids/inventory" },
+      {
+        path: "grids",
+        children: [
+          { path: "inventory", component: "erp-hgrid-view" },
+          { path: "finance", component: "finance-view" },
+          { path: "hr-portal", component: "hr-portal-view" },
+          { path: "sales", component: "sales-view" },
+          { path: "fleet", component: "fleet-management-view" },
+        ]
+      },
       {
         path: "charts",
         children: [
@@ -25,11 +30,16 @@ export const routes: Route[] = [
       }
     ],
   },
-  { path: "inventory", component: "app-erp-hgrid" },
-  { path: "finance", component: "app-finance-grid" },
-  { path: "hr-portal", component: "app-hr-portal" },
-  { path: "sales", component: "app-sales-grid" },
-  { path: "fleet", component: "app-fleet-management" },
+  {
+    path: "grids",
+    children: [
+      { path: "inventory", component: "app-erp-hgrid" },
+      { path: "finance", component: "app-finance-grid" },
+      { path: "hr-portal", component: "app-hr-portal" },
+      { path: "sales", component: "app-sales-grid" },
+      { path: "fleet", component: "app-fleet-management" },
+    ]
+  },
   {
     path: "charts",
     children: [

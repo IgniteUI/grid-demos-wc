@@ -1,5 +1,5 @@
 {
-  "name": "step-chart",
+  "name": "finance-grid",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,11 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "igniteui-theming": "^17.0.0",
     "igniteui-webcomponents": "^6.2.0",
-    "igniteui-webcomponents-charts": "^6.0.1",
-    "igniteui-webcomponents-core": "^6.0.1",
+    "igniteui-webcomponents-grids": "^6.0.7",
     "lit": "^3.2.1",
-    "sass": "^1.86.3"
+    "sass": "^1.86.0"
   },
   "devDependencies": {
     "typescript": "~5.7.2",

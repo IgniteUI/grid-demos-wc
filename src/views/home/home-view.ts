@@ -4,11 +4,11 @@ import { defineComponents, IgcChipComponent, IgcIconButtonComponent, IgcRippleCo
 import { EXIT_FULL_SCREEN, FILE_DOWNLOAD, FULL_SCREEN, VIEW_MORE } from "../../assets/icons";
 import styles from "./home-view.scss?inline";
 
-import "../finance/finance-view";
-import "../hr-portal/hr-portal-view";
-import "../erp-hgrid/erp-hgrid-view";
-import "../fleet-management/fleet-management-view";
-import "../sales/sales-view";
+import "../grids/finance/finance-view";
+import "../grids/hr-portal/hr-portal-view";
+import "../grids/erp-hgrid/erp-hgrid-view";
+import "../grids/fleet-management/fleet-management-view";
+import "../grids/sales/sales-view";
 
 import "../charts/bar-chart/bar-chart-view";
 import "../charts/column-chart/column-chart-view";
@@ -56,7 +56,7 @@ export default class HomeView extends LitElement {
 
   public tabInfoGrids = new Map<string, TabInfo>([
     [
-      "inventory",
+      "grids/inventory",
       {
         title: "ERP/ Inventory",
         theme: "Material",
@@ -67,7 +67,7 @@ export default class HomeView extends LitElement {
       },
     ],
     [
-      "hr-portal",
+      "grids/hr-portal",
       {
         title: "Org Chart/HR Portal",
         theme: "Fluent",
@@ -78,7 +78,7 @@ export default class HomeView extends LitElement {
       },
     ],
     [
-      "finance",
+      "grids/finance",
       {
         title: "Financial Portfolio",
         theme: "Bootstrap",
@@ -89,7 +89,7 @@ export default class HomeView extends LitElement {
       },
     ],
     [
-      "sales",
+      "grids/sales",
       {
         title: "Sales Dashboard",
         theme: "Indigo",
@@ -100,7 +100,7 @@ export default class HomeView extends LitElement {
       },
     ],
     [
-      "fleet",
+      "grids/fleet",
       {
         title: "Fleet Management",
         theme: "Material",
@@ -288,10 +288,10 @@ export default class HomeView extends LitElement {
   private tabItemTemplate = (tabName: string) => {
     const currentTabName  = this.routeName.startsWith('charts/')
       ? this.routeName.substring('charts/'.length)
-      : this.routeName;
+      : this.routeName.substring('grids/'.length);
   
     const isSelected = currentTabName  === tabName;
-    const fullTabKey = this.isChartsSection ? `charts/${tabName}` : tabName;
+    const fullTabKey = this.isChartsSection ? `charts/${tabName}` : `grids/${tabName}`;
     const info = this.tabInfo.get(fullTabKey);
   
     return html`
@@ -361,7 +361,7 @@ export default class HomeView extends LitElement {
             ${this.activeTabs.map(
               (tab) => html`
                 <div class="tab-item-container">
-                  <a href="${import.meta.env.BASE_URL}home/${this.isChartsSection ? 'charts/' : ''}${tab.key}">
+                  <a href="${import.meta.env.BASE_URL}home/${this.isChartsSection ? 'charts/' : 'grids/'}${tab.key}">
                     ${this.tabItemTemplate(tab.key)}
                   </a>
                 </div>

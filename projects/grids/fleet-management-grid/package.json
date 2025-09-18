@@ -1,5 +1,5 @@
 {
-  "name": "step-chart",
+  "name": "fleet-management-grid",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,15 +9,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.6.13",
+    "@igniteui/material-icons-extended": "^3.1.0",
+    "igniteui-theming": "^17.0.0",
     "igniteui-webcomponents": "^6.2.0",
     "igniteui-webcomponents-charts": "^6.0.1",
     "igniteui-webcomponents-core": "^6.0.1",
+    "igniteui-webcomponents-grids": "^6.0.7",
+    "igniteui-webcomponents-maps": "^6.0.1",
     "lit": "^3.2.1",
-    "sass": "^1.86.3"
+    "sass": "^1.86.0"
   },
   "devDependencies": {
     "typescript": "~5.7.2",
-    "vite": "^6.3.1",
+    "vite": "^6.2.0",
     "vite-plugin-static-copy": "^2.3.0"
   }
 }

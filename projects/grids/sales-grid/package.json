@@ -1,23 +1,24 @@
 {
-  "name": "step-chart",
+  "name": "sales-grid",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "vite --force",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "igniteui-webcomponents": "^6.2.0",
-    "igniteui-webcomponents-charts": "^6.0.1",
-    "igniteui-webcomponents-core": "^6.0.1",
     "lit": "^3.2.1",
-    "sass": "^1.86.3"
+    "sass": "^1.86.1",
+    "igniteui-theming": "^17.1.0",
+    "igniteui-webcomponents": "^6.2.0",
+    "igniteui-webcomponents-grids": "^6.0.7"
   },
   "devDependencies": {
     "typescript": "~5.7.2",
     "vite": "^6.3.1",
-    "vite-plugin-static-copy": "^2.3.0"
+    "vite-plugin-static-copy": "^2.3.1"
   }
 }
