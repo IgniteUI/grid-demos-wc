@@ -32,5 +32,9 @@
     "typescript": "~5.7.2",
     "vite": "^6.3.4",
     "vite-plugin-static-copy": "^2.3.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-arm64": "4.26.0",
+    "@rollup/rollup-linux-x64-gnu": "4.26.0"
   }
 }
