@@ -32,18 +32,17 @@ interface TabInfo {
 
 @customElement("home-view")
 export default class HomeView extends LitElement {
-
   @query('#fullscreenElement') fullscreenElement!: HTMLElement;
   @property({ type: Boolean }) isFullscreen = false;
   @property({ type: Boolean }) isChartsSection = false;
-  @property({type: Array}) tabsGrids = [
+  @property({ type: Array }) tabsGrids = [
     { key: 'inventory' },
     { key: 'hr-portal' },
     { key: 'finance' },
     { key: 'sales' },
     { key: 'fleet' },
   ];
-  @property({type: Array}) tabsCharts = [
+  @property({ type: Array }) tabsCharts = [
     { key: 'column-chart' },
     { key: 'bar-chart' },
     { key: 'line-chart' },
@@ -51,8 +50,7 @@ export default class HomeView extends LitElement {
     { key: 'step-chart' },
     { key: 'polar-chart' }
   ];
-  @state()
-  private routeName: string = "inventory";
+  @state() private routeName: string = "inventory";
 
   public tabInfoGrids = new Map<string, TabInfo>([
     [
@@ -165,7 +163,7 @@ export default class HomeView extends LitElement {
 
   public tabInfo = this.tabInfoGrids;
   public activeTabs = this.tabsGrids;
-  
+
   constructor() {
     super();
     registerIconFromText("file_download", FILE_DOWNLOAD, "indigo_internal");
@@ -176,104 +174,86 @@ export default class HomeView extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-  
+
     if (typeof window !== 'undefined') {
       window.addEventListener('vaadin-router-location-changed', this.updateCurrentPath);
       window.addEventListener('resize', this.onResize);
 
       // Initial setting of the correct route
-      const path = window.location.pathname;
-      this.routeName = this.extractRouteKey(path);
-      this.updateTabsBasedOnRoute(path);
+      this.updateTabsBasedOnRoute(window.location.pathname);
     }
-  
+
     if (typeof document !== 'undefined') {
       document.addEventListener('fullscreenchange', this.onFullscreenChange);
+      document.addEventListener('webkitfullscreenchange', this.onFullscreenChange);
     }
   }
-  
+
   disconnectedCallback(): void {
     super.disconnectedCallback();
-  
+
     if (typeof window !== 'undefined') {
       window.removeEventListener('vaadin-router-location-changed', this.updateCurrentPath);
       window.removeEventListener('resize', this.onResize);
-      this.updateTabsBasedOnRoute(window.location.pathname);
     }
-  
     if (typeof document !== 'undefined') {
       document.removeEventListener('fullscreenchange', this.onFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', this.onFullscreenChange);
     }
   }
 
-  private extractRouteKey(path: string): string {
+  private extractRouteKey(path: string) {
     // Get the part after '/home/', (for example 'charts/column-chart')
-    const base = path.split('/home/')[1] || '';
-    return base;
+    return path.split('/home/')[1] || '';
   }
-  
-  private updateCurrentPath = (_event: any) => {
-    // The full pathname -> like '/webcomponents-grid-examples/home/charts/line-chart'
-    const fullPath = window.location.pathname; 
-  
-    // Extract the last segment as routeName for tab selection -> like 'line-chart'
-    const segments = fullPath.split('/').filter(Boolean); 
-    const lastSegment = segments[segments.length - 1] || '';
-    this.routeName = lastSegment;
 
-    this.updateTabsBasedOnRoute(fullPath);
+  private updateCurrentPath = (_event: any) => {
+    this.updateTabsBasedOnRoute(window.location.pathname);
   };
-  
+
   private onDownloadClick = (event: MouseEvent, tabName: string) => {
     event.preventDefault();
     event.stopPropagation();
-  
     const downloadLink = this.tabInfo.get(tabName)?.downloadLink;
-    if (typeof window !== 'undefined' && downloadLink) {
-      window.open(downloadLink, "_blank")?.focus();
-    }
+    if (downloadLink) window.open(downloadLink, "_blank")?.focus();
   };
-  
+
   private onViewMoreClick = (event: MouseEvent, tabName: string) => {
     event.preventDefault();
     event.stopPropagation();
-  
     const viewMoreLink = this.tabInfo.get(tabName)?.moreLink;
-    if (typeof window !== 'undefined' && viewMoreLink) {
-      window.open(viewMoreLink, '_blank')?.focus();
-    }
+    if (viewMoreLink) window.open(viewMoreLink, "_blank")?.focus();
   };
-  
+
   private async onToggleFullscreen() {
-    if (typeof document === 'undefined') return;
+    const el = this.fullscreenElement || this.shadowRoot?.host;
 
     if (!document.fullscreenElement) {
-      await this.fullscreenElement?.requestFullscreen?.();
+      await el?.requestFullscreen?.();
     } else {
       await document.exitFullscreen?.();
     }
   }
-  
+
   private onResize = () => {
-    if (typeof window === 'undefined' || typeof screen === 'undefined') return;
-
-    const isF11 =
-      window.innerWidth === screen.width &&
-      window.innerHeight === screen.height;
-
-    if (this.isFullscreen !== isF11) {
-      this.isFullscreen = isF11;
+    const isFs = !!document.fullscreenElement ||
+                 (window.innerHeight === screen.height && window.innerWidth === screen.width);
+    if (this.isFullscreen !== isFs) {
+      this.isFullscreen = isFs;
+      this.requestUpdate();
     }
   };
 
   private onFullscreenChange = () => {
-    if (typeof document === 'undefined') return;
-    this.isFullscreen = !!document.fullscreenElement;
+    this.isFullscreen = !!document.fullscreenElement ||
+                        (window.innerHeight === screen.height && window.innerWidth === screen.width);
+    this.requestUpdate();
   };
 
   private updateTabsBasedOnRoute(url: string) {
-    this.routeName = url.replace(/^.*home\//, '');
-    
+    const routeKey = this.extractRouteKey(url);
+    this.routeName = routeKey;
+
     if (url.includes('charts')) {
       this.tabInfo = this.tabInfoCharts;
       this.activeTabs = this.tabsCharts;
@@ -285,56 +265,52 @@ export default class HomeView extends LitElement {
     }
   }
 
-  private tabItemTemplate = (tabName: string) => {
-    const currentTabName  = this.routeName.startsWith('charts/')
-      ? this.routeName.substring('charts/'.length)
-      : this.routeName;
-  
-    const isSelected = currentTabName  === tabName;
+  private tabItemTemplate(tabName: string) {
+    const currentTabName = this.isChartsSection ? this.routeName.replace(/^charts\//, '') : this.routeName;
+    const isSelected = currentTabName === tabName;
     const fullTabKey = this.isChartsSection ? `charts/${tabName}` : tabName;
     const info = this.tabInfo.get(fullTabKey);
-  
+
     return html`
       <div class="tab-item ${classMap({ "tab-item--selected": isSelected })}">
-        <div class="tab-header ${classMap({ "tab-header--disabled": !isSelected })}">
+        <div class="tab-header">
           ${info?.title?.toUpperCase() ?? tabName}
         </div>
       </div>
     `;
-  };
-  
-  private tabInfoTemplate = (tabName: string, info: TabInfo | undefined) => {
+  }
 
+  private tabInfoTemplate(tabName: string, info: TabInfo | undefined) {
     return html`
       <div class="current-tab-info">
         <div class="sample-info">
           <div class="tab-header">${info?.title}</div>
           <div class="tab-description">${info?.content}</div>
         </div>
-  
+
         <div class="sample-actions">
           <div class="theme-info">Theme: ${info?.theme}</div>
           <div class="theme-info">Mode: ${info?.themeMode}</div>
-  
+
           <div class="action-buttons">
-            <igc-button
-              variant="outlined"
-              class="custom-button"
-              @click="${(e: MouseEvent) => this.onDownloadClick(e, tabName)}"
-            >
-            <igc-icon name="file_download" collection="indigo_internal"></igc-icon>
+          <igc-button
+          variant="outlined"
+          class="custom-button"
+          @click="${(e: MouseEvent) => this.onDownloadClick(e, tabName)}"
+        >
+              <igc-icon name="file_download" collection="indigo_internal"></igc-icon>
               Download
             </igc-button>
-  
+            
             <igc-button
-              variant="outlined"
-              class="custom-button"
-              @click="${(e: MouseEvent) => this.onViewMoreClick(e, tabName)}"
-            >
+            variant="outlined"
+            class="custom-button"
+            @click="${(e: MouseEvent) => this.onViewMoreClick(e, tabName)}"
+          >
               <igc-icon name="view_more" collection="indigo_internal"></igc-icon>
               View More
             </igc-button>
-  
+
             <igc-button
               variant="outlined"
               class="custom-button"
@@ -356,20 +332,17 @@ export default class HomeView extends LitElement {
     return html`
       <div class="demo-container" id="fullscreenElement">
         <div class="tabs-info-wrapper-element">
-        ${!this.isFullscreen ? html`
-          <div class="tab-container">
-            ${this.activeTabs.map(
-              (tab) => html`
+          ${!this.isFullscreen ? html`
+            <div class="tab-container">
+              ${this.activeTabs.map(tab => html`
                 <div class="tab-item-container">
                   <a href="${import.meta.env.BASE_URL}home/${this.isChartsSection ? 'charts/' : ''}${tab.key}">
                     ${this.tabItemTemplate(tab.key)}
                   </a>
                 </div>
-              `
-            )}
-          </div>
-        ` : ''}
-  
+              `)}
+            </div>
+          ` : ''}
           <div>
             ${this.tabInfoTemplate(this.routeName, this.tabInfo?.get(this.routeName))}
           </div>
@@ -380,5 +353,6 @@ export default class HomeView extends LitElement {
       </div>
     `;
   }
+
   static styles = unsafeCSS(styles);
 }
