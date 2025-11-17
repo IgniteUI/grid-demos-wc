@@ -288,7 +288,8 @@ export default class ErpHierarchicalGrid extends LitElement {
           allow-advanced-filtering="${true}"
           moving="${true}"
           row-selection="${this.selectionMode}"
-          .data="${this.erpData}" >
+          .data="${this.erpData}"
+          .isLoading="${!this.erpData.length}">
   
           <igc-grid-toolbar>
             <igc-grid-toolbar-title>Inventory</igc-grid-toolbar-title>
