@@ -118,7 +118,7 @@ export default class HomeView extends LitElement {
       theme: "Material",
       themeMode: 'Light',
       content: "Render a collection of data points connected by a straight line to emphasize the amount of change over a period of time",
-      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/column-chart",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-web-components/web-components/components/charts/types/column-chart",
       downloadLink: "https://www.infragistics.com/resources/sample-applications/column-chart-sample-app-web-components"
     }],
     ['charts/bar-chart', {
@@ -126,7 +126,7 @@ export default class HomeView extends LitElement {
       theme: "Material",
       themeMode: 'Light',
       content: "Quickly compare frequency, count, total, or average of data in different categories",
-      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/bar-chart",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-web-components/web-components/components/charts/types/bar-chart",
       downloadLink: "https://www.infragistics.com/resources/sample-applications/bar-chart-sample-app-web-components"
     }],
     ['charts/line-chart', {
@@ -134,7 +134,7 @@ export default class HomeView extends LitElement {
       theme: "Material",
       themeMode: 'Light',
       content: "Show trends and perform comparative analysis of one or more quantities over a period of time",
-      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/line-chart",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-web-components/web-components/components/charts/types/line-chart",
       downloadLink: "https://www.infragistics.com/resources/sample-applications/line-chart-sample-app-web-components"
     }],
     ['charts/pie-chart', {
@@ -142,7 +142,7 @@ export default class HomeView extends LitElement {
       theme: "Material",
       themeMode: 'Light',
       content: "Part-to-whole chart that shows how categories (parts) of a data set add up to a total (whole) value.",
-      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/pie-chart",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-web-components/web-components/components/charts/types/pie-chart",
       downloadLink: "https://www.infragistics.com/resources/sample-applications/pie-chart-sample-app-web-components"
     }],
     ['charts/step-chart', {
@@ -150,7 +150,7 @@ export default class HomeView extends LitElement {
       theme: "Material",
       themeMode: 'Light',
       content: "Emphasizes the amount of change over a period of time or compares multiple items at once.",
-      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/step-chart",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-web-components/web-components/components/charts/types/step-chart",
       downloadLink: "https://www.infragistics.com/resources/sample-applications/step-chart-sample-app-web-components"
     }],
     ['charts/polar-chart', {
@@ -158,7 +158,7 @@ export default class HomeView extends LitElement {
       theme: "Material",
       themeMode: 'Light',
       content: "Emphasizes the amount of change over a period of time or compares multiple items at once.",
-      moreLink: "https://www.infragistics.com/products/ignite-ui-angular/angular/components/charts/types/polar-chart",
+      moreLink: "https://www.infragistics.com/products/ignite-ui-web-components/web-components/components/charts/types/polar-chart",
       downloadLink: "https://www.infragistics.com/resources/sample-applications/polar-chart-sample-app-web-components"
     }],
   ]);
