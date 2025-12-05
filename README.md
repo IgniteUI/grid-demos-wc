@@ -2,7 +2,7 @@
 
 Explore how to build lightning-fast apps with these Web Components examples. 
 
-(https://www.infragistics.com/webcomponents-grid-examples/home/inventory)[https://www.infragistics.com/webcomponents-grid-examples/home/inventory]
+[https://www.infragistics.com/webcomponents-grid-examples/home/inventory](https://www.infragistics.com/webcomponents-grid-examples/home/inventory)
 
 Each sample demonstrates the power of Ignite UI’s Web Components Grids, ensuring scalability, interactivity, and flexibility. Use them as a starting point to create scalable, customizable solutions. 
 
