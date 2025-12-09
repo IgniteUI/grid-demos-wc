@@ -36,7 +36,7 @@ stages:
         displayName: 'Install Node'
         inputs:
           versionSource: 'spec'
-          versionSpec: '18.x'
+          versionSpec: '24.x'
 
       - task: Bash@3
         displayName: 'Create download artifact per sample (Shell)'
@@ -189,6 +189,13 @@ stages:
           command: custom
           workingDir: '$(Build.SourcesDirectory)'
           customCommand: 'run build:ci'
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Repo as artifact - after trial-to-licensed'
+        inputs:
+          targetPath: '$(Build.SourcesDirectory)'
+          artifact: 'dist.grid-demos-wc'
+          publishLocation: 'pipeline'
 
       - task: PublishPipelineArtifact@1
         displayName: 'Publish app'
