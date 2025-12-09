@@ -194,7 +194,7 @@ stages:
         displayName: 'Repo as artifact - after trial-to-licensed'
         inputs:
           targetPath: '$(Build.SourcesDirectory)'
-          artifact: 'dist.grid-demos-wc'
+          artifact: 'dist.grid-demos-changed-code'
           publishLocation: 'pipeline'
 
       - task: PublishPipelineArtifact@1
